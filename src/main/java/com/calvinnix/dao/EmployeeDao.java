@@ -2,6 +2,7 @@ package com.calvinnix.dao;
 
 import com.calvinnix.model.Employee;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -10,4 +11,9 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface EmployeeDao extends CrudRepository<Employee, Long> {
+
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @Override
+    void delete(Long aLong);
+
 }
