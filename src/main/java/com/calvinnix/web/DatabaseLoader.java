@@ -1,7 +1,9 @@
-package com.calvinnix;
+package com.calvinnix.web;
 
 import com.calvinnix.dao.EmployeeDao;
+import com.calvinnix.dao.RoleDao;
 import com.calvinnix.model.Employee;
+import com.calvinnix.model.Role;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
@@ -14,17 +16,23 @@ import org.springframework.stereotype.Component;
 public class DatabaseLoader implements CommandLineRunner {
 
     private final EmployeeDao employeeDao;
+    private final RoleDao roleDao;
 
     @Autowired
-    public DatabaseLoader(EmployeeDao employeeDao) {
+    public DatabaseLoader(EmployeeDao employeeDao, RoleDao roleDao) {
         this.employeeDao = employeeDao;
+        this.roleDao = roleDao;
     }
 
     @Override
     public void run(String... strings) throws Exception {
-        this.employeeDao.save(new Employee("Calvin Nix", 22, 3));
-        this.employeeDao.save(new Employee("Alex Estrada", 23, 2));
-        this.employeeDao.save(new Employee("Eric Plascencia", 23, 2));
-        this.employeeDao.save(new Employee("Zacch Thomas", 36, 5));
+        Role ROLE_USER = new Role("ROLE_USER");
+        this.roleDao.save(ROLE_USER);
+
+        final String password = "$2a$08$wgwoMKfYl5AUE9QtP4OjheNkkSDoqDmFGjjPE2XTPLDe9xso/hy7u";
+        final String username = "cnix";
+
+
+       this.employeeDao.save(new Employee(username, password, true, ROLE_USER));
     }
 }

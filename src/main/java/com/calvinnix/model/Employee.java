@@ -1,9 +1,14 @@
 package com.calvinnix.model;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import javax.persistence.*;
+import javax.validation.constraints.Size;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * Created by Calvin on 1/9/17.
@@ -11,48 +16,74 @@ import javax.persistence.Id;
 
 
 @Entity
-public class Employee {
+public class Employee implements UserDetails {
 
     @Id
     @GeneratedValue (strategy = GenerationType.IDENTITY)
     private Long id;
-    private String name;
-    private int age;
-    private int years;
+
+    @Column(unique = true)
+    @Size(min = 4, max = 20)
+    private String username;
+
+    @Column(length = 100)
+    private String password;
+
+    @Column(nullable = false)
+    private boolean enabled;
+
+    @OneToOne
+    @JoinColumn(name = "role_id")
+    private Role role;
+
+    public Employee(String username, String password, boolean enabled, Role role) {
+        this.username = username;
+        this.password = password;
+        this.enabled = enabled;
+        this.role = role;
+    }
+
+    public Employee() {
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        List<GrantedAuthority> authorities = new ArrayList<>();
+        authorities.add(new SimpleGrantedAuthority(role.getName()));
+        return authorities;
+    }
 
     public Long getId() {
         return id;
     }
 
-    public String getName() {
-        return name;
+    @Override
+    public String getPassword() {
+        return password;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    @Override
+    public String getUsername() {
+        return username;
     }
 
-    public int getAge() {
-        return age;
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
     }
 
-    public void setAge(int age) {
-        this.age = age;
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
     }
 
-    public int getYears() {
-        return years;
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
     }
 
-    public void setYears(int years) {
-        this.years = years;
-    }
-
-    private Employee() {}
-
-    public Employee(String name, int age, int years) {
-        this.name = name;
-        this.age = age;
-        this.years = years;
+    @Override
+    public boolean isEnabled() {
+        return enabled;
     }
 }
