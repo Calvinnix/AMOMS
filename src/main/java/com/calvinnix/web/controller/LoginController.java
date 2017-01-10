@@ -19,7 +19,7 @@ public class LoginController {
     public String loginForm(Model model, HttpServletRequest request) {
 
         //TODO: cn - Add a User class
-        model.addAttribute("user", new Employee());
+        model.addAttribute("employee", new Employee());
         model.addAttribute("login", new Object());
         try {
             Object flash = request.getSession().getAttribute("flash");
