@@ -1,8 +1,3 @@
-
-
-
-
-
 var Employee = React.createClass({
     getInitialState: function() {
         return {display: true};

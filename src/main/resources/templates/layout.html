@@ -1,10 +1,22 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="head(title)">
     <meta charset="UTF-8" />
-    <title>Title</title>
+    <title th:text="${title}"></title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.3/toastr.min.css"/>
+    <link rel="stylesheet" href="css/app.css" />
 </head>
 <body>
-
+    <th:block fragment="script(react_script_location)">
+        <script src="https://fb.me/react-15.0.1.js"></script>
+        <script src="https://fb.me/react-dom-15.0.1.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.23/browser.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.3/toastr.min.js"></script>
+        <!-- TODO:CN - Implement webpack -->
+        <script type="text/babel" th:src="${react_script_location}"/>
+    </th:block>
 </body>
 </html>

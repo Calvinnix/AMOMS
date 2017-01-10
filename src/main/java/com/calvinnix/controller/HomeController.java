@@ -20,4 +20,9 @@ public class HomeController {
         return "unauthorized";
     }
 
+    @RequestMapping(value = "/login")
+    public String login() {
+        return "login";
+    }
+
 }
