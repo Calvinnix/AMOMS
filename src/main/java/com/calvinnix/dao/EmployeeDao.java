@@ -11,7 +11,4 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface EmployeeDao extends CrudRepository<Employee, Long> {
 
-    @Override
-    void delete(Long aLong);
-
 }

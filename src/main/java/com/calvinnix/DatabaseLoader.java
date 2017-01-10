@@ -25,6 +25,6 @@ public class DatabaseLoader implements CommandLineRunner {
         this.employeeDao.save(new Employee("Calvin Nix", 22, 3));
         this.employeeDao.save(new Employee("Alex Estrada", 23, 2));
         this.employeeDao.save(new Employee("Eric Plascencia", 23, 2));
-        this.employeeDao.save(new Employee("Zacch Thomas", 46, 5));
+        this.employeeDao.save(new Employee("Zacch Thomas", 36, 5));
     }
 }

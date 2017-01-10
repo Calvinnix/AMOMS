@@ -15,4 +15,9 @@ public class HomeController {
         return "index";
     }
 
+    @RequestMapping(value = "/unauthorized")
+    public String unauthorized() {
+        return "unauthorized";
+    }
+
 }
