@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:th="http://www.thymeleaf.org">
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org">
 <head th:fragment="head(title)">
     <meta charset="UTF-8" />
     <title th:text="${title}"></title>
@@ -9,10 +10,45 @@
     <link rel="stylesheet" href="css/app.css" />
 </head>
 <body>
-    <div th:fragment="flash" th:if="${flash != null}" class="container">
-        <div class="message">
-            <i class="right material-icons" data-close="">close</i>
-            <div th:classappend="${#strings.toLowerCase(flash.status)}" th:text="${flash.message}" class="flash"></div>
+    <nav class="navbar navbar-default navbar-fixed-top" th:fragment="nav" th:if="${login == null}">
+        <div class="container">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#">Brand</a>
+            </div>
+
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav">
+                    <li class="active"><a href="#">Link <span class="sr-only">(current)</span></a></li>
+                    <li><a href="#">Link</a></li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" sec:authentication="name"></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="#">View Profile</a></li>
+                            <li>
+                                <form class="logout inline" th:action="@{/logout}" method="post">
+                                    <button class="btn btn-default" type="submit">Logout</button>
+                                </form>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div><!-- /.navbar-collapse -->
+        </div><!-- /.container-fluid -->
+    </nav>
+
+    <div th:fragment="flash" th:if="${flash != null}">
+        <div class="alert alert-danger alert-dismissible flash" role="alert" th:classappend="${#strings.toLowerCase(flash.status)}" th:text="${flash.message}">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         </div>
     </div>
     <th:block fragment="script">
@@ -21,8 +57,9 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.23/browser.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.3/toastr.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
         <!-- TODO:CN - Implement webpack -->
-        <script type="text/babel" src="js/app.js"/>
+        <script th:if="${login == null}" type="text/babel" src="js/app.js"/>
     </th:block>
 </body>
 </html>
