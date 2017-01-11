@@ -1,6 +1,7 @@
 package com.calvinnix.web.controller;
 
 import com.calvinnix.model.Employee;
+import org.springframework.boot.autoconfigure.web.ErrorController;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,7 +19,6 @@ public class LoginController {
     @RequestMapping(path = "/login", method = RequestMethod.GET)
     public String loginForm(Model model, HttpServletRequest request) {
 
-        //TODO: cn - Add a User class
         model.addAttribute("employee", new Employee());
         model.addAttribute("login", new Object());
         try {
@@ -30,11 +30,6 @@ public class LoginController {
             // "flash" session attribute must not exist...do nothing and proceed normally
         }
         return "login";
-    }
-
-    @RequestMapping("/access_denied")
-    public String accessDenied() {
-        return "access_denied";
     }
 
 }

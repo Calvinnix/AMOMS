@@ -11,7 +11,16 @@ var Employee = React.createClass({
                 self.setState({display: false});
             },
             error: function(xhr, ajaxOptions, thrownError) {
-                toastr.error(xhr.responseJSON.message);
+                toastr.options = {
+                    "debug": false,
+                    "positionClass": "toast-top-center",
+                    "onclick": null,
+                    "fadeIn": 300,
+                    "fadeOut": 1000,
+                    "timeOut": 5000,
+                    "extendedTimeOut": 1000
+                }
+                toastr.error("Not Authorized");
             }
         });
     },
@@ -21,9 +30,9 @@ var Employee = React.createClass({
         } else {
             return (
                 <tr>
-                    <td>{this.props.employee.name}</td>
-                    <td>{this.props.employee.age}</td>
-                    <td>{this.props.employee.years}</td>
+                    <td>{this.props.employee.username}</td>
+                    <td>{this.props.employee.password}</td>
+                    <td>{this.props.employee.authorities[0].authority}</td>
                     <td>
                         <button className="btn btn-danger" onClick={this.handleDelete}>✕</button>
                     </td>
@@ -38,14 +47,14 @@ var EmployeeTable = React.createClass({
     render: function() {
         var rows = [];
         this.props.employees.forEach(function(employee) {
-            rows.push(<Employee employee={employee} key={employee.name} />);
+            rows.push(<Employee employee={employee} key={employee.username} />);
         });
         return (
             <div className="container">
             <table className="table table-striped">
             <thead>
             <tr>
-            <th>Name</th><th>Age</th><th>Years</th>
+            <th>Username</th><th>Password</th><th>Role</th>
             </tr>
             </thead>
             <tbody>{rows}</tbody>
