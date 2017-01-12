@@ -1,7 +1,13 @@
 package com.calvinnix.web;
 
+import com.calvinnix.model.Employee;
+import com.calvinnix.service.EmployeeService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.validation.Errors;
+import org.springframework.validation.ValidationUtils;
+
 import javax.validation.ConstraintViolation;
-import javax.validation.Validator;
 import javax.validation.executable.ExecutableValidator;
 import javax.validation.metadata.BeanDescriptor;
 import java.util.Set;
@@ -9,34 +15,40 @@ import java.util.Set;
 /**
  * Created by Calvin on 1/11/17.
  */
-public class EmployeeValidator implements Validator {
+
+@Component
+public class EmployeeValidator implements org.springframework.validation.Validator {
+
+    @Autowired
+    private EmployeeService employeeService;
+
+
     @Override
-    public <T> Set<ConstraintViolation<T>> validate(T t, Class<?>[] classes) {
-        return null;
+    public boolean supports(Class<?> aClass) {
+        return Employee.class.equals(aClass);
     }
 
     @Override
-    public <T> Set<ConstraintViolation<T>> validateProperty(T t, String s, Class<?>[] classes) {
-        return null;
-    }
+    public void validate(Object o, Errors errors) {
+        Employee employee = (Employee) o;
 
-    @Override
-    public <T> Set<ConstraintViolation<T>> validateValue(Class<T> aClass, String s, Object o, Class<?>[] classes) {
-        return null;
-    }
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "username", "NotEmpty");
+        //TODO:ctn change the restraints
+        if (employee.getUsername().length() < 6 || employee.getUsername().length() > 32) {
+            errors.rejectValue("username", "Size.userForm.username");
+        }
+        if (employeeService.findEmployeeByUsername(employee.getUsername()) != null) {
+            errors.rejectValue("username", "Duplicate.userForm.username");
+        }
 
-    @Override
-    public BeanDescriptor getConstraintsForClass(Class<?> aClass) {
-        return null;
-    }
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "password", "NotEmpty");
+        //TODO:ctn change the restraints
+        if (employee.getPassword().length() < 8 || employee.getPassword().length() > 32) {
+            errors.rejectValue("password", "Size.userForm.password");
+        }
 
-    @Override
-    public <T> T unwrap(Class<T> aClass) {
-        return null;
-    }
-
-    @Override
-    public ExecutableValidator forExecutables() {
-        return null;
+        if (!employee.getPasswordConfirm().equals(employee.getPassword())) {
+            errors.rejectValue("passwordConfirm", "Diff.userForm.passwordConfirm");
+        }
     }
 }
