@@ -42,7 +42,6 @@ public class SignupController {
         try {
             Object flash = request.getSession().getAttribute("flash");
             model.addAttribute("flash", flash);
-
             request.getSession().removeAttribute("flash");
         } catch (Exception ex) {
             // "flash" session attribute must not exist...do nothing and proceed normally
@@ -51,20 +50,20 @@ public class SignupController {
     }
 
     @RequestMapping(value = "/signup", method = RequestMethod.POST)
-    public String registration(@ModelAttribute("employee") Employee employeeForm, BindingResult bindingResult,
-                               Model model, RedirectAttributes redirectAttributes) {
+    public String signup(@ModelAttribute("employee") Employee employeeForm, BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes) {
         model.addAttribute("disableReact", new Object());
         employeeValidator.validate(employeeForm, bindingResult);
 
         if (bindingResult.hasErrors()) {
-            redirectAttributes.addFlashAttribute("flash",new FlashMessage("Invalid data provided", FlashMessage.Status.FAILURE));
-            return "redirect:/signup";
+            model.addAttribute("flash",new FlashMessage("Invalid Username and/or Password", FlashMessage.Status.FAILURE));
+            return "signup";
         }
 
         employeeService.save(employeeForm);
         securityService.autoLogin(employeeForm.getUsername(), employeeForm.getPasswordConfirm());
 
-        return "redirect:/application";
+        redirectAttributes.addFlashAttribute("flash",new FlashMessage("Successfully created account!", FlashMessage.Status.SUCCESS));
+        return "redirect:/login";
     }
 
 
