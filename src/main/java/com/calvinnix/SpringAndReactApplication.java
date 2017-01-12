@@ -15,6 +15,7 @@ public class SpringAndReactApplication {
 	//TODO:ctn sanitize inputs
 	//TODO:ctn escape outputs
 	//TODO:ctn re-enable csrf
+	//TODO:ctn add logging
 	//TODO:ctn Refactor code
 
 	public static void main(String[] args) {

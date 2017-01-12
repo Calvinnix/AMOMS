@@ -15,7 +15,7 @@ public class AppController {
     @Autowired
     private EmployeeService employeeService;
 
-    @RequestMapping(value = "/")
+    @RequestMapping(value = {"/","/application"})
     public String index() {
         return "application";
     }

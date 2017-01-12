@@ -6,6 +6,7 @@ import com.calvinnix.model.Role;
 import com.calvinnix.service.EmployeeService;
 import com.calvinnix.service.SecurityService;
 import com.calvinnix.web.EmployeeValidator;
+import com.calvinnix.web.FlashMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -24,16 +26,17 @@ import javax.servlet.http.HttpServletRequest;
 @Controller
 public class SignupController {
 
-    private final EmployeeDao employeeDao;
+    @Autowired
+    private EmployeeService employeeService;
 
     @Autowired
-    public SignupController(EmployeeDao employeeDao) {
-        this.employeeDao = employeeDao;
-    }
+    private SecurityService securityService;
 
-    @RequestMapping(path = "/signup", method = RequestMethod.GET)
-    public String signupForm(Model model, HttpServletRequest request) {
+    @Autowired
+    private EmployeeValidator employeeValidator;
 
+    @RequestMapping(value = "/signup", method = RequestMethod.GET)
+    public String signup(Model model, HttpServletRequest request) {
         model.addAttribute("employee", new Employee());
         model.addAttribute("disableReact", new Object());
         try {
@@ -47,59 +50,21 @@ public class SignupController {
         return "signup";
     }
 
-    //TODO:ctn figure out how to pass this through thymeleaf cleanly
-    @RequestMapping(path = "/signup", method = RequestMethod.POST)
-    public String addEmployee(@RequestParam("inputUsername") String username,
-                              @RequestParam("inputPassword") String password,
-                              @RequestParam("inputConfirmPassword") String confirmPassword) {
-
-        //TODO:ctn Sanitize this shit
-
-        //TODO:ctn verify password and confirm password are the same
-
-        Role ROLE_USER = new Role("ROLE_USER");
-        this.employeeDao.save(new Employee(username, password, true, ROLE_USER));
-
-        //TODO:ctn login automatically using this account
-
-        return "redirect:/";
-    }
-
-
-
-
-
-
-    @Autowired
-    private EmployeeService employeeService;
-
-    @Autowired
-    private SecurityService securityService;
-
-    @Autowired
-    private EmployeeValidator employeeValidator;
-
-    @RequestMapping(value = "/signup", method = RequestMethod.GET)
-    public String registration(Model model) {
-        model.addAttribute("employee", new Employee());
-        model.addAttribute("disableReact", new Object());
-
-        return "signup";
-    }
-
     @RequestMapping(value = "/signup", method = RequestMethod.POST)
-    public String registration(@ModelAttribute("userForm") Employee employeeForm, BindingResult bindingResult, Model model) {
+    public String registration(@ModelAttribute("employee") Employee employeeForm, BindingResult bindingResult,
+                               Model model, RedirectAttributes redirectAttributes) {
+        model.addAttribute("disableReact", new Object());
         employeeValidator.validate(employeeForm, bindingResult);
 
         if (bindingResult.hasErrors()) {
-            return "signup";
+            redirectAttributes.addFlashAttribute("flash",new FlashMessage("Invalid data provided", FlashMessage.Status.FAILURE));
+            return "redirect:/signup";
         }
 
         employeeService.save(employeeForm);
-
         securityService.autoLogin(employeeForm.getUsername(), employeeForm.getPasswordConfirm());
 
-        return "redirect:/";
+        return "redirect:/application";
     }
 
 
