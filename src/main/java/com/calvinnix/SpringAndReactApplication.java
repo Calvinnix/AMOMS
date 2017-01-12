@@ -12,7 +12,6 @@ public class SpringAndReactApplication {
 	//TODO:ctn use scss instead of css
 	//TODO:ctn add remember me functionality
 	//TODO:ctn add sign up functionality
-	//TODO:ctn fix react signup bug
 	//TODO:ctn sanitize inputs
 	//TODO:ctn escape outputs
 	//TODO:ctn re-enable csrf

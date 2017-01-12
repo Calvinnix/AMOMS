@@ -1,10 +1,13 @@
 package com.calvinnix.service;
 
 import com.calvinnix.dao.EmployeeDao;
+import com.calvinnix.dao.RoleDao;
 import com.calvinnix.model.Employee;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 /**
@@ -16,6 +19,19 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Autowired
     private EmployeeDao employeeDao;
+
+    @Autowired
+    private RoleDao roleDao;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Override
+    public void save(Employee employee) {
+        employee.setPassword(passwordEncoder.encode(employee.getPassword()));
+        employee.setRole(roleDao.findByName("ROLE_USER"));
+        employeeDao.save(employee);
+    }
 
     @Override
     public Employee findEmployeeByUsername(String username) {

@@ -1,7 +1,6 @@
 package com.calvinnix.web.controller;
 
 import com.calvinnix.model.Employee;
-import org.springframework.boot.autoconfigure.web.ErrorController;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,7 +19,7 @@ public class LoginController {
     public String loginForm(Model model, HttpServletRequest request) {
 
         model.addAttribute("employee", new Employee());
-        model.addAttribute("login", new Object());
+        model.addAttribute("disableReact", new Object());
         try {
             Object flash = request.getSession().getAttribute("flash");
             model.addAttribute("flash", flash);

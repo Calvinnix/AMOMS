@@ -30,7 +30,7 @@ public class SignupController {
     public String signupForm(Model model, HttpServletRequest request) {
 
         model.addAttribute("employee", new Employee());
-        model.addAttribute("signup", new Object());
+        model.addAttribute("disableReact", new Object());
         try {
             Object flash = request.getSession().getAttribute("flash");
             model.addAttribute("flash", flash);

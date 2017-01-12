@@ -8,4 +8,5 @@ import org.springframework.security.core.userdetails.UserDetailsService;
  */
 public interface EmployeeService extends UserDetailsService {
     Employee findEmployeeByUsername(String username);
+    void save(Employee employee);
 }
