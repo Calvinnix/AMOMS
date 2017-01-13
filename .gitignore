@@ -24,3 +24,5 @@ nbdist/
 .nb-gradle/
 
 .DS_Store
+.sass-cache
+src/main/resources/static/css/app.css
