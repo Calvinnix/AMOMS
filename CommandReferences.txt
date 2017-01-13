@@ -1,0 +1,5 @@
+---Run Project---
+mvn spring-boot:run
+
+---Compile Sass---
+mvn sass:watch
