@@ -7,7 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class SpringAndReactApplication {
 
 	//TODO:ctn add unit tests
-	//TODO:ctn use webpack to load resources
+	//TODO:ctn better way to load resources?
 	//TODO:ctn use scss instead of css
 	//TODO:ctn security (sql injection)
 	//TODO:ctn re-enable csrf
