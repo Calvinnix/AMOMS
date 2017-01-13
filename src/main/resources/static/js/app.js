@@ -87,5 +87,6 @@ var App = React.createClass({
 });
 
 
-
-ReactDOM.render(<App />, document.getElementById('root'));
+if (document.getElementById('root') != null) {
+    ReactDOM.render(<App />, document.getElementById('root'));
+}

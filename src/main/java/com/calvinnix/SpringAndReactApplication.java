@@ -9,8 +9,7 @@ public class SpringAndReactApplication {
 	//TODO:ctn add unit tests
 	//TODO:ctn use webpack to load resources
 	//TODO:ctn use scss instead of css
-	//TODO:ctn sanitize inputs
-	//TODO:ctn escape outputs
+	//TODO:ctn security (sql injection)
 	//TODO:ctn re-enable csrf
 	//TODO:ctn add front-end login/signup form validation
 
