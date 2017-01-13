@@ -26,36 +26,46 @@ public class SecurityServiceImpl implements SecurityService {
 
     @Override
     public String findLoggedInUsername() {
+        logger.info(String.format(" --- Entering: %s", Thread.currentThread().getStackTrace()[1].getMethodName()));
 
+        logger.info(" --- Getting employee authentication details from SecurityContextHolder");
         Object employee = SecurityContextHolder.getContext().getAuthentication().getDetails();
+
         if (employee instanceof UserDetails) {
-            return ((UserDetails) employee).getUsername();
+            logger.info(" --- Getting username from employee Object");
+            String result = ((UserDetails) employee).getUsername();
+
+            logger.info(String.format(" --- username is %s", result));
+            logger.info(String.format(" --- Exiting: %s", Thread.currentThread().getStackTrace()[1].getMethodName()));
+            return result;
         }
+        logger.error(" --- username is null");
+        logger.info(String.format(" --- Exiting: %s", Thread.currentThread().getStackTrace()[1].getMethodName()));
         return null;
     }
 
     @Override
     public void autoLogin(String username, String password) {
-        logger.info("Entering: autoLogin();");
-        logger.info("Calling: employeeService.loadUserByUsername(username)");
+        logger.info(String.format(" --- Entering: %s", Thread.currentThread().getStackTrace()[1].getMethodName()));
+
+        logger.info(String.format(" --- Loading User by Username: %s", username));
         UserDetails userDetails = employeeService.loadUserByUsername(username);
-        logger.info("Calling: new UsernamePasswordAuthenticationToken(userDetails, password, userDetails.getAuthorities());");
+
+        logger.info(" --- Creating UsernamePasswordAuthenticationToken");
         UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
                 new UsernamePasswordAuthenticationToken(userDetails, password, userDetails.getAuthorities());
-        logger.info("Calling: authenticationManager.authenticate(usernamePasswordAuthenticationToken);");
-        try {
-            authenticationManager.authenticate(usernamePasswordAuthenticationToken);
-        } catch (Exception e) {
-            logger.error(e.getMessage());
-        }
+
+        logger.info(" --- Authenticating usernamePasswordAuthenticationToken");
+        authenticationManager.authenticate(usernamePasswordAuthenticationToken);
 
 
         if (usernamePasswordAuthenticationToken.isAuthenticated()) {
+            logger.info(" --- Setting authentication");
             SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
-            logger.debug(String.format("Auto login %s successfully!", username));
+            logger.info(String.format(" --- Auto login %s successfully!", username));
         } else {
-            logger.error(String.format("Auto login %s failed!", username));
+            logger.error(String.format(" --- Auto login %s failed!", username));
         }
-        logger.info("Exiting: autoLogin();");
+        logger.info(String.format(" --- Exiting: %s", Thread.currentThread().getStackTrace()[1].getMethodName()));
     }
 }

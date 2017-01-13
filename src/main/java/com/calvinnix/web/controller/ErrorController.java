@@ -1,5 +1,7 @@
 package com.calvinnix.web.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -10,15 +12,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 public class ErrorController implements org.springframework.boot.autoconfigure.web.ErrorController {
 
-    private static final String PATH = "/error";
+    private static final Logger logger = LoggerFactory.getLogger(ErrorController.class);
 
-    @RequestMapping(value = "/access_denied")
-    public String accessDenied() {
-        return "access_denied";
-    }
+    private static final String PATH = "/error";
 
     @RequestMapping(value = PATH)
     public String error() {
+        logger.info(String.format(" --- RequestMapping from %s", PATH));
+        logger.info(" --- Mapping to /access_denied");
         return "access_denied";
     }
 

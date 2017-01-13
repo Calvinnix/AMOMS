@@ -5,6 +5,8 @@ import com.calvinnix.service.EmployeeService;
 import com.calvinnix.service.SecurityService;
 import com.calvinnix.web.EmployeeValidator;
 import com.calvinnix.web.FlashMessage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -32,34 +34,59 @@ public class SignupController {
     @Autowired
     private EmployeeValidator employeeValidator;
 
+    private static final Logger logger = LoggerFactory.getLogger(SignupController.class);
+
     @RequestMapping(value = "/signup", method = RequestMethod.GET)
     public String signup(Model model, HttpServletRequest request) {
+        logger.info(" --- RequestMapping from /signup");
+
+        logger.info(" --- Adding employee attribute to model from new Employee()");
         model.addAttribute("employee", new Employee());
+
+        logger.info(" --- Adding disableReact attribute to model from new Object()");
         model.addAttribute("disableReact", new Object());
         try {
+            logger.info(" --- Checking for flash attribute from session");
             Object flash = request.getSession().getAttribute("flash");
+
+            logger.info(" --- Adding flash attribute to model from session");
             model.addAttribute("flash", flash);
+
+            logger.info(" --- Removing flash attribute from session");
             request.getSession().removeAttribute("flash");
         } catch (Exception ex) {
-            // "flash" session attribute must not exist...do nothing and proceed normally
+            logger.info(" --- 'flash' session attribute must not exist...do nothing and proceed normally");
         }
+
+        logger.info(" --- Mapping to /signup");
         return "signup";
     }
 
     @RequestMapping(value = "/signup", method = RequestMethod.POST)
-    public String signup(@ModelAttribute("employee") Employee employeeForm, BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes) {
+    public String signup(@ModelAttribute("employee") Employee employeeForm, BindingResult bindingResult, Model model) {
+        logger.info(" --- RequestMapping from /signup POST");
+
+        logger.info(" --- Adding disableReact attribute to model from new Object()");
         model.addAttribute("disableReact", new Object());
+
+        logger.info(" --- Validating employee");
         employeeValidator.validate(employeeForm, bindingResult);
 
         if (bindingResult.hasErrors()) {
-            //model.addAttribute("flash",new FlashMessage("Invalid Username and/or Password", FlashMessage.Status.FAILURE));
-            model.addAttribute("flash", new FlashMessage(bindingResult.toString(), FlashMessage.Status.FAILURE));
+            logger.error(" --- Adding flash attribute to model");
+            model.addAttribute("flash",new FlashMessage("Invalid Username and/or Password", FlashMessage.Status.FAILURE));
+
+            logger.info(" --- Mapping to /signup");
             return "signup";
         }
 
+        logger.info(" --- Saving employee");
         employeeService.save(employeeForm);
+
+        logger.info(" --- Automatically logging in employee");
         securityService.autoLogin(employeeForm.getUsername(), employeeForm.getPasswordConfirm());
 
+        logger.info(" --- Redirecting to /");
         return "redirect:/";
     }
 

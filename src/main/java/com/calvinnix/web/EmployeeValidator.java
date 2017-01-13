@@ -33,8 +33,7 @@ public class EmployeeValidator implements org.springframework.validation.Validat
         Employee employee = (Employee) o;
 
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "username", "NotEmpty");
-        //TODO:ctn change the restraints
-        if (employee.getUsername().length() < 6 || employee.getUsername().length() > 32) {
+        if (employee.getUsername().length() < 4 || employee.getUsername().length() > 20) {
             errors.rejectValue("username", "Size.userForm.username");
         }
         if (employeeService.findEmployeeByUsername(employee.getUsername()) != null) {
@@ -42,7 +41,6 @@ public class EmployeeValidator implements org.springframework.validation.Validat
         }
 
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "password", "NotEmpty");
-        //TODO:ctn change the restraints
         if (employee.getPassword().length() < 8 || employee.getPassword().length() > 32) {
             errors.rejectValue("password", "Size.userForm.password");
         }

@@ -26,6 +26,7 @@ public class DatabaseLoader implements CommandLineRunner {
 
     @Override
     public void run(String... strings) throws Exception {
+
         Role ROLE_USER = new Role("ROLE_USER");
         this.roleDao.save(ROLE_USER);
         Role ROLE_ADMIN = new Role("ROLE_ADMIN");
