@@ -55,15 +55,15 @@ public class SignupController {
         employeeValidator.validate(employeeForm, bindingResult);
 
         if (bindingResult.hasErrors()) {
-            model.addAttribute("flash",new FlashMessage("Invalid Username and/or Password", FlashMessage.Status.FAILURE));
+            //model.addAttribute("flash",new FlashMessage("Invalid Username and/or Password", FlashMessage.Status.FAILURE));
+            model.addAttribute("flash", new FlashMessage(bindingResult.toString(), FlashMessage.Status.FAILURE));
             return "signup";
         }
 
         employeeService.save(employeeForm);
         securityService.autoLogin(employeeForm.getUsername(), employeeForm.getPasswordConfirm());
 
-        redirectAttributes.addFlashAttribute("flash",new FlashMessage("Successfully created account!", FlashMessage.Status.SUCCESS));
-        return "redirect:/login";
+        return "redirect:/";
     }
 
 

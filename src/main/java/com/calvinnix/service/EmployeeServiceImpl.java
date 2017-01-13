@@ -6,7 +6,6 @@ import com.calvinnix.model.Employee;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -30,6 +29,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     public void save(Employee employee) {
         employee.setPassword(passwordEncoder.encode(employee.getPassword()));
         employee.setRole(roleDao.findByName("ROLE_USER"));
+        employee.setEnabled(true);
         employeeDao.save(employee);
     }
 
