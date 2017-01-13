@@ -1,8 +1,6 @@
 package com.calvinnix.web.controller;
 
-import com.calvinnix.dao.EmployeeDao;
 import com.calvinnix.model.Employee;
-import com.calvinnix.model.Role;
 import com.calvinnix.service.EmployeeService;
 import com.calvinnix.service.SecurityService;
 import com.calvinnix.web.EmployeeValidator;
@@ -14,7 +12,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;

@@ -34,13 +34,7 @@ public class DatabaseLoader implements CommandLineRunner {
         final String password = "$2a$08$wgwoMKfYl5AUE9QtP4OjheNkkSDoqDmFGjjPE2XTPLDe9xso/hy7u"; // == password
         final String username = "cnix";
 
-
-       this.employeeDao.save(new Employee(username, password, true, ROLE_ADMIN));
-
-
-
-        this.employeeDao.save(new Employee("alex", "$2a$10$GYKdM/co5aM5HR3f58fFp.qIWfamM4.dBsqLqTKUgq8TCJ53RoCiW", true, ROLE_ADMIN));
-
+        this.employeeDao.save(new Employee(username, password, true, ROLE_ADMIN));
         this.employeeDao.save(new Employee("TEST1", password, true, ROLE_USER));
         this.employeeDao.save(new Employee("TEST2", password, true, ROLE_USER));
     }
