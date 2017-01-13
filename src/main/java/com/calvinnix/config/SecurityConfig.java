@@ -31,6 +31,8 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
+    private final int TIMEOUT = 60*60*24*7; //1 week
+
     @Autowired
     private EmployeeService employeeService;
 
@@ -68,6 +70,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .logout()
                     .permitAll()
                     .logoutSuccessUrl("/login")
+                    .and()
+                .rememberMe().tokenValiditySeconds(TIMEOUT)
                     .and()
                 //TODO:ctn - Temporarily removing csrf protection.
                 .csrf().disable();
