@@ -5,6 +5,7 @@ import com.calvinnix.service.EmployeeService;
 import com.calvinnix.service.SecurityService;
 import com.calvinnix.web.EmployeeValidator;
 import com.calvinnix.web.FlashMessage;
+import com.calvinnix.web.Utility;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +15,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -45,18 +45,8 @@ public class SignupController {
 
         logger.info(" --- Adding disableReact attribute to model from new Object()");
         model.addAttribute("disableReact", new Object());
-        try {
-            logger.info(" --- Checking for flash attribute from session");
-            Object flash = request.getSession().getAttribute("flash");
 
-            logger.info(" --- Adding flash attribute to model from session");
-            model.addAttribute("flash", flash);
-
-            logger.info(" --- Removing flash attribute from session");
-            request.getSession().removeAttribute("flash");
-        } catch (Exception ex) {
-            logger.info(" --- 'flash' session attribute must not exist...do nothing and proceed normally");
-        }
+        Utility.addFlashAttributeIfAvailable(model, request);
 
         logger.info(" --- Mapping to /signup");
         return "signup";
@@ -73,7 +63,7 @@ public class SignupController {
         employeeValidator.validate(employeeForm, bindingResult);
 
         if (bindingResult.hasErrors()) {
-            logger.error(" --- Adding flash attribute to model");
+            logger.info(" --- Adding flash attribute to model");
             model.addAttribute("flash",new FlashMessage("Invalid Username and/or Password", FlashMessage.Status.FAILURE));
 
             logger.info(" --- Mapping to /signup");

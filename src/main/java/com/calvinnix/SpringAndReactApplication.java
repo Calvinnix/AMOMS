@@ -13,9 +13,7 @@ public class SpringAndReactApplication {
 	//TODO:ctn sanitize inputs
 	//TODO:ctn escape outputs
 	//TODO:ctn re-enable csrf
-	//TODO:ctn Refactor code
 	//TODO:ctn add front-end login/signup form validation
-	//TODO:ctn refactor logging messages to centralized location
 
 	public static void main(String[] args) {
 		SpringApplication.run(SpringAndReactApplication.class, args);
