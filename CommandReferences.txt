@@ -3,3 +3,5 @@ mvn spring-boot:run
 
 ---Compile Sass---
 mvn sass:watch
+
+NOTE: If mvn fails you most likely need to install it. https://maven.apache.org/install.html
