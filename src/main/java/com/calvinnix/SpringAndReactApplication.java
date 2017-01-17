@@ -7,7 +7,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class SpringAndReactApplication {
 
 	//TODO:ctn add unit tests
-	//TODO:ctn better way to load resources?
 
 	public static void main(String[] args) {
 		SpringApplication.run(SpringAndReactApplication.class, args);

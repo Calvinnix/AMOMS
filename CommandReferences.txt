@@ -1,7 +1,12 @@
 ---Run Project---
 mvn spring-boot:run
 
----Compile Sass---
-mvn sass:watch
+---Preprocess Step---
+gulp
+
+^Running the above command will perform the following steps:
+1. compile sass
+2. concat js files to 1 file //todo:ctn minify?...
+3. watches files for changes to automatically reload.
 
 NOTE: If mvn fails you most likely need to install it. https://maven.apache.org/install.html
