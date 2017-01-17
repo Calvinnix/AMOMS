@@ -1,9 +1,7 @@
 var gulp = require('gulp'),
     gutil = require('gulp-util'),
     sass = require('gulp-sass'),
-    uglify = require('gulp-uglify'),
     concat = require('gulp-concat'),
-    sourcemaps = require('gulp-sourcemaps'),
     babel = require('gulp-babel'),
     react = require('gulp-react');
 
@@ -15,11 +13,11 @@ gulp.task('sass', function() {
 });
 
 gulp.task('watch', function() {
-  gulp.watch('./src/main/resources/static/js/*.js', ['minify']);
+  gulp.watch('./src/main/resources/static/js/*.js', ['concatjs']);
   gulp.watch('./src/main/resources/static/css/app.scss', ['sass']);
 });
 
-gulp.task('minify', () => {
+gulp.task('concatjs', () => {
     return gulp.src([
             './src/main/resources/static/js/jquery.min.js',
             './src/main/resources/static/js/browser.min.js',
@@ -34,4 +32,4 @@ gulp.task('minify', () => {
         .pipe(gulp.dest('./src/main/resources/static/js/build'));
 });
 
-gulp.task('default', ['sass', 'minify', 'watch']);
+gulp.task('default', ['sass', 'concatjs', 'watch']);

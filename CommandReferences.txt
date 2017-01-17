@@ -1,5 +1,7 @@
----Run Project---
-mvn spring-boot:run
+---Setup guide---
+npm install gulp -g
+***If npm fails, install npm. Google is your friend.***
+npm install gulp-babel gulp-concat gulp-connect gulp-react gulp-sass gulp-util gulp-watch scss-loader
 
 ---Preprocess Step---
 gulp
@@ -10,3 +12,7 @@ gulp
 3. watches files for changes to automatically reload.
 
 NOTE: If mvn fails you most likely need to install it. https://maven.apache.org/install.html
+
+---Run Project---
+***NOTE: you will want 'gulp' to be running, so create a new terminal window for this command***
+mvn spring-boot:run
