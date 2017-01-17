@@ -8,6 +8,7 @@
             <!--TODO:ctn - Temporarily removing csrf protection.-->
             <!--input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" /-->
             <div th:replace="layout :: flash"></div>
+
             <h2 class="form-signin-heading">Please Log In</h2>
             <label for="inputUsername" class="sr-only">Username</label>
             <input type="text" id="inputUsername" class="form-control" th:field="*{username}" placeholder="Username" required="required" autofocus="autofocus"/>
@@ -18,7 +19,7 @@
                     <input type="checkbox" name="remember-me"/> Remember me
                 </label>
             </div>
-            <button class="btn btn-lg btn-primary btn-block" type="submit">Log In</button>
+            <button type="submit" id="btnLogin" class="btn btn-lg btn-primary btn-block" >Log In</button>
             <a class="center" href="/signup">Sign Up</a>
         </form>
     </div>

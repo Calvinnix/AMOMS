@@ -46,7 +46,7 @@
         </div><!-- /.container-fluid -->
     </nav>
 
-    <div th:fragment="flash" th:if="${flash != null}">
+    <div th:fragment="flash" th:if="${flash != null}" class="errorDiv">
         <div class="alert alert-danger alert-dismissible flash" role="alert" th:classappend="${#strings.toLowerCase(flash.status)}" th:text="${flash.message}">
             <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         </div>

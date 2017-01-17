@@ -63,3 +63,11 @@ a:hover {
     text-align: center;
     display: block;
 }
+
+.invalid {
+     border: 1px solid #D9534F;
+}
+
+.valid {
+     border: 1px solid #5CB85C;
+}
