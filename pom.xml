@@ -108,6 +108,11 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-aop</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.github.springtestdbunit</groupId>
+            <artifactId>spring-test-dbunit</artifactId>
+            <version>1.2.1</version>
+        </dependency>
     </dependencies>
 
 	<build>
@@ -120,6 +125,15 @@
                 </configuration>
 			</plugin>
 		</plugins>
+        <resources>
+            <resource>
+                <directory>resources</directory>
+                <targetPath>${project.build.outputDirectory}</targetPath>
+                <includes>
+                    <include>application.properties</include>
+                </includes>
+            </resource>
+        </resources>
 	</build>
 
 

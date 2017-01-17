@@ -19,9 +19,9 @@ public class AppController {
 
     private static final Logger logger = LoggerFactory.getLogger(AppController.class);
 
-    @RequestMapping(value = {"/","/application"})
+    @RequestMapping(value = "/")
     public String index() {
-        logger.info(" --- RequestMapping from / or /application");
+        logger.info(" --- RequestMapping from /");
         logger.info(" --- Mapping to /application");
         return "application";
     }
