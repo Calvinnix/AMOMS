@@ -25,3 +25,5 @@ nbdist/
 
 .DS_Store
 .sass-cache
+
+node_modules/
