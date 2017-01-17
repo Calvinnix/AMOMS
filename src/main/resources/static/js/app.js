@@ -4,6 +4,11 @@ var Employee = React.createClass({
     },
     handleDelete() {
         var self = this;
+        if (csrf_element !== null) {
+          $.ajaxPrefilter(function (options, originalOptions, jqXHR) {
+             jqXHR.setRequestHeader('X-CSRF-Token', csrf_element.value);
+          });
+        }
         $.ajax({
             url: self.props.employee._links.self.href,
             type: 'DELETE',
@@ -47,7 +52,7 @@ var EmployeeTable = React.createClass({
     render: function() {
         var rows = [];
         this.props.employees.forEach(function(employee) {
-            rows.push(<Employee employee={employee} key={employee.username} />);
+            rows.push(<Employee csrf_element={csrf_element} employee={employee} key={employee.username} />);
         });
         return (
             <div className="container">
@@ -82,13 +87,13 @@ var App = React.createClass({
     },
 
     render() {
-        return (<EmployeeTable employees={this.state.employees} />);
+        return (<EmployeeTable csrf_element={csrf_element} employees={this.state.employees} />);
     }
 });
 
-
 if (document.getElementById('root') != null) {
-    ReactDOM.render(<App />, document.getElementById('root'));
+    var csrf_element = document.getElementById('csrf_token');
+    ReactDOM.render(<App csrf_element="{{csrf_element}}"/>, document.getElementById('root'));
 }
 
 

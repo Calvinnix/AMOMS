@@ -73,8 +73,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .and()
                 .rememberMe().tokenValiditySeconds(TIMEOUT)
                     .and()
-                //TODO:ctn - Temporarily removing csrf protection.
-                .csrf().disable();
+                .csrf();
 
     }
 
