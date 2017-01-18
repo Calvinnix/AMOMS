@@ -4,12 +4,12 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.calvinnix</groupId>
-	<artifactId>spring_and_react</artifactId>
+	<artifactId>Amoms</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
-	<name>spring_and_react</name>
-	<description>Demo project for Spring Boot with React</description>
+	<name>Amoms</name>
+	<description>Senior Project Kennesaw State University</description>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
