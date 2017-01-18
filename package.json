@@ -1,5 +1,5 @@
 {
-  "name": "SpringReactBoilerPlate",
+  "name": "amoms",
   "version": "1.0.0",
   "description": "",
   "repository": {
@@ -10,9 +10,9 @@
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/Calvinnix/SpringReactBoilerPlate/issues"
+    "url": "https://github.com/Calvinnix/AMOMS/issues"
   },
-  "homepage": "https://github.com/Calvinnix/SpringReactBoilerPlate#readme",
+  "homepage": "https://github.com/Calvinnix/AMOMS#readme",
   "devDependencies": {
     "gulp": "^3.9.1",
     "gulp-babel": "^6.1.2",
