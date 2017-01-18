@@ -1,7 +1,7 @@
 ---Setup guide---
 npm install gulp -g
 ***If npm fails, install npm. Google is your friend.***
-npm install gulp-babel gulp-concat gulp-connect gulp-react gulp-sass gulp-util gulp-watch scss-loader
+npm install gulp gulp-babel gulp-concat gulp-connect gulp-react gulp-sass gulp-util gulp-watch scss-loader
 
 ---Preprocess Step---
 gulp
@@ -16,3 +16,12 @@ NOTE: If mvn fails you most likely need to install it. https://maven.apache.org/
 ---Run Project---
 ***NOTE: you will want 'gulp' to be running, so create a new terminal window for this command***
 mvn spring-boot:run
+
+--Run Tests--
+mvn test
+
+
+
+--Weird things I encountered--
+If none of the spring things are loading try to refresh Maven
+If application.properties isn't being found make sure the resources folder is marked as 'resources'
