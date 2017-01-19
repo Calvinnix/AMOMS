@@ -11,7 +11,7 @@ gulp
 2. concat js files to 1 file //todo:ctn minify?...
 3. watches files for changes to automatically reload.
 
-NOTE: If mvn fails you most likely need to install it. https://maven.apache.org/install.html
+NOTE: If mvn fails you most likely need to install it.
 
 ---Run Project---
 ***NOTE: you will want 'gulp' to be running, so create a new terminal window for this command***
@@ -25,3 +25,4 @@ mvn test
 --Weird things I encountered--
 If none of the spring things are loading try to refresh Maven
 If application.properties isn't being found make sure the resources folder is marked as 'resources'
+^ Rebuild after doing this.
