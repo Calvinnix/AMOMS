@@ -11,7 +11,7 @@ gulp
 2. concat js files to 1 file //todo:ctn minify?...
 3. watches files for changes to automatically reload.
 
-NOTE: If mvn fails you most likely need to install it.
+NOTE: If mvn fails you most likely need to install it. https://maven.apache.org/install.html
 
 ---Run Project---
 ***NOTE: you will want 'gulp' to be running, so create a new terminal window for this command***
