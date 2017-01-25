@@ -43,9 +43,6 @@ public class SignupController {
         logger.info(" --- Adding user attribute to model from new User()");
         model.addAttribute("user", new User());
 
-        logger.info(" --- Adding disableReact attribute to model from new Object()");
-        model.addAttribute("disableReact", new Object());
-
         Utility.addFlashAttributeIfAvailable(model, request);
 
         logger.info(" --- Mapping to /signup");
@@ -55,9 +52,6 @@ public class SignupController {
     @RequestMapping(value = "/signup", method = RequestMethod.POST)
     public String signup(@ModelAttribute("user") User userForm, BindingResult bindingResult, Model model) {
         logger.info(" --- RequestMapping from /signup POST");
-
-        logger.info(" --- Adding disableReact attribute to model from new Object()");
-        model.addAttribute("disableReact", new Object());
 
         logger.info(" --- Validating user");
         userValidator.validate(userForm, bindingResult);

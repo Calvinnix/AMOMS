@@ -27,9 +27,6 @@ public class LoginController {
         logger.info(" --- Adding user attribute to model from new User()");
         model.addAttribute("user", new User());
 
-        logger.info(" --- Adding disableReact attribute to model from new Object()");
-        model.addAttribute("disableReact", new Object());
-
         Utility.addFlashAttributeIfAvailable(model, request);
 
         logger.info(" --- Mapping to /login");
