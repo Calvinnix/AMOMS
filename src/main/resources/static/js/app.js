@@ -69,7 +69,7 @@ var UserTable = React.createClass({
     }
 });
 
-var App = React.createClass({
+var AllUsers = React.createClass({
 
     loadUsersFromServer: function() {
         var self = this;
@@ -91,11 +91,41 @@ var App = React.createClass({
     }
 });
 
-if (document.getElementById('root') != null) {
+var AddNewUser = React.createClass({
+    render: function() {
+        return (<div className="container">
+                    <h1>Add New User</h1>
+                    <form>
+                        <div className="form-group">
+                            <label for="inputUsername">Username</label>
+                            <input type="text" className="form-control" id="inputUsername" placeholder="Username"/>
+                        </div>
+                        <div className="form-group">
+                            <label for="inputPassword">Password</label>
+                            <input type="password" className="form-control" id="inputPassword" placeholder="Password"/>
+                        </div>
+                        <div className="form-group">
+                            <label for="selectRole">Role</label>
+                            <select className="form-control" name="role" id="selectRole">
+                                <option value="ROLE_ADMIN">Admin</option>
+                                <option value="ROLE_USER">User</option>
+                            </select>
+                        </div>
+                        <button className="btn btn-primary">Submit</button>
+                    </form>
+                </div>);
+    }
+});
+
+if (document.getElementById('allUsers') != null) {
     var csrf_element = document.getElementById('csrf_token');
-    ReactDOM.render(<App csrf_element="{{csrf_element}}"/>, document.getElementById('root'));
+    ReactDOM.render(<AllUsers csrf_element="{{csrf_element}}"/>, document.getElementById('allUsers'));
 }
 
+if (document.getElementById('addNewUser') != null) {
+    var csrf_element = document.getElementById('csrf_token');
+    ReactDOM.render(<AddNewUser csrf_element="{{csrf_element}}"/>, document.getElementById('addNewUser'));
+}
 
 
 /*TODO:ctn Eventually will want to convert this code (as well as the login/signup page) to utilize REACT */

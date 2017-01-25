@@ -11,6 +11,7 @@ public class Amoms {
 	//todo:ctn Add javascript validation for adding user
 	//todo:ctn only admins can add users
 	//todo:ctn add a favicon
+	//todo:ctn update current tab correctly
 
 	public static void main(String[] args) {
 		SpringApplication.run(Amoms.class, args);

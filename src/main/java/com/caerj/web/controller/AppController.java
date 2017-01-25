@@ -26,4 +26,11 @@ public class AppController {
         return "application";
     }
 
+    @RequestMapping(value = "/admin")
+    public String admin() {
+        logger.info(" --- RequestMapping from /admin");
+        logger.info(" --- Mapping to /admin");
+        return "admin";
+    }
+
 }

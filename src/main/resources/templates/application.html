@@ -7,7 +7,6 @@
     <div th:replace="layout :: nav"></div>
     <h1 sec:authorize="hasRole('ROLE_ADMIN')">You're an Admin</h1>
     <h1 sec:authorize="hasRole('ROLE_USER')">You're a User</h1>
-    <div id="root"></div>
     <block th:replace="layout :: script"></block>
 </body>
 </html>
