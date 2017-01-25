@@ -1,9 +1,9 @@
 package com.caerj.web.controller;
 
-import com.caerj.model.Employee;
-import com.caerj.service.EmployeeService;
+import com.caerj.model.User;
+import com.caerj.service.UserService;
 import com.caerj.service.SecurityService;
-import com.caerj.web.EmployeeValidator;
+import com.caerj.web.UserValidator;
 import com.caerj.web.FlashMessage;
 import com.caerj.web.Utility;
 import org.slf4j.Logger;
@@ -26,13 +26,13 @@ import javax.servlet.http.HttpServletRequest;
 public class SignupController {
 
     @Autowired
-    private EmployeeService employeeService;
+    private UserService userService;
 
     @Autowired
     private SecurityService securityService;
 
     @Autowired
-    private EmployeeValidator employeeValidator;
+    private UserValidator userValidator;
 
     private static final Logger logger = LoggerFactory.getLogger(SignupController.class);
 
@@ -40,8 +40,8 @@ public class SignupController {
     public String signup(Model model, HttpServletRequest request) {
         logger.info(" --- RequestMapping from /signup");
 
-        logger.info(" --- Adding employee attribute to model from new Employee()");
-        model.addAttribute("employee", new Employee());
+        logger.info(" --- Adding user attribute to model from new User()");
+        model.addAttribute("user", new User());
 
         logger.info(" --- Adding disableReact attribute to model from new Object()");
         model.addAttribute("disableReact", new Object());
@@ -53,14 +53,14 @@ public class SignupController {
     }
 
     @RequestMapping(value = "/signup", method = RequestMethod.POST)
-    public String signup(@ModelAttribute("employee") Employee employeeForm, BindingResult bindingResult, Model model) {
+    public String signup(@ModelAttribute("user") User userForm, BindingResult bindingResult, Model model) {
         logger.info(" --- RequestMapping from /signup POST");
 
         logger.info(" --- Adding disableReact attribute to model from new Object()");
         model.addAttribute("disableReact", new Object());
 
-        logger.info(" --- Validating employee");
-        employeeValidator.validate(employeeForm, bindingResult);
+        logger.info(" --- Validating user");
+        userValidator.validate(userForm, bindingResult);
 
         if (bindingResult.hasErrors()) {
             logger.info(" --- Adding flash attribute to model");
@@ -70,11 +70,11 @@ public class SignupController {
             return "signup";
         }
 
-        logger.info(" --- Saving employee");
-        employeeService.save(employeeForm);
+        logger.info(" --- Saving user");
+        userService.save(userForm);
 
-        logger.info(" --- Automatically logging in employee");
-        securityService.autoLogin(employeeForm.getUsername(), employeeForm.getPasswordConfirm());
+        logger.info(" --- Automatically logging in user");
+        securityService.autoLogin(userForm.getUsername(), userForm.getPasswordConfirm());
 
         logger.info(" --- Redirecting to /");
         return "redirect:/";

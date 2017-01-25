@@ -1,8 +1,8 @@
 package com.caerj.web;
 
-import com.caerj.dao.EmployeeDao;
+import com.caerj.dao.UserDao;
 import com.caerj.dao.RoleDao;
-import com.caerj.model.Employee;
+import com.caerj.model.User;
 import com.caerj.model.Role;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -15,12 +15,12 @@ import org.springframework.stereotype.Component;
 @Component
 public class DatabaseLoader implements CommandLineRunner {
 
-    private final EmployeeDao employeeDao;
+    private final UserDao userDao;
     private final RoleDao roleDao;
 
     @Autowired
-    public DatabaseLoader(EmployeeDao employeeDao, RoleDao roleDao) {
-        this.employeeDao = employeeDao;
+    public DatabaseLoader(UserDao userDao, RoleDao roleDao) {
+        this.userDao = userDao;
         this.roleDao = roleDao;
     }
 
@@ -35,8 +35,8 @@ public class DatabaseLoader implements CommandLineRunner {
         final String password = "$2a$08$wgwoMKfYl5AUE9QtP4OjheNkkSDoqDmFGjjPE2XTPLDe9xso/hy7u"; // == password
         final String username = "cnix";
 
-        this.employeeDao.save(new Employee(username, password, true, ROLE_ADMIN));
-        this.employeeDao.save(new Employee("TEST1", password, true, ROLE_USER));
-        this.employeeDao.save(new Employee("TEST2", password, true, ROLE_USER));
+        this.userDao.save(new User(username, password, true, ROLE_ADMIN));
+        this.userDao.save(new User("TEST1", password, true, ROLE_USER));
+        this.userDao.save(new User("TEST2", password, true, ROLE_USER));
     }
 }

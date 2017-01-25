@@ -15,7 +15,7 @@ import java.util.List;
 
 
 @Entity
-public class Employee implements UserDetails {
+public class User implements UserDetails {
 
     @Id
     @GeneratedValue (strategy = GenerationType.IDENTITY)
@@ -67,14 +67,14 @@ public class Employee implements UserDetails {
     @JoinColumn(name = "role_id")
     private Role role;
 
-    public Employee(String username, String password, boolean enabled, Role role) {
+    public User(String username, String password, boolean enabled, Role role) {
         this.username = username;
         this.password = password;
         this.enabled = enabled;
         this.role = role;
     }
 
-    public Employee() {
+    public User() {
     }
 
     @Override

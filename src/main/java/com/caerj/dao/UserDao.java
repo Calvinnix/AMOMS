@@ -1,6 +1,6 @@
 package com.caerj.dao;
 
-import com.caerj.model.Employee;
+import com.caerj.model.User;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Repository;
@@ -10,9 +10,9 @@ import org.springframework.stereotype.Repository;
  */
 
 @Repository
-public interface EmployeeDao extends CrudRepository<Employee, Long> {
+public interface UserDao extends CrudRepository<User, Long> {
 
-    Employee findByUsername(String username);
+    User findByUsername(String username);
 
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @Override

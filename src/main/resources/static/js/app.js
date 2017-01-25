@@ -1,4 +1,4 @@
-var Employee = React.createClass({
+var User = React.createClass({
     getInitialState: function() {
         return {display: true};
     },
@@ -10,7 +10,7 @@ var Employee = React.createClass({
           });
         }
         $.ajax({
-            url: self.props.employee._links.self.href,
+            url: self.props.user._links.self.href,
             type: 'DELETE',
             success: function(result) {
                 self.setState({display: false});
@@ -35,9 +35,9 @@ var Employee = React.createClass({
         } else {
             return (
                 <tr>
-                    <td>{this.props.employee.username}</td>
-                    <td>{this.props.employee.password}</td>
-                    <td>{this.props.employee.authorities[0].authority}</td>
+                    <td>{this.props.user.username}</td>
+                    <td>{this.props.user.password}</td>
+                    <td>{this.props.user.authorities[0].authority}</td>
                     <td>
                         <button className="btn btn-danger" onClick={this.handleDelete}>✕</button>
                     </td>
@@ -48,11 +48,11 @@ var Employee = React.createClass({
 });
 
 
-var EmployeeTable = React.createClass({
+var UserTable = React.createClass({
     render: function() {
         var rows = [];
-        this.props.employees.forEach(function(employee) {
-            rows.push(<Employee csrf_element={csrf_element} employee={employee} key={employee.username} />);
+        this.props.users.forEach(function(user) {
+            rows.push(<User csrf_element={csrf_element} user={user} key={user.username} />);
         });
         return (
             <div className="container">
@@ -71,23 +71,23 @@ var EmployeeTable = React.createClass({
 
 var App = React.createClass({
 
-    loadEmployeesFromServer: function() {
+    loadUsersFromServer: function() {
         var self = this;
         $.ajax({
-            url: "http://localhost:8080/api/employees"
+            url: "http://localhost:8080/api/users"
         }).then(function (data) {
-            self.setState({employees: data._embedded.employees});
+            self.setState({users: data._embedded.users});
         });
     },
     getInitialState: function() {
-        return {employees: []};
+        return {users: []};
     },
     componentDidMount: function () {
-        this.loadEmployeesFromServer();
+        this.loadUsersFromServer();
     },
 
     render() {
-        return (<EmployeeTable csrf_element={csrf_element} employees={this.state.employees} />);
+        return (<UserTable csrf_element={csrf_element} users={this.state.users} />);
     }
 });
 

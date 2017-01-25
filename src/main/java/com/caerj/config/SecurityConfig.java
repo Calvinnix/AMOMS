@@ -1,7 +1,7 @@
 package com.caerj.config;
 
 
-import com.caerj.service.EmployeeService;
+import com.caerj.service.UserService;
 import com.caerj.web.FlashMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -34,11 +34,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final int TIMEOUT = 60*60*24*7; //1 week
 
     @Autowired
-    private EmployeeService employeeService;
+    private UserService userService;
 
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(employeeService).passwordEncoder(passwordEncoder());
+        auth.userDetailsService(userService).passwordEncoder(passwordEncoder());
     }
 
     @Bean

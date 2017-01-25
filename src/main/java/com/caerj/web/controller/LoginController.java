@@ -1,6 +1,6 @@
 package com.caerj.web.controller;
 
-import com.caerj.model.Employee;
+import com.caerj.model.User;
 import com.caerj.web.Utility;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,8 +24,8 @@ public class LoginController {
     public String loginForm(Object object, Model model, HttpServletRequest request) {
         logger.info(" --- RequestMapping from /login");
 
-        logger.info(" --- Adding employee attribute to model from new Employee()");
-        model.addAttribute("employee", new Employee());
+        logger.info(" --- Adding user attribute to model from new User()");
+        model.addAttribute("user", new User());
 
         logger.info(" --- Adding disableReact attribute to model from new Object()");
         model.addAttribute("disableReact", new Object());

@@ -37,7 +37,7 @@ public class SignupControllerTest {
         mockMvc.perform(get("/signup"))
             .andExpect(status().isOk())
             .andExpect(view().name("signup"))
-            .andExpect(model().attributeExists("employee"))
+            .andExpect(model().attributeExists("user"))
             .andExpect(model().attributeExists("disableReact"));
     }
 

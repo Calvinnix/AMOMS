@@ -1,7 +1,7 @@
 package com.caerj.web;
 
-import com.caerj.model.Employee;
-import com.caerj.service.EmployeeService;
+import com.caerj.model.User;
+import com.caerj.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
@@ -12,35 +12,35 @@ import org.springframework.validation.ValidationUtils;
  */
 
 @Component
-public class EmployeeValidator implements org.springframework.validation.Validator {
+public class UserValidator implements org.springframework.validation.Validator {
 
     @Autowired
-    private EmployeeService employeeService;
+    private UserService userService;
 
 
     @Override
     public boolean supports(Class<?> aClass) {
-        return Employee.class.equals(aClass);
+        return User.class.equals(aClass);
     }
 
     @Override
     public void validate(Object o, Errors errors) {
-        Employee employee = (Employee) o;
+        User user = (User) o;
 
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "username", "NotEmpty");
-        if (employee.getUsername().length() < 4 || employee.getUsername().length() > 20) {
+        if (user.getUsername().length() < 4 || user.getUsername().length() > 20) {
             errors.rejectValue("username", "Size.userForm.username");
         }
-        if (employeeService.findEmployeeByUsername(employee.getUsername()) != null) {
+        if (userService.findUserByUsername(user.getUsername()) != null) {
             errors.rejectValue("username", "Duplicate.userForm.username");
         }
 
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "password", "NotEmpty");
-        if (employee.getPassword().length() < 8 || employee.getPassword().length() > 32) {
+        if (user.getPassword().length() < 8 || user.getPassword().length() > 32) {
             errors.rejectValue("password", "Size.userForm.password");
         }
 
-        if (!employee.getPasswordConfirm().equals(employee.getPassword())) {
+        if (!user.getPasswordConfirm().equals(user.getPassword())) {
             errors.rejectValue("passwordConfirm", "Diff.userForm.passwordConfirm");
         }
     }

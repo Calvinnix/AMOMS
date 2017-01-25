@@ -20,7 +20,7 @@ public class SecurityServiceImpl implements SecurityService {
     private AuthenticationManager authenticationManager;
 
     @Autowired
-    private EmployeeService employeeService;
+    private UserService userService;
 
     private static final Logger logger = LoggerFactory.getLogger(SecurityServiceImpl.class);
 
@@ -28,12 +28,12 @@ public class SecurityServiceImpl implements SecurityService {
     public String findLoggedInUsername() {
         logger.info(String.format(" --- Entering: %s", Thread.currentThread().getStackTrace()[1].getMethodName()));
 
-        logger.info(" --- Getting employee authentication details from SecurityContextHolder");
-        Object employee = SecurityContextHolder.getContext().getAuthentication().getDetails();
+        logger.info(" --- Getting user authentication details from SecurityContextHolder");
+        Object user = SecurityContextHolder.getContext().getAuthentication().getDetails();
 
-        if (employee instanceof UserDetails) {
-            logger.info(" --- Getting username from employee Object");
-            String result = ((UserDetails) employee).getUsername();
+        if (user instanceof UserDetails) {
+            logger.info(" --- Getting username from user Object");
+            String result = ((UserDetails) user).getUsername();
 
             logger.info(String.format(" --- username is %s", result));
             logger.info(String.format(" --- Exiting: %s", Thread.currentThread().getStackTrace()[1].getMethodName()));
@@ -49,7 +49,7 @@ public class SecurityServiceImpl implements SecurityService {
         logger.info(String.format(" --- Entering: %s", Thread.currentThread().getStackTrace()[1].getMethodName()));
 
         logger.info(String.format(" --- Loading User by Username: %s", username));
-        UserDetails userDetails = employeeService.loadUserByUsername(username);
+        UserDetails userDetails = userService.loadUserByUsername(username);
 
         logger.info(" --- Creating UsernamePasswordAuthenticationToken");
         UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
