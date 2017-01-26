@@ -81,6 +81,17 @@ var AllUsers = React.createClass({
     },
     handleAddUser: function() {
         var self = this;
+
+        /**
+         * The value for this.state.role isn't being set because
+         * onChange doesn't always fire. We can probably avoid
+         * the below code by setting this value when we create
+         * this.state.role.
+         */
+        if (this.state.role == null) {
+            this.state.role = "ROLE_USER";
+        }
+
         if (csrf_element !== null) {
             $.ajaxPrefilter(function (options, originalOptions, jqXHR) {
                 jqXHR.setRequestHeader('X-CSRF-Token', csrf_element.value);

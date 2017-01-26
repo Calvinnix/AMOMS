@@ -37,7 +37,19 @@ public class UserServiceImpl implements UserService {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
         logger.info(" --- Setting Role");
-        user.setRole(roleDao.findByName("ROLE_USER"));
+        String userRole = user.getRole().getName();
+        if (userRole == null) {
+            user.setRole(roleDao.findByName("ROLE_USER"));
+        } else {
+            /**
+             * Need to re-map the user's Role with the actual
+             * Role object created in the database. I believe
+             * there is an issue because these roles aren't
+             * being detected as the same object just because
+             * they have the same name.
+             */
+            user.setRole(roleDao.findByName(userRole));
+        }
 
         logger.info(" --- Setting enabled");
         user.setEnabled(true);

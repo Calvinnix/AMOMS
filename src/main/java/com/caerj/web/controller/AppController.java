@@ -46,12 +46,6 @@ public class AppController {
                 String password = request.getParameter("password");
                 String role = request.getParameter("role");
 
-        logger.info(String.format(" --- Username: %s, Password: %s, Role: %s",
-                username,
-                password,
-                role)
-            );
-
         Role userRole = new Role(role);
         User user = new User(username, password, true, userRole);
         logger.info(" --- Saving user");
