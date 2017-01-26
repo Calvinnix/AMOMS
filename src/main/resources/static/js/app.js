@@ -164,7 +164,7 @@ var AllUsers = React.createClass({
                         <div className="form-group">
                             <label for="selectRole">Role</label>
                             <select className="form-control" name="selectRole" value={this.state.role} onChange={this.updateRole}>
-                                <option selected value="ROLE_USER">User</option>
+                                <option value="ROLE_USER">User</option>
                                 <option value="ROLE_ADMIN">Admin</option>
                             </select>
                         </div>
