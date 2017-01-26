@@ -1,11 +1,16 @@
 package com.caerj.web.controller;
 
+import com.caerj.model.Role;
+import com.caerj.model.User;
 import com.caerj.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * Created by Calvin on 1/9/17.
@@ -31,6 +36,28 @@ public class AppController {
         logger.info(" --- RequestMapping from /admin");
         logger.info(" --- Mapping to /admin");
         return "admin";
+    }
+
+    @RequestMapping(value = "/admin/addUser", method = RequestMethod.POST)
+    public String addUser(HttpServletRequest request) {
+        logger.info(" --- RequestMapping from /admin/addUser");
+
+        String username = request.getParameter("username");
+                String password = request.getParameter("password");
+                String role = request.getParameter("role");
+
+        logger.info(String.format(" --- Username: %s, Password: %s, Role: %s",
+                username,
+                password,
+                role)
+            );
+
+        User user = new User(username, password, true, new Role(role));
+        logger.info(" --- Saving user");
+        userService.save(user);
+
+        logger.info(" --- Redirecting to /admin");
+        return "redirect:/admin";
     }
 
 }

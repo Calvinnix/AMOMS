@@ -92,27 +92,61 @@ var AllUsers = React.createClass({
 });
 
 var AddNewUser = React.createClass({
+    user: function () {
+        var username = "";
+        var password = "";
+        var role = "";
+    },
+    handleAddUser: function() {
+        console.log("Add User Clicked");
+        var self = this;
+        if (csrf_element !== null) {
+            $.ajaxPrefilter(function (options, originalOptions, jqXHR) {
+                jqXHR.setRequestHeader('X-CSRF-Token', csrf_element.value);
+            });
+        }
+        $.ajax({
+            url: "http://localhost:8080/admin/addUser",
+            type: "POST",
+            data: {username: "defaultUsername", password: "defaultPassword", role:"defaultRole"},
+            success: function() {
+                console.log("Success");
+            },
+            error: function(xhr, ajaxOptions, thrownError) {
+                toastr.options = {
+                    "debug": false,
+                    "positionClass": "toast-top-center",
+                    "onclick": null,
+                    "fadeIn": 300,
+                    "fadeOut": 1000,
+                    "timeOut": 5000,
+                    "extendedTimeOut": 1000
+                }
+                toastr.error("Not Authorized");
+            }
+        });
+    },
     render: function() {
         return (<div className="container">
                     <h1>Add New User</h1>
-                    <form>
+                    <div>
                         <div className="form-group">
                             <label for="inputUsername">Username</label>
-                            <input type="text" className="form-control" id="inputUsername" placeholder="Username"/>
+                            <input type="text" className="form-control" name="inputUsername" placeholder="Username"/>
                         </div>
                         <div className="form-group">
                             <label for="inputPassword">Password</label>
-                            <input type="password" className="form-control" id="inputPassword" placeholder="Password"/>
+                            <input type="password" className="form-control" name="inputPassword" placeholder="Password"/>
                         </div>
                         <div className="form-group">
                             <label for="selectRole">Role</label>
-                            <select className="form-control" name="role" id="selectRole">
+                            <select className="form-control" name="selectRole">
                                 <option value="ROLE_ADMIN">Admin</option>
                                 <option value="ROLE_USER">User</option>
                             </select>
                         </div>
-                        <button className="btn btn-primary">Submit</button>
-                    </form>
+                        <button className="btn btn-primary" onClick={this.handleAddUser}>Submit</button>
+                    </div>
                 </div>);
     }
 });
