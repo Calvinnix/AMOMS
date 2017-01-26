@@ -13,7 +13,6 @@ gulp.task('sass', function() {
 });
 
 gulp.task('watch', function() {
-  gulp.watch('./src/main/resources/static/js/*.js', ['concatjs']);
   gulp.watch('./src/main/resources/static/css/app.scss', ['sass']);
 });
 
@@ -24,8 +23,7 @@ gulp.task('concatjs', () => {
             './src/main/resources/static/js/bootstrap.min.js',
             './src/main/resources/static/js/react.js',
             './src/main/resources/static/js/react-dom.js',
-            './src/main/resources/static/js/toastr.min.js',
-            './src/main/resources/static/js/*.js'
+            './src/main/resources/static/js/toastr.min.js'
             ])
         .pipe(concat('bundle.js'))
         .pipe(react())
