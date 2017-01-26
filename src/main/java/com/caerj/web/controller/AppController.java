@@ -52,7 +52,8 @@ public class AppController {
                 role)
             );
 
-        User user = new User(username, password, true, new Role(role));
+        Role userRole = new Role(role);
+        User user = new User(username, password, true, userRole);
         logger.info(" --- Saving user");
         userService.save(user);
 

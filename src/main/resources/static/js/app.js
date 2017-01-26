@@ -79,26 +79,7 @@ var AllUsers = React.createClass({
             self.setState({users: data._embedded.users});
         });
     },
-    getInitialState: function() {
-        return {users: []};
-    },
-    componentDidMount: function () {
-        this.loadUsersFromServer();
-    },
-
-    render() {
-        return (<UserTable csrf_element={csrf_element} users={this.state.users} />);
-    }
-});
-
-var AddNewUser = React.createClass({
-    user: function () {
-        var username = "";
-        var password = "";
-        var role = "";
-    },
     handleAddUser: function() {
-        console.log("Add User Clicked");
         var self = this;
         if (csrf_element !== null) {
             $.ajaxPrefilter(function (options, originalOptions, jqXHR) {
@@ -108,9 +89,11 @@ var AddNewUser = React.createClass({
         $.ajax({
             url: "http://localhost:8080/admin/addUser",
             type: "POST",
-            data: {username: "defaultUsername", password: "defaultPassword", role:"defaultRole"},
+            data: {username: this.state.username,
+                   password: this.state.password,
+                   role: this.state.role},
             success: function() {
-                console.log("Success");
+                self.loadUsersFromServer();
             },
             error: function(xhr, ajaxOptions, thrownError) {
                 toastr.options = {
@@ -126,39 +109,66 @@ var AddNewUser = React.createClass({
             }
         });
     },
-    render: function() {
-        return (<div className="container">
+    getInitialState: function() {
+        return {users: []};
+    },
+    componentDidMount: function () {
+        this.loadUsersFromServer();
+    },
+
+    updateUsername: function(evt) {
+        this.setState({
+            username: evt.target.value
+        });
+    },
+
+    updatePassword: function(evt) {
+        this.setState({
+            password: evt.target.value
+        });
+    },
+
+    updateRole: function(evt) {
+        this.setState({
+            role: evt.target.value
+        });
+    },
+
+    render() {
+        return (
+            <div>
+                <div className="container">
                     <h1>Add New User</h1>
                     <div>
                         <div className="form-group">
                             <label for="inputUsername">Username</label>
-                            <input type="text" className="form-control" name="inputUsername" placeholder="Username"/>
+                            <input type="text" className="form-control" name="inputUsername"
+                                   placeholder="Username" value={this.state.username} onChange={this.updateUsername}/>
                         </div>
                         <div className="form-group">
                             <label for="inputPassword">Password</label>
-                            <input type="password" className="form-control" name="inputPassword" placeholder="Password"/>
+                            <input type="password" className="form-control" name="inputPassword"
+                                   placeholder="Password" value={this.state.password} onChange={this.updatePassword}/>
                         </div>
                         <div className="form-group">
                             <label for="selectRole">Role</label>
-                            <select className="form-control" name="selectRole">
+                            <select className="form-control" name="selectRole" value={this.state.role} onChange={this.updateRole}>
                                 <option value="ROLE_ADMIN">Admin</option>
                                 <option value="ROLE_USER">User</option>
                             </select>
                         </div>
                         <button className="btn btn-primary" onClick={this.handleAddUser}>Submit</button>
                     </div>
-                </div>);
+                </div>
+                <UserTable csrf_element={csrf_element} users={this.state.users} />
+            </div>
+        );
     }
 });
 
 if (document.getElementById('allUsers') != null) {
     var csrf_element = document.getElementById('csrf_token');
     ReactDOM.render(<AllUsers csrf_element="{{csrf_element}}"/>, document.getElementById('allUsers'));
-}
-
-if (document.getElementById('addNewUser') != null) {
-    var csrf_element = document.getElementById('csrf_token');
-    ReactDOM.render(<AddNewUser csrf_element="{{csrf_element}}"/>, document.getElementById('addNewUser'));
 }
 
 
