@@ -6,9 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class Amoms {
 
-	//todo:ctn create logo
 	//todo:ctn Add javascript validation for adding user
-	//todo:ctn add a favicon
 	//todo:ctn update current tab correctly
 	//todo:ctn fix warning in console concerning react controlled components when adding a user.
 

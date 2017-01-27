@@ -70,5 +70,7 @@ a:hover {
   padding: 0px; }
 
 .navbar-brand > img {
-  width: 131px;
-  height: 50px; }
+  width: 75%;
+  height: 75%;
+  margin-top: 7px;
+  margin-left: 7px; }
