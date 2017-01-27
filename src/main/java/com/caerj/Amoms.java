@@ -8,7 +8,7 @@ public class Amoms {
 
 	//todo:ctn Add javascript validation for adding user
 	//todo:ctn update current tab correctly
-	//todo:ctn fix warning in console concerning react controlled components when adding a user.
+	//todo:ctn refactor how roles are loaded in app.js
 
 	public static void main(String[] args) {
 		SpringApplication.run(Amoms.class, args);

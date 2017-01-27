@@ -88,7 +88,7 @@ var AllUsers = React.createClass({
          * the below code by setting this value when we create
          * this.state.role.
          */
-        if (this.state.role == null) {
+        if (this.state.role == '') {
             this.state.role = "ROLE_USER";
         }
 
@@ -121,7 +121,10 @@ var AllUsers = React.createClass({
         });
     },
     getInitialState: function() {
-        return {users: []};
+        return {users: [],
+                username: '',
+                password: '',
+                role: ''};
     },
     componentDidMount: function () {
         this.loadUsersFromServer();
