@@ -48,6 +48,7 @@ public class UserServiceImpl implements UserService {
              * being detected as the same object just because
              * they have the same name.
              */
+            //todo:ctn might want to verify this user role is valid before setting
             user.setRole(roleDao.findByName(userRole));
         }
 

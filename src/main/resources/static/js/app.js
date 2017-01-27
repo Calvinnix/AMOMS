@@ -47,7 +47,6 @@ var User = React.createClass({
     }
 });
 
-
 var UserTable = React.createClass({
     render: function() {
         var rows = [];
@@ -56,27 +55,70 @@ var UserTable = React.createClass({
         });
         return (
             <div className="container">
-            <table className="table table-striped">
-            <thead>
-            <tr>
-            <th>Username</th><th>Password</th><th>Role</th>
-            </tr>
-            </thead>
-            <tbody>{rows}</tbody>
-            </table>
+                <table className="table table-striped">
+                    <thead>
+                    <tr>
+                        <th>Username</th><th>Password</th><th>Role</th>
+                    </tr>
+                    </thead>
+                    <tbody>{rows}</tbody>
+                </table>
             </div>
         );
     }
 });
 
-var AllUsers = React.createClass({
+var Role = React.createClass({
+    render: function() {
+        var roleName = this.props.role.name;
+        if (roleName != null && roleName.length > 5) {
+            /**
+             * This formats the role name to look nice.
+             * i.e. ROLE_ADMIN -> Admin
+             */
+            roleName = roleName.substring(5).toLowerCase();
+            roleName = roleName.charAt(0).toUpperCase() + roleName.slice(1);
+        } else {
+            roleName = "INVALID";
+        }
+            return (
+                <option value={this.props.role.name}>{roleName}</option>
+            );
+    }
+});
 
+var RoleSelect = React.createClass({
+    render: function() {
+        var roles = [];
+        this.props.roles.forEach(function(role) {
+            roles.push(<Role role={role} key={role.name} />);
+        });
+        return (
+            <select className="form-control" name="selectRole" value={this.props.role} onChange={this.props.onChange}>
+                {roles}
+            </select>
+        );
+    }
+});
+
+
+
+
+var AllUsers = React.createClass({
     loadUsersFromServer: function() {
         var self = this;
         $.ajax({
             url: "http://localhost:8080/api/users"
         }).then(function (data) {
             self.setState({users: data._embedded.users});
+        });
+    },
+    loadRolesFromServer: function () {
+        var self = this;
+        $.ajax({
+            url: "http://localhost:8080/api/roles"
+        }).then(function (data) {
+            self.setState({roles: data._embedded.roles});
         });
     },
     handleAddUser: function() {
@@ -122,12 +164,14 @@ var AllUsers = React.createClass({
     },
     getInitialState: function() {
         return {users: [],
+                roles: [],
                 username: '',
                 password: '',
                 role: ''};
     },
     componentDidMount: function () {
         this.loadUsersFromServer();
+        this.loadRolesFromServer();
     },
 
     updateUsername: function(evt) {
@@ -141,7 +185,6 @@ var AllUsers = React.createClass({
             password: evt.target.value
         });
     },
-
     updateRole: function(evt) {
         this.setState({
             role: evt.target.value
@@ -166,10 +209,7 @@ var AllUsers = React.createClass({
                         </div>
                         <div className="form-group">
                             <label for="selectRole">Role</label>
-                            <select className="form-control" name="selectRole" value={this.state.role} onChange={this.updateRole}>
-                                <option value="ROLE_USER">User</option>
-                                <option value="ROLE_ADMIN">Admin</option>
-                            </select>
+                            <RoleSelect roles={this.state.roles} onChange={this.updateRole} />
                         </div>
                         <button className="btn btn-primary" onClick={this.handleAddUser}>Submit</button>
                     </div>
