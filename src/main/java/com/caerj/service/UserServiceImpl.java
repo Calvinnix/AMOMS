@@ -2,6 +2,7 @@ package com.caerj.service;
 
 import com.caerj.dao.UserDao;
 import com.caerj.dao.RoleDao;
+import com.caerj.model.Role;
 import com.caerj.model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,8 +49,16 @@ public class UserServiceImpl implements UserService {
              * being detected as the same object just because
              * they have the same name.
              */
-            //todo:ctn might want to verify this user role is valid before setting
-            user.setRole(roleDao.findByName(userRole));
+            Role roleFound = roleDao.findByName(userRole);
+            if (roleFound == null) {
+                /**
+                 * Default to ROLE_USER if invalid role is passed in
+                 */
+                user.setRole(roleDao.findByName("ROLE_USER"));
+            } else {
+                user.setRole(roleFound);
+            }
+
         }
 
         logger.info(" --- Setting enabled");
