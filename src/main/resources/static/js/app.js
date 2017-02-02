@@ -34,14 +34,14 @@ var User = React.createClass({
             return null;
         } else {
             return (
-                <tr>
-                    <td>{this.props.user.username}</td>
-                    <td>{this.props.user.password}</td>
-                    <td>{this.props.user.authorities[0].authority}</td>
-                    <td>
+                <div className="row">
+                      <div className="col-md-2">{this.props.user.username}</div>
+                      <div className="col-md-7">{this.props.user.password}</div>
+                      <div className="col-md-2">{this.props.user.authorities[0].authority}</div>
+                      <div className="col-md-1">
                         <button className="btn btn-danger" onClick={this.handleDelete}>✕</button>
-                    </td>
-                </tr>
+                      </div>
+                </div>
             );
         }
     }
@@ -55,14 +55,14 @@ var UserTable = React.createClass({
         });
         return (
             <div className="container">
-                <table className="table table-striped">
-                    <thead>
-                    <tr>
-                        <th>Username</th><th>Password</th><th>Role</th>
-                    </tr>
-                    </thead>
-                    <tbody>{rows}</tbody>
-                </table>
+                <div className="row">
+                    <div className="col-md-2">Username</div>
+                      <div className="col-md-7">Password</div>
+                      <div className="col-md-2">Role</div>
+                      <div className="col-md-1">
+                      </div>
+                 </div>
+                {rows}
             </div>
         );
     }
