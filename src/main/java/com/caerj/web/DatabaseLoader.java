@@ -29,8 +29,10 @@ public class DatabaseLoader implements CommandLineRunner {
 
         Role ROLE_USER = new Role("ROLE_USER");
         this.roleDao.save(ROLE_USER);
-        Role ROLE_PATIENT = new Role("ROLE_PATIENT");
-        this.roleDao.save(ROLE_PATIENT);
+        Role ROLE_PRACTITIONER = new Role("ROLE_PRACTITIONER");
+        this.roleDao.save(ROLE_PRACTITIONER);
+        Role ROLE_RECEPTIONIST = new Role("ROLE_RECEPTIONIST");
+        this.roleDao.save(ROLE_RECEPTIONIST);
         Role ROLE_ADMIN = new Role("ROLE_ADMIN");
         this.roleDao.save(ROLE_ADMIN);
 
