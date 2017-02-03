@@ -1,7 +1,7 @@
 body {
   padding-top: 40px;
   padding-bottom: 40px;
-  background-color: #fefefe; }
+  background-color: #eee; }
 
 .form-signin, .flash {
   max-width: 600px;
@@ -76,7 +76,7 @@ a:hover {
   margin-left: 7px; }
 
 .row-striped:nth-of-type(odd) {
-  background-color: #efefef;
+  background-color: #ddd;
   padding-top: 10px;
   padding-bottom: 10px; }
 

@@ -61,9 +61,6 @@ public class UserServiceImpl implements UserService {
 
         }
 
-        logger.info(" --- Setting enabled");
-        user.setEnabled(true);
-
         logger.info(" --- Saving user");
         userDao.save(user);
 

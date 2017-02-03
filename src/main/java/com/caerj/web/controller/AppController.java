@@ -43,11 +43,14 @@ public class AppController {
         logger.info(" --- RequestMapping from /admin/addUser");
 
         String username = request.getParameter("username");
-                String password = request.getParameter("password");
-                String role = request.getParameter("role");
+        String password = request.getParameter("password");
+        String role = request.getParameter("role");
+        String enabled = request.getParameter("enabled");
 
         Role userRole = new Role(role);
-        User user = new User(username, password, true, userRole);
+        boolean isEnabled = (enabled.equals("Enabled"));
+
+        User user = new User(username, password, isEnabled, userRole);
         logger.info(" --- Saving user");
         userService.save(user);
 

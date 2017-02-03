@@ -36,8 +36,9 @@ var User = React.createClass({
             return (
                 <div className="row row-striped">
                       <div className="col-md-2">{this.props.user.username}</div>
-                      <div className="col-md-6">{this.props.user.password}</div>
+                      <div className="col-md-4">********</div>
                       <div className="col-md-2">{this.props.user.authorities[0].authority}</div>
+                      <div className="col-md-2">{this.props.user.enabled ? 'Enabled' : 'Disabled'}</div>
                       <div className="col-md-1">
                         <button className="btn btn-warning" onClick={this.handleEdit}>
                             <span className="glyphicon glyphicon-pencil" aria-hidden="true"></span>
@@ -53,6 +54,8 @@ var User = React.createClass({
         }
     }
 });
+
+
 
 var UserTable = React.createClass({
     render: function() {
@@ -105,8 +108,8 @@ var EnabledSelect = React.createClass({
     render: function() {
         return (
             <select className="form-control" name="selectEnabled" value={this.props.enabled} onChange={this.props.onChange}>
-                <option value="true">True</option>
-                <option value="false">False</option>
+                <option value="Enabled">Enabled</option>
+                <option value="Disabled">Disabled</option>
             </select>
         );
     }
@@ -155,6 +158,7 @@ var AllUsers = React.createClass({
             type: "POST",
             data: {username: this.state.username,
                    password: this.state.password,
+                   enabled: this.state.enabled,
                    role: this.state.role},
             success: function() {
                 self.loadUsersFromServer();
@@ -178,6 +182,7 @@ var AllUsers = React.createClass({
                 roles: [],
                 username: '',
                 password: '',
+                enabled: 'Enabled',
                 role: ''};
     },
     componentDidMount: function () {
@@ -202,9 +207,9 @@ var AllUsers = React.createClass({
         });
     },
     updateEnabled: function(evt) {
-            this.setState({
-                enabled: evt.target.value
-            });
+        this.setState({
+            enabled: evt.target.value
+        });
     },
 
     render() {
