@@ -34,12 +34,19 @@ var User = React.createClass({
             return null;
         } else {
             return (
-                <div className="row">
+                <div className="row row-striped">
                       <div className="col-md-2">{this.props.user.username}</div>
-                      <div className="col-md-7">{this.props.user.password}</div>
+                      <div className="col-md-6">{this.props.user.password}</div>
                       <div className="col-md-2">{this.props.user.authorities[0].authority}</div>
                       <div className="col-md-1">
-                        <button className="btn btn-danger" onClick={this.handleDelete}>✕</button>
+                        <button className="btn btn-warning" onClick={this.handleEdit}>
+                            <span className="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+                        </button>
+                      </div>
+                      <div className="col-md-1">
+                        <button className="btn btn-danger" onClick={this.handleDelete}>
+                            <span className="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                        </button>
                       </div>
                 </div>
             );
@@ -55,13 +62,6 @@ var UserTable = React.createClass({
         });
         return (
             <div className="container">
-                <div className="row">
-                    <div className="col-md-2">Username</div>
-                      <div className="col-md-7">Password</div>
-                      <div className="col-md-2">Role</div>
-                      <div className="col-md-1">
-                      </div>
-                 </div>
                 {rows}
             </div>
         );
@@ -96,6 +96,17 @@ var RoleSelect = React.createClass({
         return (
             <select className="form-control" name="selectRole" value={this.props.role} onChange={this.props.onChange}>
                 {roles}
+            </select>
+        );
+    }
+});
+
+var EnabledSelect = React.createClass({
+    render: function() {
+        return (
+            <select className="form-control" name="selectEnabled" value={this.props.enabled} onChange={this.props.onChange}>
+                <option value="true">True</option>
+                <option value="false">False</option>
             </select>
         );
     }
@@ -190,29 +201,48 @@ var AllUsers = React.createClass({
             role: evt.target.value
         });
     },
+    updateEnabled: function(evt) {
+            this.setState({
+                enabled: evt.target.value
+            });
+    },
 
     render() {
         return (
             <div>
                 <div className="container">
-                    <h1>Add New User</h1>
-                    <div>
-                        <div className="form-group">
-                            <label for="inputUsername">Username</label>
+                    <div className="row header-row">
+                        <div className="col-md-2"><h5>Username</h5></div>
+                          <div className="col-md-4"><h5>Password</h5></div>
+                          <div className="col-md-2"><h5>Role</h5></div>
+                          <div className="col-md-2"><h5>Enabled</h5></div>
+                          <div className="col-md-2"></div>
+                     </div>
+                     <hr />
+                    <div className="row">
+                        <div className="col-md-2">
                             <input type="text" className="form-control" name="inputUsername"
-                                   placeholder="Username" value={this.state.username} onChange={this.updateUsername}/>
+                                     placeholder="Username" value={this.state.username} onChange={this.updateUsername}/>
                         </div>
-                        <div className="form-group">
-                            <label for="inputPassword">Password</label>
+                        <div className="col-md-4">
                             <input type="password" className="form-control" name="inputPassword"
                                    placeholder="Password" value={this.state.password} onChange={this.updatePassword}/>
                         </div>
-                        <div className="form-group">
-                            <label for="selectRole">Role</label>
+                        <div className="col-md-2">
                             <RoleSelect roles={this.state.roles} onChange={this.updateRole} />
                         </div>
-                        <button className="btn btn-primary" onClick={this.handleAddUser}>Submit</button>
+                        <div className="col-md-2">
+                            <EnabledSelect onChange={this.updateEnabled} />
+                        </div>
+                        <div className="col-md-2">
+                            <button className="btn btn-success" onClick={this.handleAddUser}>Add User</button>
+                        </div>
                     </div>
+                    <hr />
+                    <div className="row">
+                      <input id="inputSearch" type="text" className="form-control" placeholder="Search" />
+                    </div>
+                    <hr />
                 </div>
                 <UserTable csrf_element={csrf_element} users={this.state.users} />
             </div>
