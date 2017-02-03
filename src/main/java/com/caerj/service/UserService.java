@@ -9,4 +9,5 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 public interface UserService extends UserDetailsService {
     User findUserByUsername(String username);
     void save(User user);
+    void update(User user);
 }

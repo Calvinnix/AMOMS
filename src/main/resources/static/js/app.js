@@ -1,11 +1,23 @@
 var User = React.createClass({
     getInitialState: function() {
-        return {display: true,
+        return {
+                users: [],
+                display: true,
                 editing: false,
                 username: this.props.user.username,
                 password: '',
+                enabled: "Enabled",
+                role: '',
                 roles: this.props.roles};
     },
+    loadUsersFromServer: function() {
+            var self = this;
+            $.ajax({
+                url: "http://localhost:8080/api/users"
+            }).then(function (data) {
+                self.setState({users: data._embedded.users});
+            });
+        },
     handleDelete() {
         var self = this;
         if (csrf_element !== null) {
@@ -37,6 +49,63 @@ var User = React.createClass({
         var self = this;
         self.setState({editing: true});
     },
+    handleEditChange: function() {
+        var self = this;
+
+        /**
+         * The value for this.state.role isn't being set because
+         * onChange doesn't always fire. We can probably avoid
+         * the below code by setting this value when we create
+         * this.state.role.
+         */
+        if (this.state.role == '') {
+            this.state.role = "ROLE_USER";
+        }
+
+        if (csrf_element !== null) {
+            $.ajaxPrefilter(function (options, originalOptions, jqXHR) {
+                jqXHR.setRequestHeader('X-CSRF-Token', csrf_element.value);
+            });
+        }
+        $.ajax({
+            url: "http://localhost:8080/admin/editUser",
+            type: "POST",
+            data: {username: this.state.username,
+                   password: this.state.password,
+                   enabled: this.state.enabled,
+                   role: this.state.role},
+            success: function() {
+                toastr.options = {
+                    "debug": false,
+                    "positionClass": "toast-top-center",
+                    "onclick": null,
+                    "fadeIn": 300,
+                    "fadeOut": 1000,
+                    "timeOut": 5000,
+                    "extendedTimeOut": 1000
+                }
+                toastr.success("Successfully Edited User!");
+                self.loadUsersFromServer();
+                self.setState({editing: false});
+            },
+            error: function(xhr, ajaxOptions, thrownError) {
+                toastr.options = {
+                    "debug": false,
+                    "positionClass": "toast-top-center",
+                    "onclick": null,
+                    "fadeIn": 300,
+                    "fadeOut": 1000,
+                    "timeOut": 5000,
+                    "extendedTimeOut": 1000
+                }
+                toastr.error("Not Authorized");
+            }
+        });
+    },
+    handleEditCancel: function() {
+        var self = this;
+        self.setState({editing: false});
+    },
     updateUsername: function(evt) {
         this.setState({
             username: evt.target.value
@@ -63,9 +132,7 @@ var User = React.createClass({
         } else if (this.state.editing == true) {
             return (
                 <div className="row row-striped">
-                      <div className="col-md-2">
-                        <input type="text" className="form-control" name="inputUsername" placeholder="Username" value={this.state.username} onChange={this.updateUsername}/>
-                      </div>
+                      <div className="col-md-2">{this.state.username}</div>
                       <div className="col-md-4">
                         <input type="password" className="form-control" name="inputPassword" placeholder="New Password" value={this.state.password} onChange={this.updatePassword}/>
                       </div>
@@ -76,13 +143,13 @@ var User = React.createClass({
                         <EnabledSelect onChange={this.updateEnabled} />
                       </div>
                       <div className="col-md-1">
-                        <button className="btn btn-warning" onClick={this.handleEdit}>
-                            <span className="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+                        <button className="btn btn-success" onClick={this.handleEditChange}>
+                            <span className="glyphicon glyphicon-ok" aria-hidden="true"></span>
                         </button>
                       </div>
                       <div className="col-md-1">
-                        <button className="btn btn-danger" onClick={this.handleDelete}>
-                            <span className="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                        <button className="btn btn-danger" onClick={this.handleEditCancel}>
+                            <span className="glyphicon glyphicon-remove" aria-hidden="true"></span>
                         </button>
                       </div>
                 </div>
@@ -218,6 +285,16 @@ var AllUsers = React.createClass({
                    role: this.state.role},
             success: function() {
                 self.loadUsersFromServer();
+                toastr.options = {
+                    "debug": false,
+                    "positionClass": "toast-top-center",
+                    "onclick": null,
+                    "fadeIn": 300,
+                    "fadeOut": 1000,
+                    "timeOut": 5000,
+                    "extendedTimeOut": 1000
+                }
+                toastr.success("Successfully Added User!");
             },
             error: function(xhr, ajaxOptions, thrownError) {
                 toastr.options = {

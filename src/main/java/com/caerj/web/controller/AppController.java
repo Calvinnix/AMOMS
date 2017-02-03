@@ -58,4 +58,24 @@ public class AppController {
         return "redirect:/admin";
     }
 
+    @RequestMapping(value = "/admin/editUser", method = RequestMethod.POST)
+    public String editUser(HttpServletRequest request) {
+        logger.info(" --- RequestMapping from /admin/editUser");
+
+        String username = request.getParameter("username");
+        String password = request.getParameter("password");
+        String role = request.getParameter("role");
+        String enabled = request.getParameter("enabled");
+
+        Role userRole = new Role(role);
+        boolean isEnabled = (enabled.equals("Enabled"));
+
+        User user = new User(username, password, isEnabled, userRole);
+        logger.info(" --- edit user");
+        userService.update(user);
+
+        logger.info(" --- Redirecting to /admin");
+        return "redirect:/admin";
+    }
+
 }
