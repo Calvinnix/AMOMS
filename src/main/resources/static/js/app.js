@@ -1,6 +1,11 @@
 var User = React.createClass({
     getInitialState: function() {
-        return {display: true};
+
+        return {display: true,
+                editing: false,
+                username: this.props.user.username,
+                password: '',
+                role: ''};
     },
     handleDelete() {
         var self = this;
@@ -29,9 +34,60 @@ var User = React.createClass({
             }
         });
     },
+    handleEdit: function() {
+        var self = this;
+        self.setState({editing: true});
+    },
+    updateUsername: function(evt) {
+        this.setState({
+            username: evt.target.value
+        });
+    },
+    updatePassword: function(evt) {
+        this.setState({
+            password: evt.target.value
+        });
+    },
+    updateRole: function(evt) {
+        this.setState({
+            role: evt.target.value
+        });
+    },
+    updateEnabled: function(evt) {
+        this.setState({
+            enabled: evt.target.value
+        });
+    },
     render: function() {
         if (this.state.display == false) {
             return null;
+        } else if (this.state.editing == true) {
+            return (
+                <div className="row row-striped">
+                      <div className="col-md-2">
+                        <input type="text" className="form-control" name="inputUsername" placeholder="Username" value={this.state.username} onChange={this.updateUsername}/>
+                      </div>
+                      <div className="col-md-4">
+                        <input type="password" className="form-control" name="inputPassword" placeholder="New Password" value={this.state.password} onChange={this.updatePassword}/>
+                      </div>
+                      <div className="col-md-2">
+
+                      </div>
+                      <div className="col-md-2">
+                        <EnabledSelect onChange={this.updateEnabled} />
+                      </div>
+                      <div className="col-md-1">
+                        <button className="btn btn-warning" onClick={this.handleEdit}>
+                            <span className="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+                        </button>
+                      </div>
+                      <div className="col-md-1">
+                        <button className="btn btn-danger" onClick={this.handleDelete}>
+                            <span className="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                        </button>
+                      </div>
+                </div>
+            );
         } else {
             return (
                 <div className="row row-striped">
@@ -60,6 +116,7 @@ var User = React.createClass({
 var UserTable = React.createClass({
     render: function() {
         var rows = [];
+
         this.props.users.forEach(function(user) {
             rows.push(<User csrf_element={csrf_element} user={user} key={user.username} />);
         });
@@ -226,12 +283,10 @@ var AllUsers = React.createClass({
                      <hr />
                     <div className="row">
                         <div className="col-md-2">
-                            <input type="text" className="form-control" name="inputUsername"
-                                     placeholder="Username" value={this.state.username} onChange={this.updateUsername}/>
+                            <input type="text" className="form-control" name="inputUsername" placeholder="Username" value={this.state.username} onChange={this.updateUsername}/>
                         </div>
                         <div className="col-md-4">
-                            <input type="password" className="form-control" name="inputPassword"
-                                   placeholder="Password" value={this.state.password} onChange={this.updatePassword}/>
+                            <input type="password" className="form-control" name="inputPassword" placeholder="Password" value={this.state.password} onChange={this.updatePassword}/>
                         </div>
                         <div className="col-md-2">
                             <RoleSelect roles={this.state.roles} onChange={this.updateRole} />
@@ -249,7 +304,7 @@ var AllUsers = React.createClass({
                     </div>
                     <hr />
                 </div>
-                <UserTable csrf_element={csrf_element} users={this.state.users} />
+                <UserTable csrf_element={csrf_element} users={this.state.users} roles={this.state.roles} />
             </div>
         );
     }
