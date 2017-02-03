@@ -1,11 +1,10 @@
 var User = React.createClass({
     getInitialState: function() {
-
         return {display: true,
                 editing: false,
                 username: this.props.user.username,
                 password: '',
-                role: ''};
+                roles: this.props.roles};
     },
     handleDelete() {
         var self = this;
@@ -71,7 +70,7 @@ var User = React.createClass({
                         <input type="password" className="form-control" name="inputPassword" placeholder="New Password" value={this.state.password} onChange={this.updatePassword}/>
                       </div>
                       <div className="col-md-2">
-
+                        <RoleSelect roles={this.state.roles} onChange={this.updateRole} />
                       </div>
                       <div className="col-md-2">
                         <EnabledSelect onChange={this.updateEnabled} />
@@ -116,9 +115,9 @@ var User = React.createClass({
 var UserTable = React.createClass({
     render: function() {
         var rows = [];
-
+        var roles = this.props.roles;
         this.props.users.forEach(function(user) {
-            rows.push(<User csrf_element={csrf_element} user={user} key={user.username} />);
+            rows.push(<User csrf_element={csrf_element} user={user} key={user.username} roles={roles} />);
         });
         return (
             <div className="container">
