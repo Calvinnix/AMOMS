@@ -3,14 +3,23 @@ package com.caerj.web.controller;
 import com.caerj.model.Role;
 import com.caerj.model.User;
 import com.caerj.service.UserService;
+import com.caerj.web.FlashMessage;
+import com.caerj.web.UserValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.validation.Errors;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 /**
  * Created by Calvin on 1/9/17.
@@ -21,6 +30,9 @@ public class AppController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private UserValidator userValidator;
 
     private static final Logger logger = LoggerFactory.getLogger(AppController.class);
 
@@ -51,6 +63,7 @@ public class AppController {
         boolean isEnabled = (enabled.equals("Enabled"));
 
         User user = new User(username, password, isEnabled, userRole);
+
         logger.info(" --- Saving user");
         userService.save(user);
 
@@ -71,6 +84,7 @@ public class AppController {
         boolean isEnabled = (enabled.equals("Enabled"));
 
         User user = new User(username, password, isEnabled, userRole);
+
         logger.info(" --- edit user");
         userService.update(user);
 

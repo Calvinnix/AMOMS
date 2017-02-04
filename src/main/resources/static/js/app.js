@@ -6,8 +6,8 @@ var User = React.createClass({
                 editing: false,
                 username: this.props.user.username,
                 password: '',
-                enabled: "Enabled",
-                role: '',
+                enabled: this.props.user.enabled,
+                role: this.props.user.authorities[0].authority,
                 roles: this.props.roles};
     },
     loadUsersFromServer: function() {
@@ -48,19 +48,22 @@ var User = React.createClass({
     handleEdit: function() {
         var self = this;
         self.setState({editing: true});
+        //todo:ctn bandaid..
+        /**
+        * I'm manually triggering a setState so that changes can be reflected after making an edit.
+        * The reason this is needed is due to default values being used as opposed to the specific value
+        *todo:ctn we should load the existing values into the comboboxes as defaults and then this wouldn't be needed
+        */
+
+        this.setState({
+            role: "ROLE_USER"
+        });
+        this.setState({
+            enabled: "ENABLED"
+        });
     },
     handleEditChange: function() {
         var self = this;
-
-        /**
-         * The value for this.state.role isn't being set because
-         * onChange doesn't always fire. We can probably avoid
-         * the below code by setting this value when we create
-         * this.state.role.
-         */
-        if (this.state.role == '') {
-            this.state.role = "ROLE_USER";
-        }
 
         if (csrf_element !== null) {
             $.ajaxPrefilter(function (options, originalOptions, jqXHR) {
@@ -85,8 +88,6 @@ var User = React.createClass({
                     "extendedTimeOut": 1000
                 }
                 toastr.success("Successfully Edited User!");
-                self.loadUsersFromServer();
-                self.setState({editing: false});
             },
             error: function(xhr, ajaxOptions, thrownError) {
                 toastr.options = {
@@ -101,6 +102,7 @@ var User = React.createClass({
                 toastr.error("Not Authorized");
             }
         });
+        self.setState({editing: false});
     },
     handleEditCancel: function() {
         var self = this;
@@ -159,8 +161,8 @@ var User = React.createClass({
                 <div className="row row-striped">
                       <div className="col-md-2">{this.props.user.username}</div>
                       <div className="col-md-4">********</div>
-                      <div className="col-md-2">{this.props.user.authorities[0].authority}</div>
-                      <div className="col-md-2">{this.props.user.enabled ? 'Enabled' : 'Disabled'}</div>
+                      <div className="col-md-2">{this.state.role}</div>
+                      <div className="col-md-2">{this.state.enabled ? "Enabled" : "Disabled"}</div>
                       <div className="col-md-1">
                         <button className="btn btn-warning" onClick={this.handleEdit}>
                             <span className="glyphicon glyphicon-pencil" aria-hidden="true"></span>
@@ -237,9 +239,6 @@ var EnabledSelect = React.createClass({
         );
     }
 });
-
-
-
 
 var AllUsers = React.createClass({
     loadUsersFromServer: function() {
@@ -344,7 +343,6 @@ var AllUsers = React.createClass({
             enabled: evt.target.value
         });
     },
-
     render() {
         return (
             <div>

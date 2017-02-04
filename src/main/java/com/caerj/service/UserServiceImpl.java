@@ -79,13 +79,19 @@ public class UserServiceImpl implements UserService {
              * This will create a new user.
              */
             logger.info(" --- An existing user with this username was not found. This will create a new user.");
+            userFound = user;
         } else {
             logger.info(" --- Mapping edited user to the existing user.");
             user.setId(userFound.getId());
         }
 
         logger.info(" --- Setting password");
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+
+        if (user.getPassword().isEmpty()) {
+            user.setPassword(userFound.getPassword());
+        } else {
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+        }
 
         logger.info(" --- Setting Role");
         String userRole = user.getRole().getName();
