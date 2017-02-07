@@ -1,6 +1,9 @@
 var User = React.createClass({
+    propTypes: {
+        roles: React.PropTypes.array.isRequired,
+        user: React.PropTypes.object.isRequired
+    },
     getInitialState: function() {
-        alert(this.props.roles.length);
         return {
                 users: [],
                 display: true,
@@ -8,8 +11,8 @@ var User = React.createClass({
                 username: this.props.user.username,
                 password: '',
                 enabled: this.props.user.enabled,
-                role: this.props.user.authorities[0].authority,
-                roles: this.props.roles};
+                role: this.props.user.authorities[0].authority
+                };
     },
     loadUsersFromServer: function() {
             var self = this;
@@ -49,19 +52,6 @@ var User = React.createClass({
     handleEdit: function() {
         var self = this;
         self.setState({editing: true});
-        //todo:ctn bandaid..
-        /**
-        * I'm manually triggering a setState so that changes can be reflected after making an edit.
-        * The reason this is needed is due to default values being used as opposed to the specific value
-        *todo:ctn we should load the existing values into the comboboxes as defaults and then this wouldn't be needed
-        */
-
-        this.setState({
-            role: "ROLE_USER"
-        });
-        this.setState({
-            enabled: "Enabled"
-        });
     },
     handleEditChange: function() {
         var self = this;
@@ -125,6 +115,7 @@ var User = React.createClass({
         });
     },
     updateEnabled: function(evt) {
+        alert(evt.target.value);
         this.setState({
             enabled: evt.target.value
         });
@@ -140,10 +131,10 @@ var User = React.createClass({
                         <input type="password" className="form-control" name="inputPassword" placeholder="New Password" value={this.state.password} onChange={this.updatePassword}/>
                       </div>
                       <div className="col-md-2">
-                        <RoleSelect roles={this.state.roles} onChange={this.updateRole} />
+                        <RoleSelect roles={this.props.roles} role={this.state.role} onChange={this.updateRole} />
                       </div>
                       <div className="col-md-2">
-                        <EnabledSelect onChange={this.updateEnabled} />
+                        <EnabledSelect onChange={this.updateEnabled} enabled={this.state.enabled} />
                       </div>
                       <div className="col-md-1">
                         <button className="btn btn-success" onClick={this.handleEditChange}>
@@ -183,15 +174,15 @@ var User = React.createClass({
 
 
 var UserTable = React.createClass({
-    getInitialState: function() {
-        alert("Usertable " + this.props.roles);
-        return {roles: this.props.roles};
+    propTypes: {
+            roles: React.PropTypes.array.isRequired,
+            users: React.PropTypes.array.isRequired
     },
     render: function() {
+        var self = this;
         var rows = [];
-        var roles = this.state.roles;
         this.props.users.forEach(function(user) {
-            rows.push(<User csrf_element={csrf_element} user={user} key={user.username} roles={roles} />);
+            rows.push(<User csrf_element={csrf_element} user={user} key={user.username} roles={self.props.roles} />);
         });
         return (
             <div className="container">
@@ -202,8 +193,11 @@ var UserTable = React.createClass({
 });
 
 var Role = React.createClass({
+    propTypes: {
+            role: React.PropTypes.object
+    },
     render: function() {
-        var roleName = this.props.role.name;
+        var roleName         = this.props.role.name;
         if (roleName != null && roleName.length > 5) {
             /**
              * This formats the role name to look nice.
@@ -214,17 +208,21 @@ var Role = React.createClass({
         } else {
             roleName = "INVALID";
         }
-            return (
-                <option value={this.props.role.name}>{roleName}</option>
-            );
+
+        return (
+            <option value={this.props.role.name}>{roleName}</option>
+        );
     }
 });
 
 var RoleSelect = React.createClass({
+    propTypes: {
+                role: React.PropTypes.string
+    },
     render: function() {
         var roles = [];
         this.props.roles.forEach(function(role) {
-            roles.push(<Role role={role} key={role.name} />);
+            roles.push(<Role role={role} key={role.name}/>);
         });
         return (
             <select className="form-control" name="selectRole" value={this.props.role} onChange={this.props.onChange}>
@@ -235,9 +233,12 @@ var RoleSelect = React.createClass({
 });
 
 var EnabledSelect = React.createClass({
+    propTypes: {
+        role: React.PropTypes.bool
+    },
     render: function() {
         return (
-            <select className="form-control" name="selectEnabled" value={this.props.enabled} onChange={this.props.onChange}>
+            <select className="form-control" name="selectEnabled" value={this.props.enabled ? "Enabled" : "Disabled"} onChange={this.props.onChange}>
                 <option value="Enabled">Enabled</option>
                 <option value="Disabled">Disabled</option>
             </select>
