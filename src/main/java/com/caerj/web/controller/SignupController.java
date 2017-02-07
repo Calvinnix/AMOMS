@@ -1,5 +1,6 @@
 package com.caerj.web.controller;
 
+import com.caerj.model.Role;
 import com.caerj.model.User;
 import com.caerj.service.UserService;
 import com.caerj.service.SecurityService;
@@ -63,6 +64,9 @@ public class SignupController {
             logger.info(" --- Mapping to /signup");
             return "signup";
         }
+
+        logger.info(" --- Setting user as enabled by default (This should always be true during signups)");
+        userForm.setEnabled(true);
 
         logger.info(" --- Saving user");
         userService.save(userForm);

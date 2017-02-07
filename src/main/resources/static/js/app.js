@@ -1,5 +1,6 @@
 var User = React.createClass({
     getInitialState: function() {
+        alert(this.props.roles.length);
         return {
                 users: [],
                 display: true,
@@ -59,7 +60,7 @@ var User = React.createClass({
             role: "ROLE_USER"
         });
         this.setState({
-            enabled: "ENABLED"
+            enabled: "Enabled"
         });
     },
     handleEditChange: function() {
@@ -182,9 +183,13 @@ var User = React.createClass({
 
 
 var UserTable = React.createClass({
+    getInitialState: function() {
+        alert("Usertable " + this.props.roles);
+        return {roles: this.props.roles};
+    },
     render: function() {
         var rows = [];
-        var roles = this.props.roles;
+        var roles = this.state.roles;
         this.props.users.forEach(function(user) {
             rows.push(<User csrf_element={csrf_element} user={user} key={user.username} roles={roles} />);
         });

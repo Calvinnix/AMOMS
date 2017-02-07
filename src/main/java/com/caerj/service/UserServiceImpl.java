@@ -39,9 +39,16 @@ public class UserServiceImpl implements UserService {
 
         //todo:ctn this code is reused below... Refactor?
         logger.info(" --- Setting Role");
-        String userRole = user.getRole().getName();
-        if (userRole == null) {
+        Role userRole = user.getRole();
+        String userRoleName = null;
+        if (userRole != null) {
+            userRoleName = user.getRole().getName();
+        }
+
+        if (userRoleName == null) {
+            logger.info(" --- Setting Default Role 'ROLE_USER'");
             user.setRole(roleDao.findByName("ROLE_USER"));
+            logger.info(" --- Set Default Role to 'ROLE_USER'");
         } else {
             /**
              * Need to re-map the user's Role with the actual
@@ -50,16 +57,22 @@ public class UserServiceImpl implements UserService {
              * being detected as the same object just because
              * they have the same name.
              */
-            Role roleFound = roleDao.findByName(userRole);
+            logger.info(String.format(" --- Finding role by string: %s", userRoleName));
+            Role roleFound = roleDao.findByName(userRoleName);
+            logger.info(String.format(" --- Found role by string: %s", userRoleName));
+            logger.info(" --- Set Default Role to 'ROLE_USER'");
             if (roleFound == null) {
                 /**
                  * Default to ROLE_USER if invalid role is passed in
                  */
+                logger.info(" --- Setting Default Role 'ROLE_USER'");
                 user.setRole(roleDao.findByName("ROLE_USER"));
+                logger.info(" --- Set Default Role to 'ROLE_USER'");
             } else {
+                logger.info(" --- Setting role by the found role");
                 user.setRole(roleFound);
+                logger.info(" --- Set role by the found role");
             }
-
         }
 
         logger.info(" --- Saving user");
