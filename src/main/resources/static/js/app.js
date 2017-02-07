@@ -115,7 +115,6 @@ var User = React.createClass({
         });
     },
     updateEnabled: function(evt) {
-        alert(evt.target.value);
         this.setState({
             enabled: evt.target.value
         });
@@ -238,9 +237,9 @@ var EnabledSelect = React.createClass({
     },
     render: function() {
         return (
-            <select className="form-control" name="selectEnabled" value={this.props.enabled ? "Enabled" : "Disabled"} onChange={this.props.onChange}>
-                <option value="Enabled">Enabled</option>
-                <option value="Disabled">Disabled</option>
+            <select className="form-control" name="selectEnabled" value={this.props.enabled} onChange={this.props.onChange}>
+                <option value="true">Enabled</option>
+                <option value="false">Disabled</option>
             </select>
         );
     }
@@ -320,7 +319,7 @@ var AllUsers = React.createClass({
                 roles: [],
                 username: '',
                 password: '',
-                enabled: 'Enabled',
+                enabled: true,
                 role: ''};
     },
     componentDidMount: function () {

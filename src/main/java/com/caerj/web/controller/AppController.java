@@ -54,13 +54,18 @@ public class AppController {
     public String addUser(HttpServletRequest request) {
         logger.info(" --- RequestMapping from /admin/addUser");
 
+        /**
+         * todo:ctn refact
+         * A lot of code is shared between addUser and editUser
+         */
+
         String username = request.getParameter("username");
         String password = request.getParameter("password");
         String role = request.getParameter("role");
         String enabled = request.getParameter("enabled");
 
         Role userRole = new Role(role);
-        boolean isEnabled = (enabled.equals("Enabled"));
+        boolean isEnabled = (enabled.equals("true"));
 
         User user = new User(username, password, isEnabled, userRole);
 
@@ -81,7 +86,7 @@ public class AppController {
         String enabled = request.getParameter("enabled");
 
         Role userRole = new Role(role);
-        boolean isEnabled = (enabled.equals("Enabled"));
+        boolean isEnabled = (enabled.equals("true"));
 
         User user = new User(username, password, isEnabled, userRole);
 
