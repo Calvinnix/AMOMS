@@ -1,29 +1,69 @@
+/**
+The class acts as the handler for the User objects.
+
+Methods:
+
+*GetInitialState
+*loadUsersFromServer
+*handleDelete
+*handleEdit
+*handleEditChange
+*handleEditCancel
+*updateUsername
+*updatePassword
+*updateRole
+*updateEnabled
+*render
+
+*/
 var User = React.createClass({
+    /**
+        propTypes defines the values that this class will be expecting as properties.
+    */
     propTypes: {
-        roles: React.PropTypes.array.isRequired,
-        user: React.PropTypes.object.isRequired
+        roles:        React.PropTypes.array.isRequired,
+        user:         React.PropTypes.object.isRequired,
+        csrf_element: React.PropTypes.string.isRequired,
+        key:          React.PropTypes.string.isRequired
     },
+    /**
+        This sets the initial state of the User class. As well as defines initial state variables
+    */
     getInitialState: function() {
         return {
-                users: [],
-                display: true,
-                editing: false,
-                username: this.props.user.username,
-                password: '',
-                enabled: this.props.user.enabled,
-                role: this.props.user.authorities[0].authority
-                };
+            users: [],
+            display: true,
+            editing: false,
+            username: this.props.user.username,
+            password: '',
+            enabled: this.props.user.enabled,
+            role: this.props.user.authorities[0].authority
+        };
     },
+    /**
+        This makes an AJAX call to load users.
+        This is primarily used for reloading users when an add/delete has occurred
+    */
     loadUsersFromServer: function() {
-            var self = this;
-            $.ajax({
-                url: "http://localhost:8080/api/users"
-            }).then(function (data) {
-                self.setState({users: data._embedded.users});
-            });
-        },
+        var self = this;
+        $.ajax({
+            url: "http://localhost:8080/api/users"
+        }).then(function (data) {
+            self.setState({users: data._embedded.users});
+        });
+    },
+    /**
+        This handles whenever a user tries to delete an entry
+    */
     handleDelete() {
         var self = this;
+
+        /**
+            Since a post request is being made. We must pass along this
+            CSRF token.
+
+            We need this because we have csrf protection enabled in SecurityConfig
+        */
         if (csrf_element !== null) {
           $.ajaxPrefilter(function (options, originalOptions, jqXHR) {
              jqXHR.setRequestHeader('X-CSRF-Token', csrf_element.value);
@@ -49,12 +89,25 @@ var User = React.createClass({
             }
         });
     },
+    /**
+        This flags the form to let it know that it is being edited
+    */
     handleEdit: function() {
         var self = this;
         self.setState({editing: true});
     },
+    /**
+        This posts the changes made to the user
+    */
     handleEditChange: function() {
         var self = this;
+
+        /**
+            Since a post request is being made. We must pass along this
+            CSRF token.
+
+            We need this because we have csrf protection enabled in SecurityConfig
+        */
 
         if (csrf_element !== null) {
             $.ajaxPrefilter(function (options, originalOptions, jqXHR) {
@@ -95,25 +148,46 @@ var User = React.createClass({
         });
         self.setState({editing: false});
     },
+    /**
+        This cancels the editing of a user.
+        Removes the edit flag.
+    */
     handleEditCancel: function() {
         var self = this;
         self.setState({editing: false});
     },
+    /**
+        This updates the username as it is being updated in the UI
+    */
     updateUsername: function(evt) {
         this.setState({
             username: evt.target.value
         });
     },
+    /**
+        This updates the password as it is being updated in the UI
+    */
     updatePassword: function(evt) {
         this.setState({
             password: evt.target.value
         });
     },
+    /**
+        This updates the role as it is being updated in the UI
+    */
     updateRole: function(evt) {
         this.setState({
             role: evt.target.value
         });
     },
+    /**
+        This updates the enabled property as it is being updated in the UI
+
+        You will notice this one has a little more logic than the other
+        update methods. This is because I was only able to pull back a string
+        "true" or "false" from the select control. This was causing an issue with
+        React not rendering the changes automatically.
+    */
     updateEnabled: function(evt) {
         if (evt.target.value === 'true') {
             this.setState({
@@ -125,10 +199,16 @@ var User = React.createClass({
             });
         }
     },
+    /**
+        Renders the HTML
+    */
     render: function() {
         if (this.state.display == false) {
             return null;
         } else if (this.state.editing == true) {
+            /**
+                This HTML provides input fields for the specified user to be edited.
+            */
             return (
                 <div className="row row-striped">
                       <div className="col-md-2">{this.state.username}</div>
@@ -154,6 +234,9 @@ var User = React.createClass({
                 </div>
             );
         } else {
+            /**
+                This HTML provides fields to show user data.
+            */
             return (
                 <div className="row row-striped">
                       <div className="col-md-2">{this.props.user.username}</div>
@@ -177,12 +260,23 @@ var User = React.createClass({
 });
 
 
+/**
+    This class acts as the handler for UserTable objects.
+    Essentially this class helps order all of the user objects together.
 
+    *render
+*/
 var UserTable = React.createClass({
+    /**
+        propTypes defines the values that this class will be expecting as properties.
+    */
     propTypes: {
             roles: React.PropTypes.array.isRequired,
             users: React.PropTypes.array.isRequired
     },
+    /**
+        Renders the HTML
+    */
     render: function() {
         var self = this;
         var rows = [];
@@ -197,7 +291,13 @@ var UserTable = React.createClass({
     }
 });
 
+/**
+    This class handles the roles to be displayed in the select control
+*/
 var Role = React.createClass({
+    /**
+        propTypes defines the values that this class will be expecting as properties.
+    */
     propTypes: {
             role: React.PropTypes.object
     },
@@ -220,7 +320,14 @@ var Role = React.createClass({
     }
 });
 
+
+/**
+    This class acts as the handler for the select element that will display the roles
+*/
 var RoleSelect = React.createClass({
+    /**
+        propTypes defines the values that this class will be expecting as properties.
+    */
     propTypes: {
                 role: React.PropTypes.string
     },
@@ -237,7 +344,13 @@ var RoleSelect = React.createClass({
     }
 });
 
+/**
+    This class acts as the handler for the select element that will display the enabled property
+*/
 var EnabledSelect = React.createClass({
+    /**
+        propTypes defines the values that this class will be expecting as properties.
+    */
     propTypes: {
         role: React.PropTypes.bool
     },
@@ -251,7 +364,31 @@ var EnabledSelect = React.createClass({
     }
 });
 
+/**
+    This class is used for displaying all of the users neatly on the page
+*/
 var AllUsers = React.createClass({
+    /**
+        This method loads the initial state variables
+    */
+    getInitialState: function() {
+        return {users: [],
+                roles: [],
+                username: '',
+                password: '',
+                enabled: true,
+                role: ''};
+    },
+    /**
+        This method fires when the component has mounted
+    */
+    componentDidMount: function () {
+        this.loadUsersFromServer();
+        this.loadRolesFromServer();
+    },
+    /**
+        This method loads the users from the server
+    */
     loadUsersFromServer: function() {
         var self = this;
         $.ajax({
@@ -260,6 +397,9 @@ var AllUsers = React.createClass({
             self.setState({users: data._embedded.users});
         });
     },
+    /**
+        This method loads the different roles from the server.
+    */
     loadRolesFromServer: function () {
         var self = this;
         $.ajax({
@@ -268,18 +408,17 @@ var AllUsers = React.createClass({
             self.setState({roles: data._embedded.roles});
         });
     },
+    /**
+        This method handles the adding of a user. (via AJAX)
+    */
     handleAddUser: function() {
         var self = this;
-
         /**
-         * The value for this.state.role isn't being set because
-         * onChange doesn't always fire. We can probably avoid
-         * the below code by setting this value when we create
-         * this.state.role.
-         */
-        if (this.state.role == '') {
-            this.state.role = "ROLE_USER";
-        }
+            Since a post request is being made. We must pass along this
+            CSRF token.
+
+            We need this because we have csrf protection enabled in SecurityConfig
+        */
 
         if (csrf_element !== null) {
             $.ajaxPrefilter(function (options, originalOptions, jqXHR) {
@@ -320,40 +459,41 @@ var AllUsers = React.createClass({
             }
         });
     },
-    getInitialState: function() {
-        return {users: [],
-                roles: [],
-                username: '',
-                password: '',
-                enabled: true,
-                role: ''};
-    },
-    componentDidMount: function () {
-        this.loadUsersFromServer();
-        this.loadRolesFromServer();
-    },
-
+    /**
+        This method updates the username as it is being updated in the UI
+    */
     updateUsername: function(evt) {
         this.setState({
             username: evt.target.value
         });
     },
-
+    /**
+        This method updates the password as it is being updated in the UI
+    */
     updatePassword: function(evt) {
         this.setState({
             password: evt.target.value
         });
     },
+    /**
+        This method updates the role as it is being updated in the UI
+    */
     updateRole: function(evt) {
         this.setState({
             role: evt.target.value
         });
     },
+    /**
+        This method updates the enabled as it is being updated in the UI
+    */
     updateEnabled: function(evt) {
         this.setState({
             enabled: evt.target.value
         });
     },
+    /**
+        This method renders the HTML
+    */
     render() {
         return (
             <div>
@@ -395,6 +535,9 @@ var AllUsers = React.createClass({
     }
 });
 
+/**
+    This is where the main React component, 'AllUsers' in this case, is being rendered.
+*/
 if (document.getElementById('allUsers') != null) {
     var csrf_element = document.getElementById('csrf_token');
     ReactDOM.render(<AllUsers csrf_element="{{csrf_element}}"/>, document.getElementById('allUsers'));
