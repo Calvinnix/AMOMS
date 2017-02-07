@@ -264,6 +264,8 @@ var User = React.createClass({
     This class acts as the handler for UserTable objects.
     Essentially this class helps order all of the user objects together.
 
+    Methods:
+
     *render
 */
 var UserTable = React.createClass({
@@ -366,6 +368,20 @@ var EnabledSelect = React.createClass({
 
 /**
     This class is used for displaying all of the users neatly on the page
+
+    Methods:
+
+    *getInitialState
+    *componentDidMount
+    *loadUsersFromServer
+    *loadRolesFromServer
+    *handleAddUser
+    *updateUsername
+    *updatePassword
+    *updateRole
+    *updateEnabled
+    *render
+
 */
 var AllUsers = React.createClass({
     /**
