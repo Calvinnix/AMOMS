@@ -115,9 +115,15 @@ var User = React.createClass({
         });
     },
     updateEnabled: function(evt) {
-        this.setState({
-            enabled: evt.target.value
-        });
+        if (evt.target.value === 'true') {
+            this.setState({
+                enabled: true
+            });
+        } else {
+            this.setState({
+                enabled: false
+            });
+        }
     },
     render: function() {
         if (this.state.display == false) {
@@ -153,7 +159,7 @@ var User = React.createClass({
                       <div className="col-md-2">{this.props.user.username}</div>
                       <div className="col-md-4">********</div>
                       <div className="col-md-2">{this.state.role}</div>
-                      <div className="col-md-2">{this.state.enabled ? "Enabled" : "Disabled"}</div>
+                      <div className="col-md-2">{this.state.enabled ? 'Enabled' : 'Disabled'}</div>
                       <div className="col-md-1">
                         <button className="btn btn-warning" onClick={this.handleEdit}>
                             <span className="glyphicon glyphicon-pencil" aria-hidden="true"></span>
