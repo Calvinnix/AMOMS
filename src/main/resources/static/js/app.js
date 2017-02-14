@@ -209,50 +209,50 @@ var User = React.createClass({
                 This HTML provides input fields for the specified user to be edited.
             */
             return (
-                <div className="row row-striped">
-                      <div className="col-md-2">{this.state.username}</div>
-                      <div className="col-md-4">
-                        <input type="password" className="form-control" name="inputPassword" placeholder="New Password" value={this.state.password} onChange={this.updatePassword}/>
-                      </div>
-                      <div className="col-md-2">
-                        <RoleSelect roles={this.props.roles} role={this.state.role} onChange={this.updateRole} />
-                      </div>
-                      <div className="col-md-2">
-                        <EnabledSelect onChange={this.updateEnabled} enabled={this.state.enabled} />
-                      </div>
-                      <div className="col-md-1">
-                        <button className="btn btn-success" onClick={this.handleEditChange}>
-                            <span className="glyphicon glyphicon-ok" aria-hidden="true"></span>
-                        </button>
-                      </div>
-                      <div className="col-md-1">
-                        <button className="btn btn-danger" onClick={this.handleEditCancel}>
-                            <span className="glyphicon glyphicon-remove" aria-hidden="true"></span>
-                        </button>
-                      </div>
-                </div>
+                <tr>
+                  <td className="col-md-2">{this.state.username}</td>
+                  <td className="col-md-4">
+                    <input type="password" className="form-control" name="inputPassword" placeholder="New Password" value={this.state.password} onChange={this.updatePassword}/>
+                  </td>
+                  <td className="col-md-2">
+                    <RoleSelect roles={this.props.roles} role={this.state.role} onChange={this.updateRole} />
+                  </td>
+                  <td className="col-md-2">
+                    <EnabledSelect onChange={this.updateEnabled} enabled={this.state.enabled} />
+                  </td>
+                  <td className="col-md-1">
+                    <button className="btn btn-success" onClick={this.handleEditChange}>
+                        <span className="glyphicon glyphicon-ok" aria-hidden="true"></span>
+                    </button>
+                  </td>
+                  <td className="col-md-1">
+                    <button className="btn btn-danger" onClick={this.handleEditCancel}>
+                        <span className="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                    </button>
+                  </td>
+                </tr>
             );
         } else {
             /**
                 This HTML provides fields to show user data.
             */
             return (
-                <div className="row row-striped">
-                      <div className="col-md-2">{this.props.user.username}</div>
-                      <div className="col-md-4">********</div>
-                      <div className="col-md-2">{this.state.role}</div>
-                      <div className="col-md-2">{this.state.enabled ? 'Enabled' : 'Disabled'}</div>
-                      <div className="col-md-1">
+                <tr>
+                      <td className="col-md-2">{this.props.user.username}</td>
+                      <td className="col-md-4">********</td>
+                      <td className="col-md-2">{this.state.role}</td>
+                      <td className="col-md-2">{this.state.enabled ? 'Enabled' : 'Disabled'}</td>
+                      <td className="col-md-1">
                         <button className="btn btn-warning" onClick={this.handleEdit}>
                             <span className="glyphicon glyphicon-pencil" aria-hidden="true"></span>
                         </button>
-                      </div>
-                      <div className="col-md-1">
+                      </td>
+                      <td className="col-md-1">
                         <button className="btn btn-danger" onClick={this.handleDelete}>
                             <span className="glyphicon glyphicon-trash" aria-hidden="true"></span>
                         </button>
-                      </div>
-                </div>
+                      </td>
+                </tr>
             );
         }
     }
@@ -285,8 +285,25 @@ var UserTable = React.createClass({
             rows.push(<User csrf_element={csrf_element} user={user} key={user.username} roles={self.props.roles} />);
         });
         return (
-            <div className="container">
-                {rows}
+            <div className="panel panel-default">
+              <div className="panel-body">
+                <input id="inputSearch" type="text" className="form-control" placeholder="Search" />
+              </div>
+              <table className="table">
+                <thead className="panel-heading">
+                    <tr>
+                        <th>Username</th>
+                        <th>Password</th>
+                        <th>Role</th>
+                        <th>Enabled</th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {rows}
+                </tbody>
+              </table>
             </div>
         );
     }
@@ -532,37 +549,8 @@ var AllUsers = React.createClass({
                             </div>
                         </div>
                     </div>
-                    <hr />
-                    <div className="row">
-                      <input id="inputSearch" type="text" className="form-control" placeholder="Search" />
-                    </div>
-                    <hr />
-                    <div className="panel panel-default">
-                      <div className="panel-heading">All Users</div>
-                      <table className="table">
-                            <thead>
-                                <tr>
-                                    <th>Username</th>
-                                    <th>Password</th>
-                                    <th>Role</th>
-                                    <th>Enabled</th>
-                                    <th></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>Calvin</td>
-                                    <td>********</td>
-                                    <td>ROLE_ADMIN</td>
-                                    <td>Enabled</td>
-                                    <td></td>
-                                </tr>
-                            </tbody>
-                      </table>
-                    </div>
+                    <UserTable csrf_element={csrf_element} users={this.state.users} roles={this.state.roles} />
                 </div>
-                <UserTable csrf_element={csrf_element} users={this.state.users} roles={this.state.roles} />
-
             </div>
         );
     }
