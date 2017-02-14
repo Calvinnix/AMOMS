@@ -688,3 +688,94 @@ function returnConfirmPasswordErrorMessage(password, confirmPassword) {
   }
   return errorMessage;
 }
+
+
+
+$(document).ready(function() {
+
+    // page is now ready, initialize the calendar...
+
+    $(document).ready(function() {
+
+            var initialLocaleCode = 'en';
+
+    		$('#calendar').fullCalendar({
+    			header: {
+    				left: 'prev,next today',
+    				center: 'title',
+    				right: 'month,agendaWeek,agendaDay'
+    			},
+    			locale: initialLocaleCode,
+    			navLinks: true, // can click day/week names to navigate views
+    			selectable: true,
+    			selectHelper: true,
+    			select: function(start, end) {
+    				var title = prompt('Event Title:');
+    				var eventData;
+    				if (title) {
+    					eventData = {
+    						title: title,
+    						start: start,
+    						end: end
+    					};
+    					$('#calendar').fullCalendar('renderEvent', eventData, true); // stick? = true
+    				}
+    				$('#calendar').fullCalendar('unselect');
+    			},
+    			editable: true,
+    			eventLimit: true, // allow "more" link when too many events
+    			events: [
+    				{
+    					title: 'All Day Event',
+    					start: '2016-12-01'
+    				},
+    				{
+    					title: 'Long Event',
+    					start: '2016-12-07',
+    					end: '2016-12-10'
+    				},
+    				{
+    					id: 999,
+    					title: 'Repeating Event',
+    					start: '2016-12-09T16:00:00'
+    				},
+    				{
+    					id: 999,
+    					title: 'Repeating Event',
+    					start: '2016-12-16T16:00:00'
+    				},
+    				{
+    					title: 'Conference',
+    					start: '2016-12-11',
+    					end: '2016-12-13'
+    				},
+    				{
+    					title: 'Meeting',
+    					start: '2016-12-12T10:30:00',
+    					end: '2016-12-12T12:30:00'
+    				}
+
+    			]
+    		});
+
+    		// build the locale selector's options
+            $.each($.fullCalendar.locales, function(localeCode) {
+                $('#locale-selector').append(
+                    $('<option/>')
+                        .attr('value', localeCode)
+                        .prop('selected', localeCode == initialLocaleCode)
+                        .text(localeCode)
+                );
+            });
+
+            // when the selected option changes, dynamically change the calendar option
+            $('#locale-selector').on('change', function() {
+                if (this.value) {
+                    $('#calendar').fullCalendar('option', 'locale', this.value);
+                }
+            });
+
+
+    	});
+
+});
