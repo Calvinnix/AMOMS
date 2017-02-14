@@ -565,6 +565,112 @@ if (document.getElementById('allUsers') != null) {
 }
 
 
+var AllPatients = React.createClass({
+    /**
+        This method loads the initial state variables
+    */
+    getInitialState: function() {
+        return {patients: []
+                };
+    },
+    /**
+        This method fires when the component has mounted
+    */
+    componentDidMount: function () {
+        this.loadPatientsFromServer();
+    },
+    /**
+        This method loads the patients from the server
+    */
+    loadPatientsFromServer: function() {
+        var self = this;
+        $.ajax({
+            url: "http://localhost:8080/api/patients"
+        }).then(function (data) {
+            self.setState({patients: data._embedded.patients});
+        });
+    },
+    /**
+        This method handles the adding of a user. (via AJAX)
+    */
+    handleAddPatient: function() {
+        var self = this;
+        /**
+            Since a post request is being made. We must pass along this
+            CSRF token.
+
+            We need this because we have csrf protection enabled in SecurityConfig
+        */
+
+        if (csrf_element !== null) {
+            $.ajaxPrefilter(function (options, originalOptions, jqXHR) {
+                jqXHR.setRequestHeader('X-CSRF-Token', csrf_element.value);
+            });
+        }
+        $.ajax({
+            url: "http://localhost:8080/admin/addPatient",
+            type: "POST",
+            data: {},
+            success: function() {
+                self.loadUsersFromServer();
+                toastr.options = {
+                    "debug": false,
+                    "positionClass": "toast-top-center",
+                    "onclick": null,
+                    "fadeIn": 300,
+                    "fadeOut": 1000,
+                    "timeOut": 5000,
+                    "extendedTimeOut": 1000
+                }
+                toastr.success("Successfully Added Patient!");
+            },
+            error: function(xhr, ajaxOptions, thrownError) {
+                toastr.options = {
+                    "debug": false,
+                    "positionClass": "toast-top-center",
+                    "onclick": null,
+                    "fadeIn": 300,
+                    "fadeOut": 1000,
+                    "timeOut": 5000,
+                    "extendedTimeOut": 1000
+                }
+                toastr.error("Not Authorized");
+            }
+        });
+    },
+    /**
+        This method renders the HTML
+    */
+    render() {
+        return (
+            <div>
+                <div className="container">
+                    <div className="well well-lg">
+                        <div className="row">
+                            <div className="col-md-4">
+                                <input type="text" className="form-control" name="inputUsername" placeholder="Username" />
+                            </div>
+                            <div className="col-md-4">
+                                <input type="password" className="form-control" name="inputPassword" placeholder="Password" />
+                            </div>
+                            <div className="col-md-4">
+                                <button className="btn btn-primary" onClick={this.handleAddPatient}>Add Patient</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+});
+
+if (document.getElementById('allPatients') != null) {
+    var csrf_element = document.getElementById('csrf_token');
+    ReactDOM.render(<AllPatients csrf_element="{{csrf_element}}"/>, document.getElementById('allPatients'));
+}
+
+
+
 /*TODO:ctn Eventually will want to convert this code (as well as the login/signup page) to utilize REACT */
 /*TODO:ctn some code is repeated... This should be cleaned up */
 
