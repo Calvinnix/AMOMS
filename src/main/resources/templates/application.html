@@ -4,7 +4,7 @@
 <head th:replace="layout :: head(title='React + Spring')"></head>
 <body>
     <input type="hidden" id="csrf_token" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-    <div th:replace="layout :: nav"></div>
+    <div th:replace="layout :: nav(selectedTab='home')"></div>
     <h1 sec:authorize="hasRole('ROLE_ADMIN')">You're an Admin</h1>
     <h1 sec:authorize="hasRole('ROLE_USER')">You're a User</h1>
     <block th:replace="layout :: script"></block>

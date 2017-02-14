@@ -23,8 +23,7 @@ var User = React.createClass({
     propTypes: {
         roles:        React.PropTypes.array.isRequired,
         user:         React.PropTypes.object.isRequired,
-        csrf_element: React.PropTypes.string.isRequired,
-        key:          React.PropTypes.string.isRequired
+        csrf_element: React.PropTypes.object.isRequired
     },
     /**
         This sets the initial state of the User class. As well as defines initial state variables
@@ -514,29 +513,23 @@ var AllUsers = React.createClass({
         return (
             <div>
                 <div className="container">
-                    <div className="row header-row">
-                        <div className="col-md-2"><h5>Username</h5></div>
-                          <div className="col-md-4"><h5>Password</h5></div>
-                          <div className="col-md-2"><h5>Role</h5></div>
-                          <div className="col-md-2"><h5>Enabled</h5></div>
-                          <div className="col-md-2"></div>
-                     </div>
-                     <hr />
-                    <div className="row">
-                        <div className="col-md-2">
-                            <input type="text" className="form-control" name="inputUsername" placeholder="Username" value={this.state.username} onChange={this.updateUsername}/>
-                        </div>
-                        <div className="col-md-4">
-                            <input type="password" className="form-control" name="inputPassword" placeholder="Password" value={this.state.password} onChange={this.updatePassword}/>
-                        </div>
-                        <div className="col-md-2">
-                            <RoleSelect roles={this.state.roles} onChange={this.updateRole} />
-                        </div>
-                        <div className="col-md-2">
-                            <EnabledSelect onChange={this.updateEnabled} />
-                        </div>
-                        <div className="col-md-2">
-                            <button className="btn btn-success" onClick={this.handleAddUser}>Add User</button>
+                    <div className="well well-lg">
+                        <div className="row">
+                            <div className="col-md-2">
+                                <input type="text" className="form-control" name="inputUsername" placeholder="Username" value={this.state.username} onChange={this.updateUsername}/>
+                            </div>
+                            <div className="col-md-4">
+                                <input type="password" className="form-control" name="inputPassword" placeholder="Password" value={this.state.password} onChange={this.updatePassword}/>
+                            </div>
+                            <div className="col-md-2">
+                                <RoleSelect roles={this.state.roles} onChange={this.updateRole} />
+                            </div>
+                            <div className="col-md-2">
+                                <EnabledSelect onChange={this.updateEnabled} />
+                            </div>
+                            <div className="col-md-2">
+                                <button className="btn btn-primary" onClick={this.handleAddUser}>Add User</button>
+                            </div>
                         </div>
                     </div>
                     <hr />
@@ -544,8 +537,32 @@ var AllUsers = React.createClass({
                       <input id="inputSearch" type="text" className="form-control" placeholder="Search" />
                     </div>
                     <hr />
+                    <div className="panel panel-default">
+                      <div className="panel-heading">All Users</div>
+                      <table className="table">
+                            <thead>
+                                <tr>
+                                    <th>Username</th>
+                                    <th>Password</th>
+                                    <th>Role</th>
+                                    <th>Enabled</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Calvin</td>
+                                    <td>********</td>
+                                    <td>ROLE_ADMIN</td>
+                                    <td>Enabled</td>
+                                    <td></td>
+                                </tr>
+                            </tbody>
+                      </table>
+                    </div>
                 </div>
                 <UserTable csrf_element={csrf_element} users={this.state.users} roles={this.state.roles} />
+
             </div>
         );
     }
