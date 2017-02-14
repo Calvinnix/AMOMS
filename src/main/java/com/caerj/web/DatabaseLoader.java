@@ -27,8 +27,6 @@ public class DatabaseLoader implements CommandLineRunner {
     @Override
     public void run(String... strings) throws Exception {
 
-        Role ROLE_USER = new Role("ROLE_USER");
-        this.roleDao.save(ROLE_USER);
         Role ROLE_PRACTITIONER = new Role("ROLE_PRACTITIONER");
         this.roleDao.save(ROLE_PRACTITIONER);
         Role ROLE_RECEPTIONIST = new Role("ROLE_RECEPTIONIST");
@@ -40,7 +38,7 @@ public class DatabaseLoader implements CommandLineRunner {
         final String username = "cnix";
 
         this.userDao.save(new User(username, password, true, ROLE_ADMIN));
-        this.userDao.save(new User("TEST1", password, true, ROLE_USER));
-        this.userDao.save(new User("TEST2", password, true, ROLE_USER));
+        this.userDao.save(new User("TEST1", password, true, ROLE_PRACTITIONER));
+        this.userDao.save(new User("TEST2", password, true, ROLE_RECEPTIONIST));
     }
 }
