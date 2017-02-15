@@ -564,13 +564,269 @@ if (document.getElementById('allUsers') != null) {
     ReactDOM.render(<AllUsers csrf_element="{{csrf_element}}"/>, document.getElementById('allUsers'));
 }
 
+var Patient = React.createClass({
+    /**
+        propTypes defines the values that this class will be expecting as properties.
+    */
+    propTypes: {
+        patient:         React.PropTypes.object.isRequired,
+        csrf_element: React.PropTypes.object.isRequired
+    },
+    /**
+        This sets the initial state of the User class. As well as defines initial state variables
+    */
+    getInitialState: function() {
+        return {
+            patients: [],
+            display: true,
+            editing: false
+        };
+    },
+    /**
+        This makes an AJAX call to load users.
+        This is primarily used for reloading users when an add/delete has occurred
+    */
+    loadPatientsFromServer: function() {
+        var self = this;
+        $.ajax({
+            url: "http://localhost:8080/api/patients"
+        }).then(function (data) {
+            self.setState({patients: data._embedded.patients});
+        });
+    },
+    /**
+        This handles whenever a user tries to delete an entry
+    */
+    handleDelete() {
+        var self = this;
+
+        /**
+            Since a post request is being made. We must pass along this
+            CSRF token.
+
+            We need this because we have csrf protection enabled in SecurityConfig
+        */
+        if (csrf_element !== null) {
+          $.ajaxPrefilter(function (options, originalOptions, jqXHR) {
+             jqXHR.setRequestHeader('X-CSRF-Token', csrf_element.value);
+          });
+        }
+        $.ajax({
+            url: self.props.patient._links.self.href,
+            type: 'DELETE',
+            success: function(result) {
+                self.setState({display: false});
+            },
+            error: function(xhr, ajaxOptions, thrownError) {
+                toastr.options = {
+                    "debug": false,
+                    "positionClass": "toast-top-center",
+                    "onclick": null,
+                    "fadeIn": 300,
+                    "fadeOut": 1000,
+                    "timeOut": 5000,
+                    "extendedTimeOut": 1000
+                }
+                toastr.error("Not Authorized");
+            }
+        });
+    },
+    handleView: function() {
+        alert("Viewing profile");
+    },
+    /**
+        Renders the HTML
+    */
+    render: function() {
+        if (this.state.display == false) {
+            return null;
+        } else {
+            /**
+                This HTML provides fields to show user data.
+            */
+            return (
+                <tr>
+                      <td className="col-md-2">{this.props.patient.firstName} {this.props.patient.middleName} {this.props.patient.lastName}</td>
+                      <td className="col-md-2">{this.props.patient.dob}</td>
+                      <td className="col-md-3">{this.props.patient.address} {this.props.patient.city}, {this.props.patient.state} {this.props.patient.zipCode} </td>
+                      <td className="col-md-2">{this.props.patient.phoneNumber}</td>
+                      <td className="col-md-1">{this.props.patient.practitionerName}</td>
+                      <td className="col-md-1">
+                        <button className="btn btn-default" onClick={this.handleView}>View
+                        </button>
+                      </td>
+                      <td className="col-md-1">
+                        <button className="btn btn-danger" onClick={this.handleDelete}>
+                            <span className="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                        </button>
+                      </td>
+                </tr>
+            );
+        }
+    }
+
+});
+
+var PatientTable = React.createClass({
+    /**
+        propTypes defines the values that this class will be expecting as properties.
+    */
+    propTypes: {
+            patients: React.PropTypes.array.isRequired
+    },
+    /**
+        Renders the HTML
+    */
+    render: function() {
+        var self = this;
+        var rows = [];
+        var index = 0;
+        this.props.patients.forEach(function(patient) {
+            index++;
+            rows.push(<Patient csrf_element={csrf_element} patient={patient} key={index} />);
+        });
+        return (
+            <div className="panel panel-default">
+              <div className="panel-body">
+                <input id="inputSearch" type="text" className="form-control" placeholder="Search" />
+              </div>
+              <table className="table">
+                <thead className="panel-heading">
+                    <tr>
+                        <th>Name</th>
+                        <th>Date of Birth</th>
+                        <th>Address</th>
+                        <th>Phone Number</th>
+                        <th>Practitioner</th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {rows}
+                </tbody>
+              </table>
+            </div>
+        );
+    }
+});
+
+var SelectState = React.createClass({
+    render: function() {
+        return (
+            <select className="form-control" value={this.props.value} onChange={this.props.onChange}>
+                	<option></option>
+                	<option value="AL">Alabama</option>
+                	<option value="AK">Alaska</option>
+                	<option value="AZ">Arizona</option>
+                	<option value="AR">Arkansas</option>
+                	<option value="CA">California</option>
+                	<option value="CO">Colorado</option>
+                	<option value="CT">Connecticut</option>
+                	<option value="DE">Delaware</option>
+                	<option value="DC">District Of Columbia</option>
+                	<option value="FL">Florida</option>
+                	<option value="GA">Georgia</option>
+                	<option value="HI">Hawaii</option>
+                	<option value="ID">Idaho</option>
+                	<option value="IL">Illinois</option>
+                	<option value="IN">Indiana</option>
+                	<option value="IA">Iowa</option>
+                	<option value="KS">Kansas</option>
+                	<option value="KY">Kentucky</option>
+                	<option value="LA">Louisiana</option>
+                	<option value="ME">Maine</option>
+                	<option value="MD">Maryland</option>
+                	<option value="MA">Massachusetts</option>
+                	<option value="MI">Michigan</option>
+                	<option value="MN">Minnesota</option>
+                	<option value="MS">Mississippi</option>
+                	<option value="MO">Missouri</option>
+                	<option value="MT">Montana</option>
+                	<option value="NE">Nebraska</option>
+                	<option value="NV">Nevada</option>
+                	<option value="NH">New Hampshire</option>
+                	<option value="NJ">New Jersey</option>
+                	<option value="NM">New Mexico</option>
+                	<option value="NY">New York</option>
+                	<option value="NC">North Carolina</option>
+                	<option value="ND">North Dakota</option>
+                	<option value="OH">Ohio</option>
+                	<option value="OK">Oklahoma</option>
+                	<option value="OR">Oregon</option>
+                	<option value="PA">Pennsylvania</option>
+                	<option value="RI">Rhode Island</option>
+                	<option value="SC">South Carolina</option>
+                	<option value="SD">South Dakota</option>
+                	<option value="TN">Tennessee</option>
+                	<option value="TX">Texas</option>
+                	<option value="UT">Utah</option>
+                	<option value="VT">Vermont</option>
+                	<option value="VA">Virginia</option>
+                	<option value="WA">Washington</option>
+                	<option value="WV">West Virginia</option>
+                	<option value="WI">Wisconsin</option>
+                	<option value="WY">Wyoming</option>
+            </select>
+            );
+    }
+});
+
+var Practitioner = React.createClass({
+    render: function() {
+        return (
+            <option value={this.props.user.username}>{this.props.user.username}</option>
+        );
+    }
+});
+
+var PractitionerSelect = React.createClass({
+
+    propTypes: {
+                practitionerName: React.PropTypes.string
+    },
+    render: function() {
+        var practitioners = [];
+        //Adding blank default to ensure selected value will get set
+        practitioners.push(<option></option>);
+        this.props.users.forEach(function(user) {
+            //only add practitioners
+            if (user.authorities[0].authority === "ROLE_PRACTITIONER") {
+                practitioners.push(<Practitioner user={user} key={user.username}/>);
+            }
+        });
+        return (
+            <select className="form-control" name="selectRole" value={this.props.role} onChange={this.props.onChange}>
+                {practitioners}
+            </select>
+        );
+    }
+
+});
 
 var AllPatients = React.createClass({
     /**
         This method loads the initial state variables
     */
+
     getInitialState: function() {
-        return {patients: []
+        return {
+                  users: [],
+                  patients: [],
+                  firstName: '',
+                  middleName: '',
+                  lastName: '',
+                  gender: '',
+                  dob: '',
+                  address: '',
+                  city: '',
+                  state: '',
+                  zipCode: '',
+                  maritalStatus: '',
+                  numberOfChildren: '',
+                  phoneNumber: '',
+                  emailAddress: '',
+                  practitionerName: ''
                 };
     },
     /**
@@ -578,6 +834,7 @@ var AllPatients = React.createClass({
     */
     componentDidMount: function () {
         this.loadPatientsFromServer();
+        this.loadUsersFromServer();
     },
     /**
         This method loads the patients from the server
@@ -590,6 +847,14 @@ var AllPatients = React.createClass({
             self.setState({patients: data._embedded.patients});
         });
     },
+    loadUsersFromServer: function() {
+            var self = this;
+            $.ajax({
+                url: "http://localhost:8080/api/users"
+            }).then(function (data) {
+                self.setState({users: data._embedded.users});
+            });
+        },
     /**
         This method handles the adding of a user. (via AJAX)
     */
@@ -608,11 +873,27 @@ var AllPatients = React.createClass({
             });
         }
         $.ajax({
-            url: "http://localhost:8080/admin/addPatient",
+            url: "http://localhost:8080/patients/addPatient",
             type: "POST",
-            data: {},
+            data: {
+                  firstName: this.state.firstName,
+                  middleName: this.state.middleName,
+                  lastName: this.state.lastName,
+                  gender: this.state.gender,
+                  dob: this.state.dob,
+                  address: this.state.address,
+                  city: this.state.city,
+                  state: this.state.state,
+                  zipCode: this.state.zipCode,
+                  maritalStatus: this.state.maritalStatus,
+                  numberOfChildren: this.state.numberOfChildren,
+                  phoneNumber: this.state.phoneNumber,
+                  emailAddress: this.state.emailAddress,
+                  practitionerName: this.state.practitionerName
+
+            },
             success: function() {
-                self.loadUsersFromServer();
+                self.loadPatientsFromServer();
                 toastr.options = {
                     "debug": false,
                     "positionClass": "toast-top-center",
@@ -641,6 +922,77 @@ var AllPatients = React.createClass({
     /**
         This method renders the HTML
     */
+
+    updateFirstName: function(evt) {
+        this.setState({
+            firstName: evt.target.value
+        });
+    },
+    updateMiddleName: function(evt) {
+        this.setState({
+            middleName: evt.target.value
+        });
+    },
+    updateLastName: function(evt) {
+        this.setState({
+            lastName: evt.target.value
+        });
+    },
+    updateGender: function(evt) {
+        this.setState({
+            gender: evt.target.value
+        });
+    },
+    updateDOB: function(evt) {
+        this.setState({
+            dob: evt.target.value
+        });
+    },
+    updateAddress: function(evt) {
+        this.setState({
+            address: evt.target.value
+        });
+    },
+    updateCity: function(evt) {
+        this.setState({
+            city: evt.target.value
+        });
+    },
+    updateState: function(evt) {
+        this.setState({
+            state: evt.target.value
+        });
+    },
+    updateZipCode: function(evt) {
+        this.setState({
+            zipCode: evt.target.value
+        });
+    },
+    updateMaritalStatus: function(evt) {
+        this.setState({
+            maritalStatus: evt.target.value
+        });
+    },
+    updateNumberOfChildren: function(evt) {
+        this.setState({
+            numberOfChildren: evt.target.value
+        });
+    },
+    updatePhoneNumber: function(evt) {
+        this.setState({
+            phoneNumber: evt.target.value
+        });
+    },
+    updateEmailAddress: function(evt) {
+        this.setState({
+            emailAddress: evt.target.value
+        });
+    },
+    updatePractitionerName: function(evt) {
+        this.setState({
+            practitionerName: evt.target.value
+        });
+    },
     render() {
         return (
             <div>
@@ -648,16 +1000,86 @@ var AllPatients = React.createClass({
                     <div className="well well-lg">
                         <div className="row">
                             <div className="col-md-4">
-                                <input type="text" className="form-control" name="inputUsername" placeholder="Username" />
+                                <label>First Name:</label>
+                                <input type="text" className="form-control" name="inputFirstName" placeholder="First Name" value={this.state.firstName} onChange={this.updateFirstName} />
                             </div>
                             <div className="col-md-4">
-                                <input type="password" className="form-control" name="inputPassword" placeholder="Password" />
+                                <label>Middle Name:</label>
+                                <input type="text" className="form-control" name="inputMiddleName" placeholder="Middle Name" value={this.state.middleName} onChange={this.updateMiddleName} />
                             </div>
                             <div className="col-md-4">
-                                <button className="btn btn-primary" onClick={this.handleAddPatient}>Add Patient</button>
+                                <label>Last Name:</label>
+                                <input type="text" className="form-control" name="inputLastName" placeholder="Last Name" value={this.state.lastName} onChange={this.updateLastName} />
+                            </div>
+                        </div>
+                        <hr />
+                        <div className="row">
+                            <div className="col-md-3">
+                                <label>Gender:</label>
+                                <select className="form-control" name="selectGender" value={this.state.gender} onChange={this.updateGender} >
+                                    <option></option>
+                                    <option value="true">Male</option>
+                                    <option value="false">Female</option>
+                                </select>
+                            </div>
+                            <div className="col-md-3">
+                                <label>Date of Birth:</label>
+                                <input type="text" className="form-control" name="inputDOB" id="datepicker" value={this.state.dob} onBlur={this.updateDOB}/>
+                            </div>
+                            <div className="col-md-3">
+                                <label>Marital Status:</label>
+                                <select className="form-control" name="selectMaritalStatus" value={this.state.maritalStatus} onChange={this.updateMaritalStatus} >
+                                    <option></option>
+                                    <option value="Single">Single</option>
+                                    <option value="Married">Married</option>
+                                    <option value="Divorced">Divorced</option>
+                                    <option value="Widowed">Widowed</option>
+                                </select>
+                            </div>
+                            <div className="col-md-3">
+                                <label>Number of Children:</label>
+                                <input type="number" className="form-control" name="inputNumberOfChildren" placeholder="Number of Children" min="0" max="1000" value={this.state.numberOfChildren} onChange={this.updateNumberOfChildren} />
+                            </div>
+                        </div>
+                        <hr />
+                        <div className="row">
+                            <div className="col-md-5">
+                                <label>Address:</label>
+                                <input type="text" className="form-control" name="inputAddress" placeholder="Address" value={this.state.address} onChange={this.updateAddress} />
+                            </div>
+                            <div className="col-md-3">
+                                <label>City:</label>
+                                <input type="text" className="form-control" name="inputCity" placeholder="City" value={this.state.city} onChange={this.updateCity} />
+                            </div>
+                            <div className="col-md-2">
+                                <label>State:</label>
+                                <SelectState value={this.state.state} onChange={this.updateState} />
+                            </div>
+                            <div className="col-md-2">
+                                <label>Zip Code:</label>
+                                <input type="number" className="form-control" name="inputZipCode" placeholder="Zip Code" value={this.state.zipCode} onChange={this.updateZipCode} />
+                            </div>
+                        </div>
+                        <hr />
+                        <div className="row">
+                            <div className="col-md-3">
+                                <label>Phone Number:</label>
+                                <input type="number" className="form-control" name="inputPhoneNumber" placeholder="Phone Number" value={this.state.phoneNumber} onChange={this.updatePhoneNumber} />
+                            </div>
+                            <div className="col-md-3">
+                                <label>Email Address:</label>
+                                <input type="email" className="form-control" name="inputEmailAddress" placeholder="Email Address" value={this.state.emailAddress} onChange={this.updateEmailAddress} />
+                            </div>
+                            <div className="col-md-3">
+                                <label>Practitioner:</label>
+                                <PractitionerSelect users={this.state.users} value={this.state.practitionerName} onChange={this.updatePractitionerName} />
+                            </div>
+                            <div className="col-md-3">
+                                <button className="btn btn-primary center-block" onClick={this.handleAddPatient}>Add Patient</button>
                             </div>
                         </div>
                     </div>
+                    <PatientTable patients={this.state.patients} csrf_element={csrf_element} />
                 </div>
             </div>
         );
@@ -673,6 +1095,26 @@ if (document.getElementById('allPatients') != null) {
 
 /*TODO:ctn Eventually will want to convert this code (as well as the login/signup page) to utilize REACT */
 /*TODO:ctn some code is repeated... This should be cleaned up */
+
+
+//loads date picker for add patient form
+var picker = new Pikaday(
+{
+    setDefaultDate: new Date(1970, 1, 1),
+    field: document.getElementById('datepicker'),
+    firstDay: 0,
+    minDate: new Date(1900, 0, 1),
+    maxDate: new Date(),
+    format: 'MMMM DD, YYYY',
+    yearRange: 100
+});
+
+picker.setMoment(moment().date(1).month(0).year(1970));
+
+
+
+
+
 
 $("#btnLogin").click(function(e) {
   validateLoginForm($(this), e);
@@ -796,92 +1238,84 @@ function returnConfirmPasswordErrorMessage(password, confirmPassword) {
 }
 
 
-
 $(document).ready(function() {
 
-    // page is now ready, initialize the calendar...
+        var initialLocaleCode = 'en';
 
-    $(document).ready(function() {
-
-            var initialLocaleCode = 'en';
-
-    		$('#calendar').fullCalendar({
-    			header: {
-    				left: 'prev,next today',
-    				center: 'title',
-    				right: 'month,agendaWeek,agendaDay'
-    			},
-    			locale: initialLocaleCode,
-    			navLinks: true, // can click day/week names to navigate views
-    			selectable: true,
-    			selectHelper: true,
-    			select: function(start, end) {
-    				var title = prompt('Event Title:');
-    				var eventData;
-    				if (title) {
-    					eventData = {
-    						title: title,
-    						start: start,
-    						end: end
-    					};
-    					$('#calendar').fullCalendar('renderEvent', eventData, true); // stick? = true
-    				}
-    				$('#calendar').fullCalendar('unselect');
-    			},
-    			editable: true,
-    			eventLimit: true, // allow "more" link when too many events
-    			events: [
-    				{
-    					title: 'All Day Event',
-    					start: '2016-12-01'
-    				},
-    				{
-    					title: 'Long Event',
-    					start: '2016-12-07',
-    					end: '2016-12-10'
-    				},
-    				{
-    					id: 999,
-    					title: 'Repeating Event',
-    					start: '2016-12-09T16:00:00'
-    				},
-    				{
-    					id: 999,
-    					title: 'Repeating Event',
-    					start: '2016-12-16T16:00:00'
-    				},
-    				{
-    					title: 'Conference',
-    					start: '2016-12-11',
-    					end: '2016-12-13'
-    				},
-    				{
-    					title: 'Meeting',
-    					start: '2016-12-12T10:30:00',
-    					end: '2016-12-12T12:30:00'
-    				}
-
-    			]
-    		});
-
-    		// build the locale selector's options
-            $.each($.fullCalendar.locales, function(localeCode) {
-                $('#locale-selector').append(
-                    $('<option/>')
-                        .attr('value', localeCode)
-                        .prop('selected', localeCode == initialLocaleCode)
-                        .text(localeCode)
-                );
-            });
-
-            // when the selected option changes, dynamically change the calendar option
-            $('#locale-selector').on('change', function() {
-                if (this.value) {
-                    $('#calendar').fullCalendar('option', 'locale', this.value);
+        $('#calendar').fullCalendar({
+            header: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'month,agendaWeek,agendaDay'
+            },
+            locale: initialLocaleCode,
+            navLinks: true, // can click day/week names to navigate views
+            selectable: true,
+            selectHelper: true,
+            select: function(start, end) {
+                var title = prompt('Event Title:');
+                var eventData;
+                if (title) {
+                    eventData = {
+                        title: title,
+                        start: start,
+                        end: end
+                    };
+                    $('#calendar').fullCalendar('renderEvent', eventData, true); // stick? = true
                 }
-            });
+                $('#calendar').fullCalendar('unselect');
+            },
+            editable: true,
+            eventLimit: true, // allow "more" link when too many events
+            events: [
+                {
+                    title: 'All Day Event',
+                    start: '2016-12-01'
+                },
+                {
+                    title: 'Long Event',
+                    start: '2016-12-07',
+                    end: '2016-12-10'
+                },
+                {
+                    id: 999,
+                    title: 'Repeating Event',
+                    start: '2016-12-09T16:00:00'
+                },
+                {
+                    id: 999,
+                    title: 'Repeating Event',
+                    start: '2016-12-16T16:00:00'
+                },
+                {
+                    title: 'Conference',
+                    start: '2016-12-11',
+                    end: '2016-12-13'
+                },
+                {
+                    title: 'Meeting',
+                    start: '2016-12-12T10:30:00',
+                    end: '2016-12-12T12:30:00'
+                }
 
+            ]
+        });
 
-    	});
+        // build the locale selector's options
+        $.each($.fullCalendar.locales, function(localeCode) {
+            $('#locale-selector').append(
+                $('<option/>')
+                    .attr('value', localeCode)
+                    .prop('selected', localeCode == initialLocaleCode)
+                    .text(localeCode)
+            );
+        });
+
+        // when the selected option changes, dynamically change the calendar option
+        $('#locale-selector').on('change', function() {
+            if (this.value) {
+                $('#calendar').fullCalendar('option', 'locale', this.value);
+            }
+        });
 
 });
