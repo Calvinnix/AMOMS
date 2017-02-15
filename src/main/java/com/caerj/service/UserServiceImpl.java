@@ -75,6 +75,9 @@ public class UserServiceImpl implements UserService {
             }
         }
 
+        //Set username to all lowercase to make it case insensitive
+        user.setUsername(user.getUsername().toLowerCase());
+
         logger.info(" --- Saving user");
         userDao.save(user);
 
@@ -137,6 +140,10 @@ public class UserServiceImpl implements UserService {
                                              user.getPassword(),
                                              user.isEnabled(),
                                              user.getRole().getName()));
+
+        //Set username to all lowercase to make it case insensitive
+        user.setUsername(user.getUsername().toLowerCase());
+
         userDao.save(user);
 
         logger.info(String.format(" --- Exiting: %s", Thread.currentThread().getStackTrace()[1].getMethodName()));
@@ -156,6 +163,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         logger.info(String.format(" --- Entering: %s", Thread.currentThread().getStackTrace()[1].getMethodName()));
+
+        username = username.toLowerCase();
 
         User user = userDao.findByUsername(username);
         if (user == null) {
