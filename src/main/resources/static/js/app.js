@@ -787,12 +787,14 @@ var PractitionerSelect = React.createClass({
     },
     render: function() {
         var practitioners = [];
+        var index = 0;
         //Adding blank default to ensure selected value will get set
-        practitioners.push(<option></option>);
+        practitioners.push(<option key={index}></option>);
         this.props.users.forEach(function(user) {
             //only add practitioners
+            index ++;
             if (user.authorities[0].authority === "ROLE_PRACTITIONER") {
-                practitioners.push(<Practitioner user={user} key={user.username}/>);
+                practitioners.push(<Practitioner user={user} key={index}/>);
             }
         });
         return (
