@@ -633,6 +633,8 @@ var Patient = React.createClass({
     },
     handleView: function() {
         alert("Viewing profile");
+
+
     },
     /**
         Renders the HTML
@@ -1055,7 +1057,7 @@ var AllPatients = React.createClass({
                             </div>
                             <div className="col-md-2">
                                 <label>State:</label>
-                                <SelectState value={this.state.state} onChange={this.updateState} />
+                                <SelectState name="selectState" value={this.state.state} onChange={this.updateState} />
                             </div>
                             <div className="col-md-2">
                                 <label>Zip Code:</label>
@@ -1077,7 +1079,7 @@ var AllPatients = React.createClass({
                                 <PractitionerSelect users={this.state.users} value={this.state.practitionerName} onChange={this.updatePractitionerName} />
                             </div>
                             <div className="col-md-3">
-                                <button className="btn btn-primary center-block" onClick={this.handleAddPatient}>Add Patient</button>
+                                <button className="btn btn-primary center-block" id="btnAddPatient" onClick={this.handleAddPatient}>Add Patient</button>
                             </div>
                         </div>
                     </div>
@@ -1087,6 +1089,14 @@ var AllPatients = React.createClass({
         );
     }
 });
+
+<div id="patientModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Test</h2>
+        </div>
+    </div>
+</div>
 
 if (document.getElementById('allPatients') != null) {
     var csrf_element = document.getElementById('csrf_token');
@@ -1115,9 +1125,6 @@ picker.setMoment(moment().date(1).month(0).year(1970));
 
 
 
-
-
-
 $("#btnLogin").click(function(e) {
   validateLoginForm($(this), e);
 });
@@ -1125,6 +1132,144 @@ $("#btnLogin").click(function(e) {
 $("#btnSignup").click(function(e) {
   validateSignupForm($(this), e);
 });
+
+$("#btnAddPatient").click(function(e){
+    validateAddPatientForm($(this), e);
+});
+
+function validateAddPatientForm(element, e){
+    var firstname = $("#inputFirstName");
+    var lastname = $("#inputLastName");
+    var zipcode = $("#inputLastName");
+    var phonenumber = $("inputPhoneNumber");
+    var address = $("inputAddress");
+    var email = $("inputEmailAddress");
+    var city = $("inputCIty");
+    var dob = $("inputDOB");
+    var maritalstatus = $("selectMaritalStatus");
+    var gen = $("selectGender");
+    var children = $("inputNumberOfChildren");
+    var errorMessage = "";
+
+    element.siblings("div.errorDiv").each(function(){
+        $(this).remove();
+    });
+
+    var firstNameErrorMessage = returnNameLengthErrorMessage();
+    if ( firstNameErrorMessage.length !== 0 ) {
+      errorMessage += firstNameErrorMessage;
+      firstname.addClass("invalid");
+      firstname.removeClass("valid");
+    } else {
+      firstname.addClass("valid");
+      firstname.removeClass("invalid");
+    }
+
+    var lastNameErrorMessage = returnLastNameLengthErrorMessage();
+    if ( lastNameErrorMessage.length !== 0 ) {
+      errorMessage += lastNameErrorMessage;
+      lastname.addClass("invalid");
+      lastname.removeClass("valid");
+    } else {
+      lastname.addClass("valid");
+      lastname.removeClass("invalid");
+    }
+
+    var phoneNumberErrorMessage = returnPhoneLengthErrorMessage();
+    if (phoneNumberErrorMessage.length !== 0 ) {
+      errorMessage += phoneNumberErrorMessage;
+      phonenumber.addClass("invalid");
+      phonenumber.removeClass("valid");
+    } else {
+      phonenumber.addClass("valid");
+      phonenumber.removeClass("invalid");
+    }
+
+    var zipCodeErrorMessage = returnZipLengthErrorMessage();
+    if ( zipCodeErrorMessage.length !== 0 ) {
+      errorMessage += zipCodeErrorMessage;
+      zipcode.addClass("invalid");
+      zipcode.removeClass("valid");
+    } else {
+      zipcode.addClass("valid");
+      zipcode.removeClass("invalid");
+    }
+
+    var addressErrorMessage = returnAddressLengthErrorMessage();
+    if ( addressErrorMessage.length !== 0 ) {
+      errorMessage += addressErrorMessage;
+      address.addClass("invalid");
+      address.removeClass("valid");
+    } else {
+      address.addClass("valid");
+      address.removeClass("invalid");
+    }
+
+    var emailErrorMessage = returnEmailLengthErrorMessage();
+    if ( emailErrorMessage.length !== 0 ) {
+      errorMessage += emailErrorMessage;
+      email.addClass("invalid");
+      email.removeClass("valid");
+    } else {
+      email.addClass("valid");
+      email.removeClass("invalid");
+    }
+
+    var cityErrorMessage = returnCityLengthErrorMessage();
+    if ( cityErrorMessage.length !== 0 ) {
+      errorMessage += cityErrorMessage;
+      city.addClass("invalid");
+      city.removeClass("valid");
+    } else {
+      city.addClass("valid");
+      city.removeClass("invalid");
+    }
+
+    var dobErrorMessage = returnDOBLengthErrorMessage();
+    if ( dobErrorMessage.length !== 0 ) {
+      errorMessage += dobErrorMessage;
+      dob.addClass("invalid");
+      dob.removeClass("valid");
+    } else {
+      dob.addClass("valid");
+      dob.removeClass("invalid");
+    }
+
+    var maritalStatusErrorMessage = returnMarriedLengthErrorMessage();
+    if (maritalStatusErrorMessage.length !== 0 ) {
+      errorMessage += maritalStatusErrorMessage;
+      maritalstatus.addClass("invalid");
+      maritalstatus.removeClass("valid");
+    } else {
+      maritalstatus.addClass("valid");
+      maritalstatus.removeClass("invalid");
+    }
+
+    var genderErrorMessage = returnGenderLengthErrorMessage();
+    if ( genderErrorMessage.length !== 0 ) {
+      errorMessage += genderErrorMessage;
+      gen.addClass("invalid");
+      gen.removeClass("valid");
+    } else {
+      gen.addClass("valid");
+      gen.removeClass("invalid");
+    }
+
+    var childrenErrorMessage = returnChildrenLengthErrorMessage();
+    if ( childrenErrorMessage.length !== 0 ) {
+      errorMessage += childrenErrorMessage;
+      children.addClass("invalid");
+      children.removeClass("valid");
+    } else {
+      children.addClass("valid");
+      children.removeClass("invalid");
+    }
+
+    if (errorMessage.length !== 0) {
+      e.preventDefault();
+      element.parent().prepend('<div class="errorDiv"><div class="alert alert-danger">'+errorMessage+'</div></div>');
+    }
+}
 
 function validateLoginForm(element, e) {
     var username = $("#inputUsername");
@@ -1205,6 +1350,7 @@ function validateSignupForm(element, e) {
       e.preventDefault();
       element.parent().prepend('<div class="errorDiv"><div class="alert alert-danger">'+errorMessage+'</div></div>');
     }
+
 }
 
 
@@ -1239,6 +1385,106 @@ function returnConfirmPasswordErrorMessage(password, confirmPassword) {
   return errorMessage;
 }
 
+function returnNameLengthErrorMessage(){
+     var errorMessage = "";
+     var fName = document.getElementsByName("inputFirstName");
+     if(fName[0].value.length === 0){
+         errorMessage += "Name cannot be left blank.\n";
+     }
+     return errorMessage;
+ }
+
+function returnLastNameLengthErrorMessage(){
+    var errorMessage = "";
+    var lName = document.getElementsByName("inputLastName");
+    if(lName[0].value.length === 0){
+        errorMessage += "Last Name cannot be left blank.\n";
+    }
+    return errorMessage;
+}
+
+function returnZipLengthErrorMessage(){
+    var errorMessage = "";
+    var lName = document.getElementsByName("inputZipCode");
+    if(lName[0].value.length < 5){
+        errorMessage += "Zip must contain at least 5 numbers.\n";
+    }
+    return errorMessage;
+}
+
+function returnPhoneLengthErrorMessage(){
+    var errorMessage = "";
+    var pNumber = document.getElementsByName("inputPhoneNumber");
+    if(pNumber[0].value.length === 0 || pNumber[0].value.length < 10 || pNumber[0].value.length > 10){
+        errorMessage += "Phone Number is invalid.\n";
+    }
+    return errorMessage;
+}
+
+function returnAddressLengthErrorMessage(){
+    var errorMessage = "";
+    var address = document.getElementsByName("inputAddress");
+    if(address[0].value.length === 0){
+        errorMessage += "address cannot be left blank.\n";
+    }
+    return errorMessage;
+}
+
+function returnCityLengthErrorMessage(){
+    var errorMessage = "";
+    var city = document.getElementsByName("inputCity");
+    if(city[0].value.length === 0){
+        errorMessage += "City cannot be left blank.\n";
+    }
+    return errorMessage;
+}
+
+function returnDOBLengthErrorMessage(){
+    var errorMessage = "";
+    var dob = document.getElementsByName("inputDOB");
+    if(dob[0].value.length === 0){
+        errorMessage += "DOB cannot be left blank.\n";
+    }
+    return errorMessage;
+}
+
+function returnMarriedLengthErrorMessage(){
+    var errorMessage = "";
+    var status = document.getElementsByName("selectMaritalStatus");
+    if(status[0].value.length === 0){
+        errorMessage += "Marital Status cannot be left blank.\n";
+    }
+    return errorMessage;
+}
+
+function returnGenderLengthErrorMessage(){
+    var errorMessage = "";
+    var gender = document.getElementsByName("selectGender");
+    if(gender[0].value.length === 0){
+        errorMessage += "Gender cannot be left blank.\n";
+    }
+    return errorMessage;
+}
+
+function returnChildrenLengthErrorMessage(){
+    var errorMessage = "";
+    var children = document.getElementsByName("inputNumberOfChildren");
+    if(children[0].value.length === 0){
+        errorMessage += "Number of Children cannot be left blank.\n";
+    }
+    return errorMessage;
+}
+
+function returnEmailLengthErrorMessage(){
+    var errorMessage = "";
+    var email = document.getElementsByName("inputEmailAddress");
+    if(email[0].value.length === 0){
+        errorMessage += "Email cannot be left blank.\n";
+    }else if(email[0].value.includes("@") === false || email[0].value.includes(".com") === false ){
+        errorMessage += "Email is invalid.\n";
+    }
+    return errorMessage;
+}
 
 $(document).ready(function() {
 
