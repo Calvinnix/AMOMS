@@ -9,8 +9,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 public interface PatientService extends UserDetailsService {
 
     Patient findById(Long id);
-
     void save(Patient patient);
-    void update(Patient patient);
 
 }

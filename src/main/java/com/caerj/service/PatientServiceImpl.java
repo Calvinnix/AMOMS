@@ -37,21 +37,6 @@ public class PatientServiceImpl implements PatientService {
     }
 
     @Override
-    public void update(Patient patient) {
-        logger.info(String.format(" --- Entering: %s", Thread.currentThread().getStackTrace()[1].getMethodName()));
-
-        Patient patientFound = patientDao.findById(patient.getId());
-        if (patientFound != null) {
-            logger.info(" --- Mapping edited user to the existing user.");
-            patient.setId(patientFound.getId());
-        }
-
-        patientDao.save(patient);
-
-        logger.info(String.format(" --- Exiting: %s", Thread.currentThread().getStackTrace()[1].getMethodName()));
-    }
-
-    @Override
     public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
         logger.error(" --- This method has not been implemented yet");
         return null;
