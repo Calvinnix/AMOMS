@@ -878,7 +878,7 @@ var Patient = React.createClass({
                                  </div>
                                  <div className="col-md-3">
                                      <label>Date of Birth:</label>
-                                     <input type="text" className="form-control" name="inputDOB" id="datepicker" value={this.state.dob} onBlur={this.updateDOB} onChange={this.updateDOB}/>
+                                     <input type="text" className="form-control" value={this.state.dob} onBlur={this.updateDOB} onChange={this.updateDOB}/>
                                  </div>
                                  <div className="col-md-3">
                                      <label>Marital Status:</label>
@@ -1419,8 +1419,11 @@ var AddAppointment = React.createClass({
                   users: [],
                   patients: [],
                   practitioners: [],
+                  appointments: [],
                   patientId: -1,
                   practitionerName: '',
+                  startTime: '',
+                  endTime: '',
                   date: '',
                   reasonForVisit: ''
         };
@@ -1428,6 +1431,57 @@ var AddAppointment = React.createClass({
     componentDidMount: function () {
         this.loadPatientsFromServer();
         this.loadUsersFromServer();
+        this.loadAppointmentsFromServer();
+
+        var self = this;
+
+        var initialLocaleCode = 'en';
+
+        $('#appointmentCalendar').fullCalendar({
+            header: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'agendaWeek,agendaDay'
+            },
+            height: 300,
+            defaultView: 'agendaWeek',
+            allDaySlot: false,
+            weekends: false,
+            overlap: false,
+            slotDuration: "00:15:00",
+            locale: initialLocaleCode,
+            navLinks: true, // can click day/week names to navigate views
+            selectable: true,
+            selectHelper: true,
+            select: function(start, end) {
+                if(start.isBefore(moment())) {
+                    alert("Error: You can't select a date in the past");
+                    $('#appointmentCalendar').fullCalendar('unselect');
+                    return false;
+                }
+                self.setState({
+                    date: start.format("MM-DD-YYYY"),
+                    startTime: start.format("hh:mm"),
+                    endTime: end.format("hh:mm")
+                });
+
+                var title = "Selected Appointment";
+                var eventData = {
+                        title: title,
+                        start: start,
+                        end: end
+                    };
+                $('#appointmentCalendar').fullCalendar('renderEvent', eventData, true); // stick? = true
+                $('#appointmentCalendar').fullCalendar('unselect');
+
+            },
+            minTime: "06:00:00",
+            maxTime: "18:00:00",
+            editable: true,
+            eventLimit: false, // allow "more" link when too many events
+
+        });
+
     },
     /**
         This method loads the patients from the server
@@ -1448,10 +1502,40 @@ var AddAppointment = React.createClass({
             self.setState({users: data._embedded.users});
         });
     },
+    loadAppointmentsFromServer: function() {
+        var self = this;
+        $.ajax({
+            url: "http://localhost:8080/api/appointments"
+        }).then(function (data) {
+            self.setState({appointments: data._embedded.appointments});
+        });
+    },
     updatePractitionerName: function(evt) {
         this.setState({
             practitionerName: evt.target.value
         });
+        var events = [];
+        this.state.appointments.forEach(function(appointment) {
+            var title = "Appointment";
+
+            var dateFormat = "MM-DD-YYYY hh:mm";
+
+            var start = moment((appointment.date + " " + appointment.startTime), dateFormat);
+            var end   = moment((appointment.date + " " + appointment.endTime), dateFormat);
+
+            var eventData = {
+                title: "",
+                start: start,
+                end: end
+            };
+            $('#appointmentCalendar').fullCalendar('renderEvent', eventData, true); // stick? = true
+        });
+
+
+
+
+
+
     },
     updatePatientId: function(evt) {
          this.setState({
@@ -1484,6 +1568,8 @@ var AddAppointment = React.createClass({
                   patientId: this.state.patientId,
                   practitionerName: this.state.practitionerName,
                   date: this.state.date,
+                  startTime: this.state.startTime,
+                  endTime: this.state.endTime,
                   reasonForVisit: this.state.reasonForVisit
             },
             success: function() {
@@ -1517,29 +1603,20 @@ var AddAppointment = React.createClass({
             <div className="container">
                 <div className="well well-lg">
                     <h3>Add Appointment</h3>
-                    <hr />
                     <div className="row">
-                        <div className="col-md-9">
+                        <div className="col-md-6">
                             <label>Patient:</label>
                             <PatientSelect patients={this.state.patients} value={this.state.patientId} onChange={this.updatePatientId} />
-                        </div>
-                        <div className="col-md-3">
+                            <hr />
                             <label>Practitioner:</label>
                             <PractitionerSelect users={this.state.users} value={this.state.practitionerName} onChange={this.updatePractitionerName} />
-                        </div>
-                    </div>
-                    <hr />
-                    <div className="row">
-                        <div className="col-md-12">
-                            <label>Date:</label>
-                            <div id="calendar"></div>
-                        </div>
-                    </div>
-                    <hr />
-                    <div className="row">
-                        <div className="col-md-12">
+                            <hr />
                             <label>Reason For Visit:</label>
-                            <textarea type="text" className="form-control" onChange={this.updateReasonForVisit} placeholder="Reason for visit." value={this.state.reasonForVisit} />
+                            <textarea type="text" rows="4" className="form-control" onChange={this.updateReasonForVisit} placeholder="Reason for visit." value={this.state.reasonForVisit} />
+                        </div>
+                        <div className="col-md-6">
+                            <label>Date:</label>
+                            <div id="appointmentCalendar"></div>
                         </div>
                     </div>
                     <hr />
@@ -1713,59 +1790,27 @@ $(document).ready(function() {
             header: {
                 left: 'prev,next today',
                 center: 'title',
-                right: 'month,agendaWeek,agendaDay'
+                right: 'agendaWeek,agendaDay'
             },
+            height: 300,
+            defaultView: 'agendaWeek',
+            allDaySlot: false,
+            weekends: false,
+            eventOverlap: false,
+            slotDuration: "00:15:00",
             locale: initialLocaleCode,
             navLinks: true, // can click day/week names to navigate views
             selectable: true,
             selectHelper: true,
             select: function(start, end) {
-                var title = prompt('Event Title:');
-                var eventData;
-                if (title) {
-                    eventData = {
-                        title: title,
-                        start: start,
-                        end: end
-                    };
-                    $('#calendar').fullCalendar('renderEvent', eventData, true); // stick? = true
-                }
-                $('#calendar').fullCalendar('unselect');
-            },
-            editable: true,
-            eventLimit: true, // allow "more" link when too many events
-            events: [
-                {
-                    title: 'All Day Event',
-                    start: '2016-12-01'
-                },
-                {
-                    title: 'Long Event',
-                    start: '2016-12-07',
-                    end: '2016-12-10'
-                },
-                {
-                    id: 999,
-                    title: 'Repeating Event',
-                    start: '2016-12-09T16:00:00'
-                },
-                {
-                    id: 999,
-                    title: 'Repeating Event',
-                    start: '2016-12-16T16:00:00'
-                },
-                {
-                    title: 'Conference',
-                    start: '2016-12-11',
-                    end: '2016-12-13'
-                },
-                {
-                    title: 'Meeting',
-                    start: '2016-12-12T10:30:00',
-                    end: '2016-12-12T12:30:00'
-                }
+                alert(start);
+                alert(end);
 
-            ]
+            },
+            minTime: "06:00:00",
+            maxTime: "18:00:00",
+            editable: true,
+            eventLimit: false // allow "more" link when too many events
         });
 
         // build the locale selector's options

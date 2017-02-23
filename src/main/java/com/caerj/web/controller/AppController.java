@@ -237,6 +237,8 @@ public class AppController {
         String strPatientId = request.getParameter("patientId");
         String practitionerName = request.getParameter("practitionerName");
         String date = request.getParameter("date");
+        String startTime = request.getParameter("startTime");
+        String endTime = request.getParameter("endTime");
         String reasonForVisit = request.getParameter("reasonForVisit");
 
         Long patientId = Long.valueOf(strPatientId);
@@ -248,7 +250,7 @@ public class AppController {
             logger.error("Practitioner not found!");
         }
 
-        Appointment appointment = new Appointment(patient, practitioner, date, "default time", -1L, reasonForVisit);
+        Appointment appointment = new Appointment(patient, practitioner, date, startTime, endTime, reasonForVisit);
 
         logger.info(" --- Saving appointment");
         appointmentService.save(appointment);

@@ -23,21 +23,21 @@ public class Appointment {
                                 //so far this is only done on the frontend
     private String date;
 
-    private String time;
+    private String startTime;
 
-    private Long length;
+    private String endTime;
 
     private String reasonForVisit;
 
     public Appointment() {
     }
 
-    public Appointment(Patient patient, User practitioner, String date, String time, Long length, String reasonForVisit) {
+    public Appointment(Patient patient, User practitioner, String date, String startTime, String endTime, String reasonForVisit) {
         this.patient = patient;
         this.practitioner = practitioner;
         this.date = date;
-        this.time = time;
-        this.length = length;
+        this.startTime = startTime;
+        this.endTime = endTime;
         this.reasonForVisit = reasonForVisit;
     }
 
@@ -73,20 +73,20 @@ public class Appointment {
         this.date = date;
     }
 
-    public String getTime() {
-        return time;
+    public String getStartTime() {
+        return startTime;
     }
 
-    public void setTime(String time) {
-        this.time = time;
+    public void setStartTime(String startTime) {
+        this.startTime = startTime;
     }
 
-    public Long getLength() {
-        return length;
+    public String getEndTime() {
+        return endTime;
     }
 
-    public void setLength(Long length) {
-        this.length = length;
+    public void setEndTime(String endTime) {
+        this.endTime = endTime;
     }
 
     public String getReasonForVisit() {
