@@ -1444,41 +1444,72 @@ var AddAppointment = React.createClass({
                 right: 'agendaWeek,agendaDay'
             },
             height: 300,
+            timezone: 'EST',
             defaultView: 'agendaWeek',
             allDaySlot: false,
             weekends: false,
-            overlap: false,
             slotDuration: "00:15:00",
             locale: initialLocaleCode,
             navLinks: true, // can click day/week names to navigate views
             selectable: true,
             selectHelper: true,
             select: function(start, end) {
-                if(start.isBefore(moment())) {
-                    alert("Error: You can't select a date in the past");
-                    $('#appointmentCalendar').fullCalendar('unselect');
-                    return false;
-                }
-                self.setState({
-                    date: start.format("MM-DD-YYYY"),
-                    startTime: start.format("hh:mm"),
-                    endTime: end.format("hh:mm")
-                });
+                var eventFound = $("#appointmentCalendar").fullCalendar('clientEvents', 1);
+                if (eventFound.length === 0) {
+                    if(start.isBefore(moment())) {
+                        alert("Error: You can't select a date in the past");
+                        $('#appointmentCalendar').fullCalendar('unselect');
+                        return false;
+                    }
+                    self.setState({
+                        date: start.format("MM-DD-YYYY"),
+                        startTime: start.format("hh:mm"),
+                        endTime: end.format("hh:mm")
+                    });
 
-                var title = "Selected Appointment";
-                var eventData = {
-                        title: title,
-                        start: start,
-                        end: end
-                    };
-                $('#appointmentCalendar').fullCalendar('renderEvent', eventData, true); // stick? = true
+                    var title = "";
+                    var eventData = {
+                            id: 1,
+                            title: title,
+                            start: start,
+                            end: end,
+                            startEditable: true,
+                            durationEditable: true
+                        };
+                    $('#appointmentCalendar').fullCalendar('renderEvent', eventData, true); // stick? = true
+
+                } else {
+                    alert("Error! You have already added entered an appointment date");
+                }
                 $('#appointmentCalendar').fullCalendar('unselect');
 
+            },
+            eventDrop: function(event) {
+                if (event.id === 1) {
+                    self.setState({
+                        date: event.start.format("MM-DD-YYYY"),
+                        startTime: event.start.format("hh:mm"),
+                        endTime: event.end.format("hh:mm")
+                    });
+                }
+            },
+            eventResize: function(event) {
+                if (event.id === 1) {
+                    self.setState({
+                        date: event.start.format("MM-DD-YYYY"),
+                        startTime: event.start.format("hh:mm"),
+                        endTime: event.end.format("hh:mm")
+                    });
+                }
             },
             minTime: "06:00:00",
             maxTime: "18:00:00",
             editable: true,
             eventLimit: false, // allow "more" link when too many events
+            eventOverlap: false,
+            selectOverlap: false,
+            eventStartEditable: false,
+            eventDurationEditable: false
 
         });
 
@@ -1511,8 +1542,15 @@ var AddAppointment = React.createClass({
         });
     },
     updatePractitionerName: function(evt) {
+
+        if ((typeof evt) === "string") {
+            var value = evt;
+        } else {
+            var value = evt.target.value;
+        }
+
         this.setState({
-            practitionerName: evt.target.value
+            practitionerName: value
         });
         var events = [];
 
@@ -1521,31 +1559,39 @@ var AddAppointment = React.createClass({
             return true;
         });
 
+        var index = 1;
         this.state.appointments.forEach(function(appointment) {
-          if (appointment.practitionerName === evt.target.value) {
+          if (appointment.practitionerName === value) {
             var dateFormat = "MM-DD-YYYY hh:mm";
             var start = moment((appointment.date + " " + appointment.startTime), dateFormat);
             var end   = moment((appointment.date + " " + appointment.endTime), dateFormat);
+            index++;
 
             var eventData = {
+                id: index,
                 title: "",
                 start: start,
-                end: end
+                end: end,
+                color: '#F08080'
             };
             $('#appointmentCalendar').fullCalendar('renderEvent', eventData, true); // stick? = true
           }
         });
 
-
-
-
-
-
     },
     updatePatientId: function(evt) {
-         this.setState({
-             patientId: evt.target.value
-         });
+
+        if (evt.target.value !== "") {
+            this.setState({
+                patientId: evt.target.value
+            });
+            this.updatePractitionerName(this.state.patients[evt.target.value-1].practitionerName); //Subtract 1 from index because it isn't 0 based
+        } else {
+            this.setState({
+                patientId: -1
+            });
+            this.updatePractitionerName(this.state.patients[evt.target.value-1].practitionerName);
+        }
      },
     updateReasonForVisit: function(evt) {
          this.setState({
