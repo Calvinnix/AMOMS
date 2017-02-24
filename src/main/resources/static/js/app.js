@@ -1454,6 +1454,7 @@ var AddAppointment = React.createClass({
             selectable: true,
             selectHelper: true,
             select: function(start, end) {
+                alert(start);
                 var eventFound = $("#appointmentCalendar").fullCalendar('clientEvents', 1);
                 if (eventFound.length === 0) {
                     if(start.isBefore(moment())) {
@@ -1463,8 +1464,8 @@ var AddAppointment = React.createClass({
                     }
                     self.setState({
                         date: start.format("MM-DD-YYYY"),
-                        startTime: start.format("hh:mm"),
-                        endTime: end.format("hh:mm")
+                        startTime: start.format("HH:mm"),
+                        endTime: end.format("HH:mm")
                     });
 
                     var title = "";
@@ -1488,8 +1489,8 @@ var AddAppointment = React.createClass({
                 if (event.id === 1) {
                     self.setState({
                         date: event.start.format("MM-DD-YYYY"),
-                        startTime: event.start.format("hh:mm"),
-                        endTime: event.end.format("hh:mm")
+                        startTime: event.start.format("HH:mm"),
+                        endTime: event.end.format("HH:mm")
                     });
                 }
             },
@@ -1497,8 +1498,8 @@ var AddAppointment = React.createClass({
                 if (event.id === 1) {
                     self.setState({
                         date: event.start.format("MM-DD-YYYY"),
-                        startTime: event.start.format("hh:mm"),
-                        endTime: event.end.format("hh:mm")
+                        startTime: event.start.format("HH:mm"),
+                        endTime: event.end.format("HH:mm")
                     });
                 }
             },
@@ -1561,8 +1562,9 @@ var AddAppointment = React.createClass({
 
         var index = 1;
         this.state.appointments.forEach(function(appointment) {
+
           if (appointment.practitionerName === value) {
-            var dateFormat = "MM-DD-YYYY hh:mm";
+            var dateFormat = "MM-DD-YYYY HH:mm";
             var start = moment((appointment.date + " " + appointment.startTime), dateFormat);
             var end   = moment((appointment.date + " " + appointment.endTime), dateFormat);
             index++;
