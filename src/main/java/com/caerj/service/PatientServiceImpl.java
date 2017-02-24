@@ -23,7 +23,12 @@ public class PatientServiceImpl implements PatientService {
 
     @Override
     public Patient findById(Long id) {
-        return null;
+        logger.info(String.format(" --- Entering: %s", Thread.currentThread().getStackTrace()[1].getMethodName()));
+
+        Patient patient = patientDao.findById(id);
+
+        logger.info(String.format(" --- Exiting: %s", Thread.currentThread().getStackTrace()[1].getMethodName()));
+        return patient;
     }
 
     @Override
@@ -31,21 +36,6 @@ public class PatientServiceImpl implements PatientService {
         logger.info(String.format(" --- Entering: %s", Thread.currentThread().getStackTrace()[1].getMethodName()));
 
         logger.info(" --- Saving user");
-        patientDao.save(patient);
-
-        logger.info(String.format(" --- Exiting: %s", Thread.currentThread().getStackTrace()[1].getMethodName()));
-    }
-
-    @Override
-    public void update(Patient patient) {
-        logger.info(String.format(" --- Entering: %s", Thread.currentThread().getStackTrace()[1].getMethodName()));
-
-        Patient patientFound = patientDao.findById(patient.getId());
-        if (patientFound != null) {
-            logger.info(" --- Mapping edited user to the existing user.");
-            patient.setId(patientFound.getId());
-        }
-
         patientDao.save(patient);
 
         logger.info(String.format(" --- Exiting: %s", Thread.currentThread().getStackTrace()[1].getMethodName()));

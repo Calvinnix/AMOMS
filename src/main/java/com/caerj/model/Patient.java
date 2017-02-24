@@ -1,7 +1,6 @@
 package com.caerj.model;
 
 import javax.persistence.*;
-import java.util.Date;
 
 /**
  * Created by nixc1 on 2/14/17.
@@ -13,6 +12,8 @@ public class Patient {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    private String publicId;
 
     @Column(nullable = false)
     private String firstName;
@@ -41,7 +42,7 @@ public class Patient {
     private Integer zipCode;
 
     @Column(nullable = false)
-    private String martialStatus;
+    private String maritalStatus;
 
     @Column(nullable = false)
     private Integer numOfChildren;
@@ -59,7 +60,7 @@ public class Patient {
     private String emailAddress;
 
 
-    public Patient(String firstName, String middleName, String lastName, Boolean gender, String dob, String address, String city, String state, Integer zipCode, String martialStatus, Integer numOfChildren, Long phoneNumber, User practitioner, String practitionerName, String emailAddress) {
+    public Patient(String firstName, String middleName, String lastName, Boolean gender, String dob, String address, String city, String state, Integer zipCode, String maritalStatus, Integer numOfChildren, Long phoneNumber, User practitioner, String practitionerName, String emailAddress) {
         this.firstName = firstName;
         this.middleName = middleName;
         this.lastName = lastName;
@@ -69,7 +70,7 @@ public class Patient {
         this.city = city;
         this.state = state;
         this.zipCode = zipCode;
-        this.martialStatus = martialStatus;
+        this.maritalStatus = maritalStatus;
         this.numOfChildren = numOfChildren;
         this.phoneNumber = phoneNumber;
         this.practitioner = practitioner;
@@ -87,6 +88,10 @@ public class Patient {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Long getPublicId() {
+        return id;
     }
 
     public String getFirstName() {
@@ -161,12 +166,12 @@ public class Patient {
         this.zipCode = zipCode;
     }
 
-    public String getMartialStatus() {
-        return martialStatus;
+    public String getMaritalStatus() {
+        return maritalStatus;
     }
 
-    public void setMartialStatus(String martialStatus) {
-        this.martialStatus = martialStatus;
+    public void setMaritalStatus(String maritalStatus) {
+        this.maritalStatus = maritalStatus;
     }
 
     public Integer getNumOfChildren() {

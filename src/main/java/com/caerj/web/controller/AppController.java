@@ -1,8 +1,10 @@
 package com.caerj.web.controller;
 
+import com.caerj.model.Appointment;
 import com.caerj.model.Patient;
 import com.caerj.model.Role;
 import com.caerj.model.User;
+import com.caerj.service.AppointmentService;
 import com.caerj.service.PatientService;
 import com.caerj.service.UserService;
 import com.caerj.web.UserValidator;
@@ -35,6 +37,9 @@ public class AppController {
     @Autowired
     private PatientService patientService;
 
+    @Autowired
+    private AppointmentService appointmentService;
+
     private static final Logger logger = LoggerFactory.getLogger(AppController.class);
 
     @RequestMapping(value = "/")
@@ -56,6 +61,13 @@ public class AppController {
         logger.info(" --- RequestMapping from /patients");
         logger.info(" --- Mapping to /patients");
         return "patients";
+    }
+
+    @RequestMapping(value = "/appointment")
+    public String appointment() {
+        logger.info(" --- RequestMapping from /appointment");
+        logger.info(" --- Mapping to /appointment");
+        return "appointment";
     }
 
     @RequestMapping(value = "/admin/addUser", method = RequestMethod.POST)
@@ -157,6 +169,95 @@ public class AppController {
 
         logger.info(" --- Redirecting to /patients");
         return "redirect:/patients";
+    }
+
+    @RequestMapping(value = "/patients/editPatient", method = RequestMethod.POST)
+    public String editPatient(HttpServletRequest request) {
+        logger.info(" --- RequestMapping from /patients/editPatient");
+
+        String strId = request.getParameter("id");
+        String firstName = request.getParameter("firstName");
+        String middleName = request.getParameter("middleName");
+        String lastName = request.getParameter("lastName");
+        String strGender = request.getParameter("gender");
+        String dob = request.getParameter("dob");
+        String address = request.getParameter("address");
+        String city = request.getParameter("city");
+        String state = request.getParameter("state");
+        String strZipCode = request.getParameter("zipCode");
+        String maritalStatus = request.getParameter("maritalStatus");
+        String strNumberOfChildren = request.getParameter("numberOfChildren");
+        String strPhoneNumber = request.getParameter("phoneNumber");
+        String emailAddress = request.getParameter("emailAddress");
+        String practitionerName = request.getParameter("practitionerName");
+
+        Long id = Long.valueOf(strId);
+
+        Boolean gender = Boolean.valueOf(strGender);
+
+        Integer zipCode = Integer.valueOf(strZipCode);
+        Integer numberOfChildren = Integer.valueOf(strNumberOfChildren);
+        Long phoneNumber = Long.valueOf(strPhoneNumber);
+
+        User practitioner = userService.findUserByUsername(practitionerName);
+
+        if (practitioner == null) {
+            logger.error("Practitioner not found!");
+        }
+
+        Patient patient = new Patient(firstName,
+                middleName,
+                lastName,
+                gender,
+                dob,
+                address,
+                city,
+                state,
+                zipCode,
+                maritalStatus,
+                numberOfChildren,
+                phoneNumber,
+                practitioner,
+                practitionerName,
+                emailAddress);
+
+        patient.setId(id);
+
+        logger.info(" --- Saving updated patient");
+        patientService.save(patient);
+
+        logger.info(" --- Redirecting to /patients");
+        return "redirect:/patients";
+    }
+
+    @RequestMapping(value = "/appointment/addAppointment", method = RequestMethod.POST)
+    public String addAppointment(HttpServletRequest request) {
+        logger.info(" --- RequestMapping from /appointment/addAppointment");
+
+        String strPatientId = request.getParameter("patientId");
+        String practitionerName = request.getParameter("practitionerName");
+        String date = request.getParameter("date");
+        String startTime = request.getParameter("startTime");
+        String endTime = request.getParameter("endTime");
+        String reasonForVisit = request.getParameter("reasonForVisit");
+
+        Long patientId = Long.valueOf(strPatientId);
+
+        Patient patient = patientService.findById(patientId);
+
+        User practitioner = userService.findUserByUsername(practitionerName); //todo:ctn should probably validate this is actually a practitioner
+
+        if (practitioner == null) {
+            logger.error("Practitioner not found!");
+        }
+
+        Appointment appointment = new Appointment(patient, practitioner, date, startTime, endTime, reasonForVisit);
+
+        logger.info(" --- Saving appointment");
+        appointmentService.save(appointment);
+
+        logger.info(" --- Redirecting to /appointment");
+        return "redirect:/appointment";
     }
 
 
