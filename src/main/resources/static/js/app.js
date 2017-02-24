@@ -737,12 +737,7 @@ var Patient = React.createClass({
             }
         });
     },
-<<<<<<< HEAD
-    handleView: function() {
-        alert("Viewing profile");
 
-
-=======
     handleEditConfirm: function() {
 
         var self = this;
@@ -823,7 +818,6 @@ var Patient = React.createClass({
             emailAddress: self.state.originalEmailAddress,
             practitionerName: self.state.originalPractitionerName
         });
->>>>>>> e7d08dfd2f8dff74d14f943a2e9df0588c0e3277
     },
     /**
         Renders the HTML
