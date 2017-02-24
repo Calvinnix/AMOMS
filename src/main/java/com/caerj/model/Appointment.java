@@ -19,8 +19,10 @@ public class Appointment {
 
     @OneToOne
     @JoinColumn(name = "user_id")
-    private User practitioner; //todo:ctn should probably add some way to validate this is a practitioner.
-                                //so far this is only done on the frontend
+    private User practitioner;
+
+    private String practitionerName;
+
     private String date;
 
     private String startTime;
@@ -63,6 +65,14 @@ public class Appointment {
 
     public void setPractitioner(User practitioner) {
         this.practitioner = practitioner;
+    }
+
+    public String getPractitionerName() {
+        if (this.practitioner != null) {
+            return this.practitioner.getUsername();
+        } else {
+            return "";
+        }
     }
 
     public String getDate() {

@@ -1515,11 +1515,15 @@ var AddAppointment = React.createClass({
             practitionerName: evt.target.value
         });
         var events = [];
+
+        //Clears the calendar so results aren't compounded
+        $('#appointmentCalendar').fullCalendar( 'removeEvents', function(event) {
+            return true;
+        });
+
         this.state.appointments.forEach(function(appointment) {
-            var title = "Appointment";
-
+          if (appointment.practitionerName === evt.target.value) {
             var dateFormat = "MM-DD-YYYY hh:mm";
-
             var start = moment((appointment.date + " " + appointment.startTime), dateFormat);
             var end   = moment((appointment.date + " " + appointment.endTime), dateFormat);
 
@@ -1529,6 +1533,7 @@ var AddAppointment = React.createClass({
                 end: end
             };
             $('#appointmentCalendar').fullCalendar('renderEvent', eventData, true); // stick? = true
+          }
         });
 
 
