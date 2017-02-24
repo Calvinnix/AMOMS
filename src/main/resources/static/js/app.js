@@ -1662,7 +1662,7 @@ var AddAppointment = React.createClass({
                 <div className="well well-lg">
                     <h3>Add Appointment</h3>
                     <div className="row">
-                        <div className="col-md-6">
+                        <div className="col-md-4">
                             <label>Patient:</label>
                             <PatientSelect patients={this.state.patients} value={this.state.patientId} onChange={this.updatePatientId} />
                             <hr />
@@ -1672,7 +1672,7 @@ var AddAppointment = React.createClass({
                             <label>Reason For Visit:</label>
                             <textarea type="text" rows="4" className="form-control" onChange={this.updateReasonForVisit} placeholder="Reason for visit." value={this.state.reasonForVisit} />
                         </div>
-                        <div className="col-md-6">
+                        <div className="col-md-8">
                             <label>Date:</label>
                             <div id="appointmentCalendar"></div>
                         </div>
