@@ -1704,6 +1704,253 @@ if (document.getElementById('addNewAppointment') != null) {
 }
 
 
+var ViewAppointments = React.createClass({
+
+    getInitialState: function() {
+        return {
+                  appointments: [],
+                  appointmentId: -1,
+                  patientName: '',
+                  date: '',
+                  startTime: '',
+                  endTime: '',
+                  reasonForVisit: '',
+                  patientId: -1,
+                  startTime: '',
+                  endTime: '',
+                  date: '',
+                  reasonForVisit: '',
+                  notes: ''
+        };
+    },
+    updateAppointment: function(id) {
+        var self = this;
+        //need to do 'id-1' offset because id is 1 based
+        this.setState({
+            appointmentId: id,
+            patientName: self.state.appointments[id-1].patientName,
+            date: self.state.appointments[id-1].date,
+            startTime: self.state.appointments[id-1].startTime,
+            endTime: self.state.appointments[id-1].endTime,
+            reasonForVisit: self.state.appointments[id-1].reasonForVisit,
+            notes: self.state.appointments[id-1].notes
+        });
+    },
+    updateNotes: function(evt) {
+        this.setState({
+            notes: evt.target.value
+        });
+    },
+    loadCalendar: function() {
+     var self = this;
+
+     var initialLocaleCode = 'en';
+
+     $('#practitionerAppointmentsCalendar').fullCalendar({
+         header: {
+             left: 'prev,next today',
+             center: 'title',
+             right: 'agendaWeek,agendaDay'
+         },
+         timezone: 'America/New_York',
+         defaultView: 'agendaDay',
+         allDaySlot: false,
+         weekends: false,
+         slotDuration: "00:15:00",
+         locale: initialLocaleCode,
+         navLinks: true, // can click day/week names to navigate views
+         selectable: false,
+         selectHelper: true,
+         minTime: "06:00:00",
+         maxTime: "18:00:00",
+         editable: true,
+         eventLimit: false, // allow "more" link when too many events
+         eventOverlap: false,
+         selectOverlap: false,
+         eventStartEditable: false,
+         eventDurationEditable: false,
+         eventClick: function(event) {
+            self.updateAppointment(event.appointmentId);
+            // This makes it to where you can't close the modal by clicking away
+            $('#myModal').modal({
+              backdrop: 'static',
+              keyboard: false
+            });
+         }
+
+     });
+
+     var index = 1;
+
+     var username = document.getElementById("username");
+
+     //Clears the calendar so results aren't compounded
+     $('#practitionerAppointmentsCalendargit').fullCalendar( 'removeEvents', function(event) {
+         return true;
+     });
+
+     this.state.appointments.forEach(function(appointment) {
+
+       if (appointment.practitionerName === username.innerText) {
+         var dateFormat = "MM-DD-YYYY HH:mm";
+         var start = moment((appointment.date + " " + appointment.startTime), dateFormat);
+         var end   = moment((appointment.date + " " + appointment.endTime), dateFormat);
+         index++;
+
+         var eventData = {
+             id: index,
+             title: appointment.patientName + " --- Reason for visit --- " + appointment.reasonForVisit,
+             start: start,
+             end: end,
+             appointmentId: appointment.publicId
+         };
+         $('#practitionerAppointmentsCalendar').fullCalendar('renderEvent', eventData, true); // stick? = true
+       }
+     });
+    },
+    loadAppointmentsFromServer: function() {
+         var self = this;
+        $.ajax({
+           url: "http://localhost:8080/api/appointments"
+        }).then(function (data) {
+             self.setState({appointments: data._embedded.appointments});
+            return self.loadCalendar();
+        });
+    },
+    saveNotes: function() {
+
+        var self = this;
+        /**
+            Since a post request is being made. We must pass along this
+            CSRF token.
+
+            We need this because we have csrf protection enabled in SecurityConfig
+        */
+
+        if (csrf_element !== null) {
+            $.ajaxPrefilter(function (options, originalOptions, jqXHR) {
+                jqXHR.setRequestHeader('X-CSRF-Token', csrf_element.value);
+            });
+        }
+        $.ajax({
+            url: "http://localhost:8080/practitioner_appointments/saveNotes",
+            type: "POST",
+            data: {
+                  appointmentId: this.state.appointmentId,
+                  notes: this.state.notes
+            },
+            success: function() {
+                toastr.options = {
+                    "debug": false,
+                    "positionClass": "toast-top-center",
+                    "onclick": null,
+                    "fadeIn": 300,
+                    "fadeOut": 1000,
+                    "timeOut": 5000,
+                    "extendedTimeOut": 1000
+                }
+                toastr.success("Successfully Added Notes!");
+                self.loadAppointmentsFromServer();
+            },
+            error: function(xhr, ajaxOptions, thrownError) {
+                toastr.options = {
+                    "debug": false,
+                    "positionClass": "toast-top-center",
+                    "onclick": null,
+                    "fadeIn": 300,
+                    "fadeOut": 1000,
+                    "timeOut": 5000,
+                    "extendedTimeOut": 1000
+                }
+                toastr.error("Not Authorized");
+            }
+        });
+    },
+    componentDidMount: function () {
+        this.loadAppointmentsFromServer();
+    },
+    render: function() {
+
+        return(
+
+        <div className="container">
+            <div className="well well-lg">
+                <div className="row">
+                    <div className="col-md-12">
+                        <div id="practitionerAppointmentsCalendar"></div>
+                        <div className="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                          <div className="modal-dialog modal-lg" role="document">
+                            <div className="modal-content">
+                              <div className="modal-header">
+                                <button type="button" className="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                <h4 className="modal-title">
+                                    {this.state.patientName}
+                                </h4>
+                              </div>
+                              <div className="modal-body">
+                                  <div className="row">
+                                      <div className="col-md-2">
+                                          <p>Date:</p>
+                                      </div>
+                                      <div className="col-md-10">
+                                          <p>{this.state.date}</p>
+                                      </div>
+                                  </div>
+                                  <div className="row">
+                                      <div className="col-md-2">
+                                          <p>Time:</p>
+                                      </div>
+                                      <div className="col-md-10">
+                                          <p>{this.state.startTime} - {this.state.endTime}</p>
+                                      </div>
+                                  </div>
+                                  <hr />
+                                  <div className="row">
+                                      <div className="col-md-2">
+                                          <p>Reason for visit:</p>
+                                      </div>
+                                      <div className="col-md-10">
+                                          <p>{this.state.reasonForVisit}</p>
+                                      </div>
+                                  </div>
+                                  <hr />
+                                  <div className="row">
+                                      <div className="col-md-2">
+                                          <p>Notes:</p>
+                                      </div>
+                                      <div className="col-md-10">
+                                          <textarea type="text" rows="4" className="form-control" onChange={this.updateNotes} value={this.state.notes} />
+                                      </div>
+                                  </div>
+                                  <hr />
+                                  <div className="row">
+                                      <div className="col-md-12">
+                                          <button className="btn btn-success center-block" onClick={this.saveNotes}>Save</button>
+                                      </div>
+                                  </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        );
+
+    }
+});
+
+
+
+if (document.getElementById('practitionerCalendar') != null) {
+    var csrf_element = document.getElementById('csrf_token');
+    ReactDOM.render(<ViewAppointments csrf_element="{{csrf_element}}"/>, document.getElementById('practitionerCalendar'));
+}
+
+
 /*TODO:ctn Eventually will want to convert this code (as well as the login/signup page) to utilize REACT */
 /*TODO:ctn some code is repeated... This should be cleaned up */
 

@@ -13,6 +13,8 @@ public class Appointment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private Long publicId;
+
     @OneToOne
     @JoinColumn(name = "patient_id")
     private Patient patient;
@@ -24,6 +26,8 @@ public class Appointment {
     private String practitionerName;
 
     private String patientName;
+
+    private String notes;
 
     private String date;
 
@@ -43,7 +47,19 @@ public class Appointment {
         this.startTime = startTime;
         this.endTime = endTime;
         this.reasonForVisit = reasonForVisit;
+        this.notes = notes;
     }
+
+    public Appointment(Patient patient, User practitioner, String date, String startTime, String endTime, String reasonForVisit, String notes) {
+        this.patient = patient;
+        this.practitioner = practitioner;
+        this.date = date;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.reasonForVisit = reasonForVisit;
+    }
+
+
 
     public Long getId() {
         return id;
@@ -51,6 +67,10 @@ public class Appointment {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Long getPublicId() {
+        return id;
     }
 
     public Patient getPatient() {
@@ -85,6 +105,14 @@ public class Appointment {
                        this.patient.getLastName();
         }
         return fullName;
+    }
+
+    public String getNotes() {
+        return notes;
+    }
+
+    public void setNotes(String notes) {
+        this.notes = notes;
     }
 
     public String getDate() {

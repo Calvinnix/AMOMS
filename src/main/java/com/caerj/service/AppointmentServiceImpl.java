@@ -21,7 +21,12 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     @Override
     public Appointment findById(Long id) {
-        return null;
+        logger.info(String.format(" --- Entering: %s", Thread.currentThread().getStackTrace()[1].getMethodName()));
+
+        Appointment appointment = appointmentDao.findById(id);
+
+        logger.info(String.format(" --- Exiting: %s", Thread.currentThread().getStackTrace()[1].getMethodName()));
+        return appointment;
     }
 
     @Override

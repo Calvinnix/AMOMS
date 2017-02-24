@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="layout :: head(title='Appointments')"></head>
+<body>
+<input type="hidden" id="csrf_token" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+<div th:replace="layout :: nav(selectedTab='practitioners_appointments')"></div>
+<div class="container">
+    <div id="practitionerCalendar"></div>
+</div>
+<block th:replace="layout :: script"></block>
+</body>
+</html>

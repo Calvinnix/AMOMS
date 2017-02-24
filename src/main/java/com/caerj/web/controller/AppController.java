@@ -70,6 +70,13 @@ public class AppController {
         return "appointment";
     }
 
+    @RequestMapping(value = "/practitioner_appointments")
+    public String practitioner_appointments() {
+        logger.info(" --- RequestMapping from /practitioner_appointments");
+        logger.info(" --- Mapping to /practitioner_appointments");
+        return "practitioner_appointments";
+    }
+
     @RequestMapping(value = "/admin/addUser", method = RequestMethod.POST)
     public String addUser(HttpServletRequest request) {
         logger.info(" --- RequestMapping from /admin/addUser");
@@ -258,6 +265,31 @@ public class AppController {
 
         logger.info(" --- Redirecting to /appointment");
         return "redirect:/appointment";
+    }
+
+
+    @RequestMapping(value = "/practitioner_appointments/saveNotes", method = RequestMethod.POST)
+    public String saveNotes(HttpServletRequest request) {
+        logger.info(" --- RequestMapping from /practitioner_appointments/saveNotes");
+
+        String strAppointmentId = request.getParameter("appointmentId");
+        String notes = request.getParameter("notes");
+
+        Long appointmentId = Long.valueOf(strAppointmentId);
+
+        Appointment appointment = appointmentService.findById(appointmentId);
+
+        if (appointment == null) {
+            logger.error("Appointment not found! appointmentId = " + appointmentId);
+        }
+
+        appointment.setNotes(notes);
+
+        logger.info(" --- Saving notes");
+        appointmentService.save(appointment);
+
+        logger.info(" --- Redirecting to /practitioner_appointments");
+        return "redirect:/practitioner_appointments";
     }
 
 
