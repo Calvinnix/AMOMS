@@ -1444,7 +1444,7 @@ var AddAppointment = React.createClass({
                 right: 'agendaWeek,agendaDay'
             },
             height: 300,
-            timezone: 'EST',
+            timezone: 'America/New_York',
             defaultView: 'agendaWeek',
             allDaySlot: false,
             weekends: false,
@@ -1454,10 +1454,15 @@ var AddAppointment = React.createClass({
             selectable: true,
             selectHelper: true,
             select: function(start, end) {
-                alert(start);
+
                 var eventFound = $("#appointmentCalendar").fullCalendar('clientEvents', 1);
+
                 if (eventFound.length === 0) {
-                    if(start.isBefore(moment())) {
+                    //The below condition acts as a workaround to how tz is automatically
+                    //picking up the EST timezone but for some reason 'start' is being
+                    //set as 'gmt'. I also had to subtract 5 hours from moment() to account
+                    //for the correct current time
+                    if(start.isBefore(moment().tz("gmt").add(-5, "hours"))) {
                         alert("Error: You can't select a date in the past");
                         $('#appointmentCalendar').fullCalendar('unselect');
                         return false;
@@ -1571,7 +1576,7 @@ var AddAppointment = React.createClass({
 
             var eventData = {
                 id: index,
-                title: "",
+                title: appointment.patientName,
                 start: start,
                 end: end,
                 color: '#F08080'

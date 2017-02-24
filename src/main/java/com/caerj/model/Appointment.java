@@ -23,6 +23,8 @@ public class Appointment {
 
     private String practitionerName;
 
+    private String patientName;
+
     private String date;
 
     private String startTime;
@@ -73,6 +75,16 @@ public class Appointment {
         } else {
             return "";
         }
+    }
+
+    public String getPatientName() {
+        String fullName = "";
+        if (this.patient != null) {
+            fullName = this.patient.getFirstName() + " " +
+                       this.patient.getMiddleName() + " " +
+                       this.patient.getLastName();
+        }
+        return fullName;
     }
 
     public String getDate() {

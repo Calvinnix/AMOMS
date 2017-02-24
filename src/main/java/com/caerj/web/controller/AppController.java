@@ -244,6 +244,7 @@ public class AppController {
         Long patientId = Long.valueOf(strPatientId);
 
         Patient patient = patientService.findById(patientId);
+
         User practitioner = userService.findUserByUsername(practitionerName); //todo:ctn should probably validate this is actually a practitioner
 
         if (practitioner == null) {
