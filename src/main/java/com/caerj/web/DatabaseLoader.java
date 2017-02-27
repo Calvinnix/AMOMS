@@ -58,11 +58,11 @@ public class DatabaseLoader implements CommandLineRunner {
 
 
         User practitioner = userService.findUserByUsername("practitioner");
-        Patient patient = new Patient("FirstName",
-                "MiddleName",
-                "LastName",
+        Patient patient = new Patient("Calvin",
+                "Thomas",
+                "Nix",
                 true,
-                "January 1, 2011",
+                "January 8, 2000",
                 "132 Brickbored ln.",
                 "Marietta",
                 "GA",
@@ -72,8 +72,24 @@ public class DatabaseLoader implements CommandLineRunner {
                 2223334444L,
                  practitioner,
                 "practitioner",
-                "email@address.com");
+                "calvin@address.com");
         this.patientDao.save(patient);
+        Patient patient2 = new Patient("Alex",
+                "",
+                "Estrada",
+                true,
+                "January 8, 1901",
+                "188 Slowtown ln.",
+                "Marietta",
+                "GA",
+                30888,
+                "Single",
+                9,
+                2223339999L,
+                practitioner,
+                "practitioner",
+                "alex@address.com");
+        this.patientDao.save(patient2);
 
     }
 }

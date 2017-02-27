@@ -1785,7 +1785,7 @@ var ViewAppointments = React.createClass({
      var username = document.getElementById("username");
 
      //Clears the calendar so results aren't compounded
-     $('#practitionerAppointmentsCalendargit').fullCalendar( 'removeEvents', function(event) {
+     $('#practitionerAppointmentsCalendar').fullCalendar( 'removeEvents', function(event) {
          return true;
      });
 
