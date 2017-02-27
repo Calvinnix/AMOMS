@@ -27,6 +27,7 @@ public class Appointment {
 
     private String patientName;
 
+    @Column( length = 10000 ) //this may need to be expanded
     private String notes;
 
     private String date;
@@ -35,6 +36,7 @@ public class Appointment {
 
     private String endTime;
 
+    @Column( length = 10000 ) //this may need to be expanded
     private String reasonForVisit;
 
     public Appointment() {

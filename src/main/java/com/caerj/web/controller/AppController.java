@@ -283,6 +283,8 @@ public class AppController {
             logger.error("Appointment not found! appointmentId = " + appointmentId);
         }
 
+        System.out.println(notes);
+
         appointment.setNotes(notes);
 
         logger.info(" --- Saving notes");

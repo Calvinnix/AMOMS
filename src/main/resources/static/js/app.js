@@ -1457,6 +1457,7 @@ var AddAppointment = React.createClass({
             defaultView: 'agendaWeek',
             allDaySlot: false,
             weekends: false,
+            nowIndicator: true,
             slotDuration: "00:15:00",
             locale: initialLocaleCode,
             navLinks: true, // can click day/week names to navigate views
@@ -1725,6 +1726,11 @@ var ViewAppointments = React.createClass({
     },
     updateAppointment: function(id) {
         var self = this;
+
+        var notes = self.state.appointments[id-1].notes;
+        if ( notes === null) {
+            notes = "";
+        }
         //need to do 'id-1' offset because id is 1 based
         this.setState({
             appointmentId: id,
@@ -1733,7 +1739,7 @@ var ViewAppointments = React.createClass({
             startTime: self.state.appointments[id-1].startTime,
             endTime: self.state.appointments[id-1].endTime,
             reasonForVisit: self.state.appointments[id-1].reasonForVisit,
-            notes: self.state.appointments[id-1].notes
+            notes: notes
         });
     },
     updateNotes: function(evt) {
@@ -1756,6 +1762,7 @@ var ViewAppointments = React.createClass({
          defaultView: 'agendaDay',
          allDaySlot: false,
          weekends: false,
+         nowIndicator: true,
          slotDuration: "00:15:00",
          locale: initialLocaleCode,
          navLinks: true, // can click day/week names to navigate views
