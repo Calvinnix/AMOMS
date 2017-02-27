@@ -1615,6 +1615,14 @@ var AddAppointment = React.createClass({
              reasonForVisit: evt.target.value
          });
      },
+     clearEntries: function() {
+        //Clears the entries
+        this.setState({
+            patientId: -1,
+            reasonForVisit: ""
+        });
+        this.updatePractitionerName("");
+     },
      handleAddAppointment: function() {
         var self = this;
         /**
@@ -1651,6 +1659,8 @@ var AddAppointment = React.createClass({
                     "extendedTimeOut": 1000
                 }
                 toastr.success("Successfully Added Appointment!");
+                self.loadAppointmentsFromServer();
+                self.clearEntries();
             },
             error: function(xhr, ajaxOptions, thrownError) {
                 toastr.options = {
