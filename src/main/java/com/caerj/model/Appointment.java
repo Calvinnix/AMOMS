@@ -39,6 +39,12 @@ public class Appointment {
     @Column( length = 10000 ) //this may need to be expanded
     private String reasonForVisit;
 
+    private String checkInTime;
+
+    private String sessionStartTime;
+
+    private String sessionEndTime;
+
     public Appointment() {
     }
 
@@ -147,5 +153,29 @@ public class Appointment {
 
     public void setReasonForVisit(String reasonForVisit) {
         this.reasonForVisit = reasonForVisit;
+    }
+
+    public String getCheckInTime() {
+        return checkInTime;
+    }
+
+    public void setCheckInTime(String checkInTime) {
+        this.checkInTime = checkInTime;
+    }
+
+    public String getSessionStartTime() {
+        return sessionStartTime;
+    }
+
+    public void setSessionStartTime(String sessionStartTime) {
+        this.sessionStartTime = sessionStartTime;
+    }
+
+    public String getSessionEndTime() {
+        return sessionEndTime;
+    }
+
+    public void setSessionEndTime(String sessionEndTime) {
+        this.sessionEndTime = sessionEndTime;
     }
 }

@@ -283,8 +283,6 @@ public class AppController {
             logger.error("Appointment not found! appointmentId = " + appointmentId);
         }
 
-        System.out.println(notes);
-
         appointment.setNotes(notes);
 
         logger.info(" --- Saving notes");
@@ -293,6 +291,79 @@ public class AppController {
         logger.info(" --- Redirecting to /practitioner_appointments");
         return "redirect:/practitioner_appointments";
     }
+
+    @RequestMapping(value = "/appointment/checkIn", method = RequestMethod.POST)
+    public String checkIn(HttpServletRequest request) {
+        logger.info(" --- RequestMapping from /appointment/checkIn");
+
+        String strAppointmentId = request.getParameter("appointmentId");
+
+        Long appointmentId = Long.valueOf(strAppointmentId);
+
+        Appointment appointment = appointmentService.findById(appointmentId);
+
+        if (appointment == null) {
+            logger.error("Appointment not found! appointmentId = " + appointmentId);
+        }
+
+        Date currentTime = new Date();
+        appointment.setCheckInTime(currentTime.toString());
+
+        logger.info(" --- Updating appointment");
+        appointmentService.update(appointment);
+
+        logger.info(" --- Redirecting to /appointment");
+        return "redirect:/appointment";
+    }
+
+    @RequestMapping(value = "/appointment/startAppointment", method = RequestMethod.POST)
+    public String startAppointment(HttpServletRequest request) {
+        logger.info(" --- RequestMapping from /appointment/startAppointment");
+
+        String strAppointmentId = request.getParameter("appointmentId");
+
+        Long appointmentId = Long.valueOf(strAppointmentId);
+
+        Appointment appointment = appointmentService.findById(appointmentId);
+
+        if (appointment == null) {
+            logger.error("Appointment not found! appointmentId = " + appointmentId);
+        }
+
+        Date currentTime = new Date();
+        appointment.setSessionStartTime(currentTime.toString());
+
+        logger.info(" --- Updating appointment");
+        appointmentService.update(appointment);
+
+        logger.info(" --- Redirecting to /appointment");
+        return "redirect:/appointment";
+    }
+
+    @RequestMapping(value = "/appointment/endAppointment", method = RequestMethod.POST)
+    public String endAppointment(HttpServletRequest request) {
+        logger.info(" --- RequestMapping from /appointment/endAppointment");
+
+        String strAppointmentId = request.getParameter("appointmentId");
+
+        Long appointmentId = Long.valueOf(strAppointmentId);
+
+        Appointment appointment = appointmentService.findById(appointmentId);
+
+        if (appointment == null) {
+            logger.error("Appointment not found! appointmentId = " + appointmentId);
+        }
+
+        Date currentTime = new Date();
+        appointment.setSessionEndTime(currentTime.toString());
+
+        logger.info(" --- Updating appointment");
+        appointmentService.update(appointment);
+
+        logger.info(" --- Redirecting to /appointment");
+        return "redirect:/appointment";
+    }
+
 
 
 }

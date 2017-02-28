@@ -6,10 +6,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class Amoms {
 
-	//todo:ctn patient check in (Receptionist)
-	//todo:ctn patient check out (Receptionist)
-	//todo:ctn patient appointment start (practitioner)
-	//todo:ctn patient appointment end   (practitioner)
 	//todo:ctn ability to add prescriptions
 	//todo:ctn associate prescriptions with appointment
 	//todo:ctn show patient history
