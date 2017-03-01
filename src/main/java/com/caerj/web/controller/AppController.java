@@ -1,11 +1,9 @@
 package com.caerj.web.controller;
 
-import com.caerj.model.Appointment;
-import com.caerj.model.Patient;
-import com.caerj.model.Role;
-import com.caerj.model.User;
+import com.caerj.model.*;
 import com.caerj.service.AppointmentService;
 import com.caerj.service.PatientService;
+import com.caerj.service.PrescriptionService;
 import com.caerj.service.UserService;
 import com.caerj.web.UserValidator;
 import org.slf4j.Logger;
@@ -16,9 +14,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.servlet.http.HttpServletRequest;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -39,6 +34,9 @@ public class AppController {
 
     @Autowired
     private AppointmentService appointmentService;
+
+    @Autowired
+    private PrescriptionService prescriptionService;
 
     private static final Logger logger = LoggerFactory.getLogger(AppController.class);
 
@@ -75,6 +73,13 @@ public class AppController {
         logger.info(" --- RequestMapping from /practitioner_appointments");
         logger.info(" --- Mapping to /practitioner_appointments");
         return "practitioner_appointments";
+    }
+
+    @RequestMapping(value = "/prescriptions")
+    public String prescriptions() {
+        logger.info(" --- RequestMapping from /prescriptions");
+        logger.info(" --- Mapping to /prescriptions");
+        return "prescriptions";
     }
 
     @RequestMapping(value = "/admin/addUser", method = RequestMethod.POST)
@@ -363,6 +368,41 @@ public class AppController {
         logger.info(" --- Redirecting to /appointment");
         return "redirect:/appointment";
     }
+
+    @RequestMapping(value = "/prescriptions/addPrescription", method = RequestMethod.POST)
+    public String addPrescription(HttpServletRequest request) {
+        logger.info(" --- RequestMapping from /prescriptions/addPrescriptions");
+
+        String name = request.getParameter("name");
+        String description = request.getParameter("description");
+
+        Prescription prescription = new Prescription(name, description);
+
+        prescriptionService.save(prescription);
+
+        logger.info(" --- Redirecting to /prescriptions");
+        return "redirect:/prescriptions";
+    }
+
+    @RequestMapping(value = "/prescriptions/editPrescription", method = RequestMethod.POST)
+    public String editPrescription(HttpServletRequest request) {
+        logger.info(" --- RequestMapping from /prescriptions/editPrescription");
+
+        String strId = request.getParameter("id");
+        String name = request.getParameter("name");
+        String description = request.getParameter("description");
+
+        Long id = Long.valueOf(strId);
+
+        Prescription prescription = new Prescription(name, description);
+        prescription.setId(id);
+
+        prescriptionService.save(prescription);
+
+        logger.info(" --- Redirecting to /prescriptions");
+        return "redirect:/prescriptions";
+    }
+
 
 
 

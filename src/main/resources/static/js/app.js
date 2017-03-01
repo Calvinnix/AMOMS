@@ -1379,14 +1379,6 @@ var AllPatients = React.createClass({
     }
 });
 
-<div id="patientModal" class="modal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h2>Test</h2>
-        </div>
-    </div>
-</div>
-
 if (document.getElementById('allPatients') != null) {
     var csrf_element = document.getElementById('csrf_token');
     ReactDOM.render(<AllPatients csrf_element="{{csrf_element}}"/>, document.getElementById('allPatients'));
@@ -2360,12 +2352,368 @@ if (document.getElementById('receptionistCalendar') != null) {
 
 
 
+var Prescription = React.createClass({
+    /**
+        propTypes defines the values that this class will be expecting as properties.
+    */
+    propTypes: {
+        prescription:      React.PropTypes.object.isRequired,
+        csrf_element: React.PropTypes.object.isRequired
+    },
+    /**
+        This sets the initial state of the User class. As well as defines initial state variables
+    */
+    getInitialState: function() {
+        return {
+            prescriptions: [],
+            display: true,
+            editing: false,
+            name: this.props.prescription.name,
+            originalName: this.props.prescription.name,
+            description: this.props.prescription.description,
+            originalDescription: this.props.prescription.description,
+        };
+    },
+    componentDidMount: function () {
+        this.loadPrescriptionsFromServer();
+    },
+    loadPrescriptionsFromServer: function() {
+        var self = this;
+        $.ajax({
+            url: "http://localhost:8080/api/prescriptions"
+        }).then(function (data) {
+            self.setState({prescriptions: data._embedded.prescriptions});
+        });
+    },
+    updateName: function(evt) {
+        this.setState({
+            name: evt.target.value
+        });
+    },
+    updateDescription: function(evt) {
+        this.setState({
+            description: evt.target.value
+        });
+    },
+    /**
+        This handles whenever a user tries to delete an entry
+    */
+    handleDelete: function() {
+        var self = this;
+        /**
+            Since a post request is being made. We must pass along this
+            CSRF token.
+
+            We need this because we have csrf protection enabled in SecurityConfig
+        */
+        if (csrf_element !== null) {
+          $.ajaxPrefilter(function (options, originalOptions, jqXHR) {
+             jqXHR.setRequestHeader('X-CSRF-Token', csrf_element.value);
+          });
+        }
+        $.ajax({
+            url: self.props.prescription._links.self.href,
+            type: 'DELETE',
+            success: function(result) {
+                self.setState({display: false});
+            },
+            error: function(xhr, ajaxOptions, thrownError) {
+                toastr.options = {
+                    "debug": false,
+                    "positionClass": "toast-top-center",
+                    "onclick": null,
+                    "fadeIn": 300,
+                    "fadeOut": 1000,
+                    "timeOut": 5000,
+                    "extendedTimeOut": 1000
+                }
+                toastr.error("Not Authorized");
+            }
+        });
+    },
+    handleEdit: function() {
+        this.setState({
+            editing: true
+        });
+    },
+    handleEditConfirm: function() {
+
+        var self = this;
+        /**
+            Since a post request is being made. We must pass along this
+            CSRF token.
+
+            We need this because we have csrf protection enabled in SecurityConfig
+        */
+
+        if (csrf_element !== null) {
+            $.ajaxPrefilter(function (options, originalOptions, jqXHR) {
+                jqXHR.setRequestHeader('X-CSRF-Token', csrf_element.value);
+            });
+        }
+        $.ajax({
+            url: "http://localhost:8080/prescriptions/editPrescription",
+            type: "POST",
+            data: {
+                  id: this.props.prescription.publicId,
+                  name: this.state.name,
+                  description: this.state.description
+            },
+            success: function() {
+                toastr.options = {
+                    "debug": false,
+                    "positionClass": "toast-top-center",
+                    "onclick": null,
+                    "fadeIn": 300,
+                    "fadeOut": 1000,
+                    "timeOut": 5000,
+                    "extendedTimeOut": 1000
+                }
+                self.props.loadPrescriptionsFromServer();
+                toastr.success("Successfully Edited Prescription!");
+                self.setState({
+                    editing: false
+                })
+            },
+            error: function(xhr, ajaxOptions, thrownError) {
+                toastr.options = {
+                    "debug": false,
+                    "positionClass": "toast-top-center",
+                    "onclick": null,
+                    "fadeIn": 300,
+                    "fadeOut": 1000,
+                    "timeOut": 5000,
+                    "extendedTimeOut": 1000
+                }
+                toastr.error("Not Authorized");
+            }
+        });
+    },
+    handleEditCancel: function() {
+        var self = this;
+        this.setState({
+            name: self.state.originalName,
+            description: self.state.originalDescription,
+            editing: false
+        });
+    },
+    /**
+        Renders the HTML
+    */
+    render: function() {
+
+        if (this.state.display == false) {
+            return null;
+        } else {
+            /**
+                This HTML provides fields to show user data.
+            */
+            return (
+                this.state.editing ? (
+                    <tr>
+                      <td className="col-md-4">{this.props.prescription.name}</td>
+                      <td className="col-md-6">
+                        <textarea type="text" rows="4" className="form-control" onChange={this.updateDescription} placeholder="Prescription Description" value={this.state.description} />
+                      </td>
+                      <td className="col-md-1">
+                        <button className="btn btn-success" onClick={this.handleEditConfirm}>
+                            <span className="glyphicon glyphicon-ok" aria-hidden="true"></span>
+                        </button>
+                      </td>
+                      <td className="col-md-1">
+                        <button className="btn btn-danger" onClick={this.handleEditCancel}>
+                            <span className="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                        </button>
+                      </td>
+                    </tr>
+                ) : (
+                    <tr>
+                      <td className="col-md-4">{this.props.prescription.name}</td>
+                      <td className="col-md-6">{this.props.prescription.description}</td>
+                      <td className="col-md-1">
+                        <button className="btn btn-warning" onClick={this.handleEdit}>
+                            <span className="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+                        </button>
+                      </td>
+                      <td className="col-md-1">
+                        <button className="btn btn-danger" onClick={this.handleDelete}>
+                            <span className="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                        </button>
+                      </td>
+                    </tr>
+                )
+            );
+        }
+    }
+
+});
+
+var PrescriptionTable = React.createClass({
+    /**
+        propTypes defines the values that this class will be expecting as properties.
+    */
+    propTypes: {
+            prescriptions: React.PropTypes.array.isRequired
+    },
+    /**
+        Renders the HTML
+    */
+    render: function() {
+        var self = this;
+        var rows = [];
+        var index = 0;
+        this.props.prescriptions.forEach(function(prescription) {
+            index++;
+            rows.push(<Prescription csrf_element={csrf_element} prescription={prescription} key={prescription.publicId} loadPrescriptionsFromServer={self.props.loadPrescriptionsFromServer} />);
+        });
+        return (
+            <div className="panel panel-default">
+              <div className="panel-body">
+                <input id="inputSearch" type="text" className="form-control" placeholder="Search" />
+              </div>
+              <table className="table">
+                <thead className="panel-heading">
+                    <tr>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {rows}
+                </tbody>
+              </table>
+            </div>
+        );
+    }
+});
+
+var AllPrescriptions = React.createClass({
+    /**
+        This method loads the initial state variables
+    */
+
+    getInitialState: function() {
+        return {
+                  prescriptions: [],
+                  name: '',
+                  description: ''
+                };
+    },
+    /**
+        This method fires when the component has mounted
+    */
+    componentDidMount: function () {
+        this.loadPrescriptionsFromServer();
+    },
+    /**
+        This method loads the prescriptions from the server
+    */
+    loadPrescriptionsFromServer: function() {
+        var self = this;
+        $.ajax({
+            url: "http://localhost:8080/api/prescriptions"
+        }).then(function (data) {
+            self.setState({prescriptions: data._embedded.prescriptions});
+        });
+    },
+    /**
+        This method handles the adding of a user. (via AJAX)
+    */
+    handleAddPrescription: function() {
+        var self = this;
+        /**
+            Since a post request is being made. We must pass along this
+            CSRF token.
+
+            We need this because we have csrf protection enabled in SecurityConfig
+        */
+
+        if (csrf_element !== null) {
+            $.ajaxPrefilter(function (options, originalOptions, jqXHR) {
+                jqXHR.setRequestHeader('X-CSRF-Token', csrf_element.value);
+            });
+        }
+        $.ajax({
+            url: "http://localhost:8080/prescriptions/addPrescription",
+            type: "POST",
+            data: {
+                  name: this.state.name,
+                  description: this.state.description
+            },
+            success: function() {
+                self.loadPrescriptionsFromServer();
+                toastr.options = {
+                    "debug": false,
+                    "positionClass": "toast-top-center",
+                    "onclick": null,
+                    "fadeIn": 300,
+                    "fadeOut": 1000,
+                    "timeOut": 5000,
+                    "extendedTimeOut": 1000
+                }
+                toastr.success("Successfully Added Prescription!");
+            },
+            error: function(xhr, ajaxOptions, thrownError) {
+                toastr.options = {
+                    "debug": false,
+                    "positionClass": "toast-top-center",
+                    "onclick": null,
+                    "fadeIn": 300,
+                    "fadeOut": 1000,
+                    "timeOut": 5000,
+                    "extendedTimeOut": 1000
+                }
+                toastr.error("Not Authorized");
+            }
+        });
+    },
+    /**
+        This method renders the HTML
+    */
+
+    updateName: function(evt) {
+        this.setState({
+            name: evt.target.value
+        });
+    },
+    updateDescription: function(evt) {
+        this.setState({
+            description: evt.target.value
+        });
+    },
+    render() {
+        return (
+            <div>
+                <div className="container">
+                    <div className="well well-lg">
+                        <div className="row">
+                            <div className="col-md-3">
+                                <label>Name:</label>
+                                <input type="text" className="form-control" placeholder="Prescription Name" value={this.state.name} onChange={this.updateName} />
+                            </div>
+                            <div className="col-md-6">
+                                <label>Description:</label>
+                                <textarea type="text" rows="4" className="form-control" onChange={this.updateDescription} placeholder="Prescription Description" value={this.state.description} />
+                            </div>
+                            <div className="col-md-3">
+                                <button className="btn btn-primary center-block" id="btnAddPrescription" onClick={this.handleAddPrescription}>Add Prescription</button>
+                            </div>
+                        </div>
+                    </div>
+                    <PrescriptionTable prescriptions={this.state.prescriptions} csrf_element={csrf_element} loadPrescriptionsFromServer={this.loadPrescriptionsFromServer} />
+                </div>
+            </div>
+        );
+    }
+});
 
 
-
-
-
-
+if (document.getElementById('allPrescriptions') != null) {
+    var csrf_element = document.getElementById('csrf_token');
+    ReactDOM.render(<AllPrescriptions csrf_element="{{csrf_element}}"/>, document.getElementById('allPrescriptions'));
+}
 
 
 

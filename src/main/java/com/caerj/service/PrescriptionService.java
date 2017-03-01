@@ -7,6 +7,7 @@ import com.caerj.model.Prescription;
  */
 public interface PrescriptionService {
     Prescription findById(Long id);
+    Prescription findByName(String name);
     void save(Prescription prescription);
     void update(Prescription prescription);
 }

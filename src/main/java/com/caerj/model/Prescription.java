@@ -15,9 +15,10 @@ public class Prescription {
 
     private Long publicId;
 
+    @Column(unique = true, nullable = false)
     private String name;
 
-    @Column( length = 10000 ) //this may need to be expanded
+    @Column( length = 10000, nullable = false ) //this may need to be expanded
     private String description;
 
     public Prescription() {

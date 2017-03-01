@@ -11,4 +11,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface PrescriptionDao extends CrudRepository<Prescription, Long> {
     Prescription findById(Long id);
+    Prescription findByName(String name);
 }

@@ -36,6 +36,7 @@
                     <li th:class="${selectedTab} == 'patients' ? 'active' : ''" sec:authorize="hasRole('ROLE_ADMIN') || hasRole('ROLE_RECEPTIONIST')"><a href="/patients">Patients</a></li>
                     <li th:class="${selectedTab} == 'appointment' ? 'active' : ''" sec:authorize="hasRole('ROLE_ADMIN') || hasRole('ROLE_RECEPTIONIST')"><a href="/appointment">Appointment</a></li>
                     <li th:class="${selectedTab} == 'practitioners_appointments' ? 'active' : ''" sec:authorize="hasRole('ROLE_ADMIN') || hasRole('ROLE_PRACTITIONER')"><a href="/practitioner_appointments">Scheduled Appointments</a></li>
+                    <li th:class="${selectedTab} == 'prescriptions' ? 'active' : ''" sec:authorize="hasRole('ROLE_ADMIN') || hasRole('ROLE_PRACTITIONER')"><a href="/prescriptions">Prescriptions</a></li>
                     <li th:class="${selectedTab} == 'admin' ? 'active' : ''" sec:authorize="hasRole('ROLE_ADMIN')"><a href="/admin">Admin</a></li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
