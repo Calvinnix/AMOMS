@@ -4,7 +4,9 @@
 <body>
 <input type="hidden" id="csrf_token" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
 <div th:replace="layout :: nav(selectedTab='appointment')"></div>
-<div id="receptionistCalendar"></div>
+<div id="receptionistCalendar">
+    <block th:replace="layout :: loading"></block>
+</div>
 <div id="addNewAppointment"></div>
 <block th:replace="layout :: script"></block>
 </body>

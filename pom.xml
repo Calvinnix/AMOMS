@@ -113,6 +113,11 @@
             <artifactId>spring-test-dbunit</artifactId>
             <version>1.2.1</version>
         </dependency>
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>20160810</version>
+        </dependency>
     </dependencies>
 
 	<build>

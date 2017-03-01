@@ -13,8 +13,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by Calvin on 1/9/17.
@@ -273,24 +278,47 @@ public class AppController {
     }
 
 
-    @RequestMapping(value = "/practitioner_appointments/saveNotes", method = RequestMethod.POST)
+    @RequestMapping(value = "/practitioner_appointments/saveChanges", method = RequestMethod.POST)
     public String saveNotes(HttpServletRequest request) {
-        logger.info(" --- RequestMapping from /practitioner_appointments/saveNotes");
+        logger.info(" --- RequestMapping from /practitioner_appointments/saveChanges");
 
         String strAppointmentId = request.getParameter("appointmentId");
         String notes = request.getParameter("notes");
+        String jsonPrescriptions = request.getParameter("prescriptions");
+
+        System.out.println(jsonPrescriptions);
 
         Long appointmentId = Long.valueOf(strAppointmentId);
 
         Appointment appointment = appointmentService.findById(appointmentId);
 
+        List prescriptions = new ArrayList<Prescription>();
+
+        JSONArray jsonAccountsArray = new JSONArray(jsonPrescriptions);
+        jsonAccountsArray.length();
+
+        for (int i = 0; i < jsonAccountsArray.length(); i++) {
+            JSONObject currentAccount = jsonAccountsArray.getJSONObject(i);
+
+            String name = currentAccount.getString("name");
+
+            System.out.println("Name: " + name);
+
+            Prescription prescription = prescriptionService.findByName(name);
+
+            prescriptions.add(prescription);
+        }
+
         if (appointment == null) {
             logger.error("Appointment not found! appointmentId = " + appointmentId);
+            appointment = new Appointment();
         }
 
         appointment.setNotes(notes);
 
-        logger.info(" --- Saving notes");
+        appointment.setPrescriptions(prescriptions);
+
+        logger.info(" --- Saving changes");
         appointmentService.save(appointment);
 
         logger.info(" --- Redirecting to /practitioner_appointments");

@@ -4,8 +4,9 @@
 <body>
 <input type="hidden" id="csrf_token" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
 <div th:replace="layout :: nav(selectedTab='admin')"></div>
-    <div id="addNewUser"></div>
-    <div id="allUsers"></div>
+    <div id="allUsers">
+        <block th:replace="layout :: loading"></block>
+    </div>
 <block th:replace="layout :: script"></block>
 </body>
 </html>

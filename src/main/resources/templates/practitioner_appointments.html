@@ -5,7 +5,9 @@
 <input type="hidden" id="csrf_token" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
 <div th:replace="layout :: nav(selectedTab='practitioners_appointments')"></div>
 <div class="container">
-    <div id="practitionerCalendar"></div>
+    <div id="practitionerCalendar">
+        <block th:replace="layout :: loading"></block>
+    </div>
 </div>
 <block th:replace="layout :: script"></block>
 </body>

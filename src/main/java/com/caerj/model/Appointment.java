@@ -1,6 +1,7 @@
 package com.caerj.model;
 
 import javax.persistence.*;
+import java.util.List;
 
 /**
  * Created by nixc1 on 2/23/17.
@@ -44,6 +45,10 @@ public class Appointment {
     private String sessionStartTime;
 
     private String sessionEndTime;
+
+    @OneToMany
+    @JoinColumn(name = "prescription_id")
+    private List<Prescription> prescriptions;
 
     public Appointment() {
     }
@@ -177,5 +182,13 @@ public class Appointment {
 
     public void setSessionEndTime(String sessionEndTime) {
         this.sessionEndTime = sessionEndTime;
+    }
+
+    public List<Prescription> getPrescriptions() {
+        return prescriptions;
+    }
+
+    public void setPrescriptions(List<Prescription> prescriptions) {
+        this.prescriptions = prescriptions;
     }
 }

@@ -1706,12 +1706,77 @@ if (document.getElementById('addNewAppointment') != null) {
     ReactDOM.render(<AddAppointment csrf_element="{{csrf_element}}"/>, document.getElementById('addNewAppointment'));
 }
 
+var PrescriptionOption = React.createClass({
+    render: function() {
+        return (
+            <option value={this.props.prescription.name}>{this.props.prescription.name}</option>
+        );
+    }
+});
+
+var PrescriptionSelect = React.createClass({
+    propTypes: {
+                prescriptionName: React.PropTypes.string
+    },
+    render: function() {
+        var prescriptions = [];
+        var index = 0;
+        //Adding blank default to ensure selected value will get set
+        prescriptions.push(<option key={index}></option>);
+        this.props.prescriptions.forEach(function(prescription) {
+            index ++;
+            prescriptions.push(<PrescriptionOption prescription={prescription} key={index}/>);
+        });
+        return (
+            <select className="form-control" value={this.props.value} onChange={this.props.onChange}>
+                {prescriptions}
+            </select>
+        );
+    }
+});
+
+
+
+var ListPrescriptions  = React.createClass({
+    propTypes: {
+            prescriptions: React.PropTypes.array
+    },
+    render: function() {
+        var self = this;
+        var prescriptions = [];
+        var index = 0;
+        this.props.prescriptions.forEach(function(prescription) {
+            index++;
+            prescriptions.push(
+                <li className="list-group-item" key={index}>
+                    <div className="row">
+                        <div className="col-md-10">{prescription}</div>
+                        <div className="col-md-2">
+                            <button className="btn btn-danger pull-right" onClick={() => self.props.removePrescription({prescription})}>
+                                <span className="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                            </button>
+                        </div>
+                    </div>
+                </li>
+            );
+        });
+        return (
+            <ul className="list-group">
+                {prescriptions}
+            </ul>
+        );
+    }
+});
 
 var ViewAppointments = React.createClass({
 
     getInitialState: function() {
         return {
                   appointments: [],
+                  prescriptions: [],
+                  addedPrescriptions: [],
+                  prescriptionName: '',
+                  prescriptionDescription: '',
                   appointmentId: -1,
                   patientName: '',
                   date: '',
@@ -1846,15 +1911,48 @@ var ViewAppointments = React.createClass({
      });
     },
     loadAppointmentsFromServer: function() {
-         var self = this;
+        var self = this;
         $.ajax({
            url: "http://localhost:8080/api/appointments"
         }).then(function (data) {
-             self.setState({appointments: data._embedded.appointments});
-            return self.loadCalendar();
+           self.setState({appointments: data._embedded.appointments});
+           return self.loadCalendar();
         });
     },
-    saveNotes: function() {
+    loadPrescriptionsFromServer: function() {
+        var self = this;
+        $.ajax({
+            url: "http://localhost:8080/api/prescriptions"
+        }).then(function (data) {
+            self.setState({prescriptions: data._embedded.prescriptions});
+        });
+    },
+    addPrescriptions: function() {
+
+        if (this.state.prescriptionName === "") {
+            return;
+        }
+
+        if (!($.inArray(this.state.prescriptionName, this.state.addedPrescriptions) > -1)) {
+          var tempArray = this.state.addedPrescriptions;
+          tempArray.push(this.state.prescriptionName);
+          this.setState({
+            addedPrescriptions: tempArray
+          });
+        }
+    },
+    removePrescription: function(name) {
+        var self = this;
+        name = name['prescription']; //Extract name from the JSON array
+
+        var index = $.inArray(name, this.state.addedPrescriptions);
+
+        this.state.addedPrescriptions.splice(index, 1);
+        this.setState({
+            addedPrescriptions: self.state.addedPrescriptions
+        });
+    },
+    saveChanges: function() {
 
         var self = this;
         /**
@@ -1870,11 +1968,12 @@ var ViewAppointments = React.createClass({
             });
         }
         $.ajax({
-            url: "http://localhost:8080/practitioner_appointments/saveNotes",
+            url: "http://localhost:8080/practitioner_appointments/saveChanges",
             type: "POST",
             data: {
                   appointmentId: this.state.appointmentId,
-                  notes: this.state.notes
+                  notes: this.state.notes,
+                  prescriptions: JSON.stringify(this.state.prescriptions)
             },
             success: function() {
                 toastr.options = {
@@ -1886,7 +1985,7 @@ var ViewAppointments = React.createClass({
                     "timeOut": 5000,
                     "extendedTimeOut": 1000
                 }
-                toastr.success("Successfully Added Notes!");
+                toastr.success("Successfully Updated Appointment!");
                 self.loadAppointmentsFromServer();
             },
             error: function(xhr, ajaxOptions, thrownError) {
@@ -1961,6 +2060,16 @@ var ViewAppointments = React.createClass({
             appointmentEnded: true
         });
     },
+    updatePrescriptionName: function(evt) {
+        this.setState({
+            prescriptionName: evt.target.value
+        });
+    },
+    updatePrescriptionDescription: function(evt) {
+        this.setState({
+            prescriptionDescription: evt.target.value
+        });
+    },
     endAppointment: function() {
         var self = this;
         /**
@@ -2011,6 +2120,7 @@ var ViewAppointments = React.createClass({
     },
     componentDidMount: function () {
         this.loadAppointmentsFromServer();
+        this.loadPrescriptionsFromServer();
     },
     render: function() {
 
@@ -2058,6 +2168,28 @@ var ViewAppointments = React.createClass({
                                   </div>
                                   <hr />
                                   <div className="row">
+                                    <div className="col-md-3">
+                                      <p>Prescriptions:</p>
+                                    </div>
+                                    <div className="col-md-7">
+                                        <PrescriptionSelect prescriptions={this.state.prescriptions} value={this.state.prescriptionName} onChange={this.updatePrescriptionName} />
+                                    </div>
+                                    <div className="col-md-2">
+                                      <button className="btn btn-success center-block" onClick={this.addPrescriptions}>Add</button>
+                                    </div>
+                                  </div>
+                                  <hr />
+                                  <div className="row">
+                                    <div className="col-md-3">
+                                      <p>Added Prescriptions:</p>
+                                    </div>
+                                    <div className="col-md-7">
+                                        <ListPrescriptions prescriptions={this.state.addedPrescriptions} removePrescription={this.removePrescription} />
+                                    </div>
+                                    <div className="col-md-2"></div>
+                                  </div>
+                                  <hr />
+                                  <div className="row">
                                       <div className="col-md-2">
                                           <p>Notes:</p>
                                       </div>
@@ -2068,7 +2200,7 @@ var ViewAppointments = React.createClass({
                                   <hr />
                                   <div className="row">
                                       <div className="col-md-6">
-                                          <button className="btn btn-success center-block" onClick={this.saveNotes}>Save Notes</button>
+                                          <button className="btn btn-success center-block" onClick={this.saveChanges}>Save Changes</button>
                                       </div>
                                       {this.state.appointmentStarted ? (
                                         <div className="col-md-6">
