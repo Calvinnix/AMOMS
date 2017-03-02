@@ -87,6 +87,13 @@ public class AppController {
         return "prescriptions";
     }
 
+    @RequestMapping(value = "/reports")
+    public String reports() {
+        logger.info(" --- RequestMapping from /reports");
+        logger.info(" --- Mapping to /reports");
+        return "reports";
+    }
+
     @RequestMapping(value = "/admin/addUser", method = RequestMethod.POST)
     public String addUser(HttpServletRequest request) {
         logger.info(" --- RequestMapping from /admin/addUser");
