@@ -27,7 +27,8 @@ gulp.task('concatjs', () => {
             './src/main/resources/static/js/moment.js',
             './src/main/resources/static/js/moment-timezone-with-data-2010-2020.js',
             './src/main/resources/static/js/fullcalendar.min.js',
-            './src/main/resources/static/js/pikaday.js'
+            './src/main/resources/static/js/pikaday.js',
+            './src/main/resources/static/js/search.js'
             ])
         .pipe(concat('bundle.js'))
         .pipe(react())
