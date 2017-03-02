@@ -360,7 +360,7 @@ public class AppController {
         return "redirect:/appointment";
     }
 
-    @RequestMapping(value = "/appointment/startAppointment", method = RequestMethod.POST)
+    @RequestMapping(value = "/practitioner_appointments/startAppointment", method = RequestMethod.POST)
     public String startAppointment(HttpServletRequest request) {
         logger.info(" --- RequestMapping from /appointment/startAppointment");
 
@@ -384,7 +384,7 @@ public class AppController {
         return "redirect:/appointment";
     }
 
-    @RequestMapping(value = "/appointment/endAppointment", method = RequestMethod.POST)
+    @RequestMapping(value = "/practitioner_appointments/endAppointment", method = RequestMethod.POST)
     public String endAppointment(HttpServletRequest request) {
         logger.info(" --- RequestMapping from /appointment/endAppointment");
 
@@ -408,7 +408,7 @@ public class AppController {
         return "redirect:/appointment";
     }
 
-    @RequestMapping(value = "/prescriptions/addPrescription", method = RequestMethod.POST)
+    @RequestMapping(value = "/practitioner_appointments/addPrescription", method = RequestMethod.POST)
     public String addPrescription(HttpServletRequest request) {
         logger.info(" --- RequestMapping from /prescriptions/addPrescriptions");
 

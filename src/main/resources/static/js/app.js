@@ -1867,6 +1867,7 @@ var ViewAppointments = React.createClass({
                   notes: '',
                   appointmentStarted: false,
                   appointmentEnded: false,
+                  checkedIn: false,
                   showHistory: false
         };
     },
@@ -1890,6 +1891,12 @@ var ViewAppointments = React.createClass({
             appointmentEnded = true
         }
 
+        var checkInTime = self.state.appointments[id-1].checkInTime;
+        var checkedIn = false;
+        if (checkInTime !== null) {
+          checkedIn = true;
+        }
+
         //need to do 'id-1' offset because id is 1 based
         this.setState({
             appointmentId: id,
@@ -1902,6 +1909,7 @@ var ViewAppointments = React.createClass({
             notes: notes,
             appointmentStarted: appointmentStarted,
             appointmentEnded: appointmentEnded,
+            checkedIn: checkedIn,
             showHistory: false,
             addedPrescriptions: []
         });
@@ -2117,7 +2125,7 @@ var ViewAppointments = React.createClass({
             });
         }
         $.ajax({
-            url: "http://localhost:8080/appointment/startAppointment",
+            url: "http://localhost:8080/practitioner_appointments/startAppointment",
             type: "POST",
             data: {
                   appointmentId: this.state.appointmentId
@@ -2147,6 +2155,7 @@ var ViewAppointments = React.createClass({
                     "extendedTimeOut": 1000
                 }
                 toastr.error("Not Authorized");
+                console.log(xhr.message())
             }
         });
     },
@@ -2180,7 +2189,7 @@ var ViewAppointments = React.createClass({
             });
         }
         $.ajax({
-            url: "http://localhost:8080/appointment/endAppointment",
+            url: "http://localhost:8080/practitioner_appointments/endAppointment",
             type: "POST",
             data: {
                   appointmentId: this.state.appointmentId
@@ -2313,7 +2322,7 @@ var ViewAppointments = React.createClass({
                                         </div>
                                       ) : (
                                         <div className="col-md-4">
-                                            <button className="btn btn-primary center-block" onClick={this.startAppointment}>Start Appointment</button>
+                                            <button className={this.state.checkedIn ? "btn btn-primary center-block" : "btn btn-primary center-block disabled"} onClick={this.startAppointment}>Start Appointment</button>
                                         </div>
                                       )}
                                       <div className="col-md-4">
@@ -2883,7 +2892,7 @@ var AllPrescriptions = React.createClass({
             });
         }
         $.ajax({
-            url: "http://localhost:8080/prescriptions/addPrescription",
+            url: "http://localhost:8080/practitioner_appointments/addPrescription",
             type: "POST",
             data: {
                   name: this.state.name,

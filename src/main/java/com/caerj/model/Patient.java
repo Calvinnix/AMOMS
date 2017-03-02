@@ -55,7 +55,7 @@ public class Patient {
     @JoinColumn(name = "user_id")
     private User practitioner;
 
-    @OneToMany
+    @OneToMany(fetch = FetchType.EAGER)
     @JoinColumn(name = "appointment_id")
     private List<Appointment> appointments;
 
