@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="layout :: head(title='Admin')"></head>
+<head th:replace="layout :: head(title='Prescriptions')"></head>
 <body>
 <input type="hidden" id="csrf_token" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-<div th:replace="layout :: nav(selectedTab='admin')"></div>
-    <div id="allUsers">
-        <block th:replace="layout :: loading"></block>
-    </div>
+<div th:replace="layout :: nav(selectedTab='prescriptions')"></div>
+<div id="allPrescriptions">
+    <block th:replace="layout :: loading"></block>
+</div>
 <block th:replace="layout :: script"></block>
 </body>
 </html>

@@ -1379,14 +1379,6 @@ var AllPatients = React.createClass({
     }
 });
 
-<div id="patientModal" class="modal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h2>Test</h2>
-        </div>
-    </div>
-</div>
-
 if (document.getElementById('allPatients') != null) {
     var csrf_element = document.getElementById('csrf_token');
     ReactDOM.render(<AllPatients csrf_element="{{csrf_element}}"/>, document.getElementById('allPatients'));
@@ -1457,6 +1449,7 @@ var AddAppointment = React.createClass({
             defaultView: 'agendaWeek',
             allDaySlot: false,
             weekends: false,
+            nowIndicator: true,
             slotDuration: "00:15:00",
             locale: initialLocaleCode,
             navLinks: true, // can click day/week names to navigate views
@@ -1614,6 +1607,14 @@ var AddAppointment = React.createClass({
              reasonForVisit: evt.target.value
          });
      },
+     clearEntries: function() {
+        //Clears the entries
+        this.setState({
+            patientId: -1,
+            reasonForVisit: ""
+        });
+        this.updatePractitionerName("");
+     },
      handleAddAppointment: function() {
         var self = this;
         /**
@@ -1650,6 +1651,8 @@ var AddAppointment = React.createClass({
                     "extendedTimeOut": 1000
                 }
                 toastr.success("Successfully Added Appointment!");
+                self.loadAppointmentsFromServer();
+                self.clearEntries();
             },
             error: function(xhr, ajaxOptions, thrownError) {
                 toastr.options = {
@@ -1671,7 +1674,7 @@ var AddAppointment = React.createClass({
                 <div className="well well-lg">
                     <h3>Add Appointment</h3>
                     <div className="row">
-                        <div className="col-md-6">
+                        <div className="col-md-4">
                             <label>Patient:</label>
                             <PatientSelect patients={this.state.patients} value={this.state.patientId} onChange={this.updatePatientId} />
                             <hr />
@@ -1681,7 +1684,7 @@ var AddAppointment = React.createClass({
                             <label>Reason For Visit:</label>
                             <textarea type="text" rows="4" className="form-control" onChange={this.updateReasonForVisit} placeholder="Reason for visit." value={this.state.reasonForVisit} />
                         </div>
-                        <div className="col-md-6">
+                        <div className="col-md-8">
                             <label>Date:</label>
                             <div id="appointmentCalendar"></div>
                         </div>
@@ -1702,6 +1705,1273 @@ if (document.getElementById('addNewAppointment') != null) {
     var csrf_element = document.getElementById('csrf_token');
     ReactDOM.render(<AddAppointment csrf_element="{{csrf_element}}"/>, document.getElementById('addNewAppointment'));
 }
+
+var PrescriptionOption = React.createClass({
+    render: function() {
+        return (
+            <option value={this.props.prescription.name}>{this.props.prescription.name}</option>
+        );
+    }
+});
+
+var PrescriptionSelect = React.createClass({
+    propTypes: {
+                prescriptionName: React.PropTypes.string
+    },
+    render: function() {
+        var prescriptions = [];
+        var index = 0;
+        //Adding blank default to ensure selected value will get set
+        prescriptions.push(<option key={index}></option>);
+        this.props.prescriptions.forEach(function(prescription) {
+            index ++;
+            prescriptions.push(<PrescriptionOption prescription={prescription} key={index}/>);
+        });
+        return (
+            <select className="form-control" value={this.props.value} onChange={this.props.onChange}>
+                {prescriptions}
+            </select>
+        );
+    }
+});
+
+
+
+var ListPrescriptions  = React.createClass({
+    propTypes: {
+            prescriptions: React.PropTypes.array
+    },
+    render: function() {
+        var self = this;
+        var prescriptions = [];
+        var index = 0;
+        this.props.prescriptions.forEach(function(prescription) {
+            index++;
+            prescriptions.push(
+                <li className="list-group-item" key={index}>
+                    <div className="row">
+                        <div className="col-md-10">{prescription}</div>
+                        <div className="col-md-2">
+                            <button className="btn btn-danger pull-right" onClick={() => self.props.removePrescription({prescription})}>
+                                <span className="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                            </button>
+                        </div>
+                    </div>
+                </li>
+            );
+        });
+        return (
+            <ul className="list-group">
+                {prescriptions}
+            </ul>
+        );
+    }
+});
+
+var PatientHistory = React.createClass({
+  getInitialState: function() {
+    return {
+      appointmentHistory: [],
+      appointments: []
+    };
+  },
+  loadAppointmentHistoryFromServer: function() {
+    var self = this;
+    $.ajax({
+       url: "http://localhost:8080/api/patients/"+self.props.patientId+"/appointments"
+    }).then(function (data) {
+       self.setState({appointmentHistory: data._embedded.appointments});
+       return self.populateAppointments();
+    });
+  },
+  componentDidMount: function() {
+    this.loadAppointmentHistoryFromServer();
+  },
+  populateAppointments: function() {
+    var index = 0;
+    var self = this;
+    this.setState({
+      appointments: self.state.appointments.concat(
+        <div className="row" key={index}>
+          <hr />
+          <div className="col-md-2"><b>Practitioner</b></div>
+          <div className="col-md-2"><b>Date/Time</b></div>
+          <div className="col-md-2"><b>Reason for visit</b></div>
+          <div className="col-md-3"><b>Notes</b></div>
+          <div className="col-md-3"><b>Prescriptions</b></div>
+        </div>
+      )
+    });
+    var appointments = [];
+    this.state.appointmentHistory.forEach(function(appointment) {
+        if (appointment.sessionEndTime !== null) {
+          index++;
+          var prescriptions = [];
+          $.ajax({
+             url: "http://localhost:8080/api/appointments/"+appointment.publicId+"/prescriptions"
+          }).then(function (data) {
+             prescriptions = data._embedded.prescriptions;
+             var prescriptionList = [];
+             prescriptions.forEach(function(prescription) {
+                prescriptionList.push(<li className="list-group-item word-wrap" key={prescription.publicId}>{prescription.name}</li>)
+             });
+             self.setState({
+                appointments: self.state.appointments.concat(
+                  <div className="row" key={appointment.publicId}>
+                     <hr />
+                     <div className="col-md-2">{appointment.practitionerName}</div>
+                     <div className="col-md-2">{appointment.date} <br /> {appointment.startTime} - {appointment.endTime}</div>
+                     <div className="col-md-2 word-wrap">{appointment.reasonForVisit}</div>
+                     <div className="col-md-3 word-wrap">{appointment.notes}</div>
+                     <div className="col-md-3">
+                        <ul className="list-group">
+                          {prescriptionList}
+                        </ul>
+                     </div>
+                   </div>
+                )
+             });
+          });
+        }
+    });
+  },
+  render: function() {
+    return (
+      <div>
+        {this.state.appointments}
+      </div>
+    );
+  }
+});
+
+var ViewAppointments = React.createClass({
+
+    getInitialState: function() {
+        return {
+                  appointments: [],
+                  prescriptions: [],
+                  addedPrescriptions: [],
+                  prescriptionName: '',
+                  prescriptionDescription: '',
+                  appointmentId: -1,
+                  patientName: '',
+                  date: '',
+                  startTime: '',
+                  endTime: '',
+                  reasonForVisit: '',
+                  patientId: -1,
+                  startTime: '',
+                  endTime: '',
+                  date: '',
+                  reasonForVisit: '',
+                  notes: '',
+                  appointmentStarted: false,
+                  appointmentEnded: false,
+                  checkedIn: false,
+                  showHistory: false
+        };
+    },
+    updateAppointment: function(id) {
+        var self = this;
+
+        var notes = self.state.appointments[id-1].notes;
+        if ( notes === null) {
+            notes = "";
+        }
+
+        var appointmentStartTime = self.state.appointments[id-1].sessionStartTime;
+        var appointmentStarted = false;
+        if (appointmentStartTime !== null) {
+            appointmentStarted = true
+        }
+
+        var appointmentEndTime = self.state.appointments[id-1].sessionEndTime;
+        var appointmentEnded = false;
+        if (appointmentEndTime !== null) {
+            appointmentEnded = true
+        }
+
+        var checkInTime = self.state.appointments[id-1].checkInTime;
+        var checkedIn = false;
+        if (checkInTime !== null) {
+          checkedIn = true;
+        }
+
+        //need to do 'id-1' offset because id is 1 based
+        this.setState({
+            appointmentId: id,
+            patientName: self.state.appointments[id-1].patientName,
+            patientId: self.state.appointments[id-1].patientId,
+            date: self.state.appointments[id-1].date,
+            startTime: self.state.appointments[id-1].startTime,
+            endTime: self.state.appointments[id-1].endTime,
+            reasonForVisit: self.state.appointments[id-1].reasonForVisit,
+            notes: notes,
+            appointmentStarted: appointmentStarted,
+            appointmentEnded: appointmentEnded,
+            checkedIn: checkedIn,
+            showHistory: false,
+            addedPrescriptions: []
+        });
+
+        this.loadAddedPrescriptionsFromServer();
+
+    },
+    updateNotes: function(evt) {
+        this.setState({
+            notes: evt.target.value
+        });
+    },
+    loadCalendar: function() {
+     var self = this;
+
+     var initialLocaleCode = 'en';
+
+     $('#practitionerAppointmentsCalendar').fullCalendar({
+         header: {
+             left: 'prev,next today',
+             center: 'title',
+             right: 'agendaWeek,agendaDay'
+         },
+         timezone: 'America/New_York',
+         defaultView: 'agendaDay',
+         allDaySlot: false,
+         weekends: false,
+         nowIndicator: true,
+         slotDuration: "00:15:00",
+         locale: initialLocaleCode,
+         navLinks: true, // can click day/week names to navigate views
+         selectable: false,
+         selectHelper: true,
+         minTime: "06:00:00",
+         maxTime: "18:00:00",
+         editable: true,
+         eventLimit: false, // allow "more" link when too many events
+         eventOverlap: false,
+         selectOverlap: false,
+         eventStartEditable: false,
+         eventDurationEditable: false,
+         eventClick: function(event) {
+            self.updateAppointment(event.appointmentId);
+            // This makes it to where you can't close the modal by clicking away
+            $('#myModal').modal({
+              backdrop: 'static',
+              keyboard: false
+            });
+         }
+
+     });
+
+     var username = document.getElementById("username");
+
+     //Clears the calendar so results aren't compounded
+     $('#practitionerAppointmentsCalendar').fullCalendar( 'removeEvents', function(event) {
+         return true;
+     });
+
+     this.state.appointments.forEach(function(appointment) {
+
+       if (appointment.practitionerName === username.innerText) {
+         var dateFormat = "MM-DD-YYYY HH:mm";
+         var start = moment((appointment.date + " " + appointment.startTime), dateFormat);
+         var end   = moment((appointment.date + " " + appointment.endTime), dateFormat);
+
+         var color = "#3CB371";
+         if (appointment.checkInTime === null) {
+            color = "#444";
+         }
+
+         if (appointment.sessionStartTime !== null) {
+            color = "#4169E1";
+         }
+
+         if (appointment.sessionEndTime !== null) {
+            color = "#8B0000";
+         }
+
+         var eventData = {
+             id: appointment.publicId,
+             title: appointment.patientName + "\n" + appointment.reasonForVisit,
+             start: start,
+             end: end,
+             appointmentId: appointment.publicId,
+             color: color
+         };
+         $('#practitionerAppointmentsCalendar').fullCalendar('renderEvent', eventData, true); // stick? = true
+       }
+     });
+    },
+    loadAppointmentsFromServer: function() {
+        var self = this;
+        $.ajax({
+           url: "http://localhost:8080/api/appointments"
+        }).then(function (data) {
+           self.setState({appointments: data._embedded.appointments});
+           return self.loadCalendar();
+        });
+    },
+    loadPrescriptionsFromServer: function() {
+        var self = this;
+        $.ajax({
+            url: "http://localhost:8080/api/prescriptions"
+        }).then(function (data) {
+            self.setState({prescriptions: data._embedded.prescriptions});
+        });
+    },
+    loadAddedPrescriptionsFromServer: function() {
+        var self = this;
+        $.ajax({
+            url: "http://localhost:8080/api/appointments/"+self.state.appointmentId+"/prescriptions"
+        }).then(function (data) {
+            data._embedded.prescriptions.forEach(function (prescription) {
+              self.setState({
+                addedPrescriptions: self.state.addedPrescriptions.concat(prescription['name'])
+              });
+            });
+        });
+    },
+    addPrescriptions: function() {
+
+        if (this.state.prescriptionName === "") {
+            return;
+        }
+
+        if (!($.inArray(this.state.prescriptionName, this.state.addedPrescriptions) > -1)) {
+          var tempArray = this.state.addedPrescriptions;
+          tempArray.push(this.state.prescriptionName);
+          this.setState({
+            addedPrescriptions: tempArray
+          });
+        }
+    },
+    removePrescription: function(name) {
+        var self = this;
+        name = name['prescription']; //Extract name from the JSON array
+
+        var index = $.inArray(name, this.state.addedPrescriptions);
+
+        this.state.addedPrescriptions.splice(index, 1);
+        this.setState({
+            addedPrescriptions: self.state.addedPrescriptions
+        });
+    },
+    saveChanges: function() {
+
+        var self = this;
+        /**
+            Since a post request is being made. We must pass along this
+            CSRF token.
+
+            We need this because we have csrf protection enabled in SecurityConfig
+        */
+
+        if (csrf_element !== null) {
+            $.ajaxPrefilter(function (options, originalOptions, jqXHR) {
+                jqXHR.setRequestHeader('X-CSRF-Token', csrf_element.value);
+            });
+        }
+        $.ajax({
+            url: "http://localhost:8080/practitioner_appointments/saveChanges",
+            type: "POST",
+            data: {
+                  appointmentId: this.state.appointmentId,
+                  notes: this.state.notes,
+                  prescriptions: JSON.stringify(this.state.addedPrescriptions)
+            },
+            success: function() {
+                toastr.options = {
+                    "debug": false,
+                    "positionClass": "toast-top-center",
+                    "onclick": null,
+                    "fadeIn": 300,
+                    "fadeOut": 1000,
+                    "timeOut": 5000,
+                    "extendedTimeOut": 1000
+                }
+                toastr.success("Successfully Updated Appointment!");
+                self.loadAppointmentsFromServer();
+            },
+            error: function(xhr, ajaxOptions, thrownError) {
+                toastr.options = {
+                    "debug": false,
+                    "positionClass": "toast-top-center",
+                    "onclick": null,
+                    "fadeIn": 300,
+                    "fadeOut": 1000,
+                    "timeOut": 5000,
+                    "extendedTimeOut": 1000
+                }
+                toastr.error("Not Authorized");
+            }
+        });
+    },
+    updateAppointmentStart: function() {
+        this.setState({
+            appointmentStarted: true
+        });
+    },
+    startAppointment: function() {
+        var self = this;
+        /**
+            Since a post request is being made. We must pass along this
+            CSRF token.
+
+            We need this because we have csrf protection enabled in SecurityConfig
+        */
+
+        if (csrf_element !== null) {
+            $.ajaxPrefilter(function (options, originalOptions, jqXHR) {
+                jqXHR.setRequestHeader('X-CSRF-Token', csrf_element.value);
+            });
+        }
+        $.ajax({
+            url: "http://localhost:8080/practitioner_appointments/startAppointment",
+            type: "POST",
+            data: {
+                  appointmentId: this.state.appointmentId
+            },
+            success: function() {
+                toastr.options = {
+                    "debug": false,
+                    "positionClass": "toast-top-center",
+                    "onclick": null,
+                    "fadeIn": 300,
+                    "fadeOut": 1000,
+                    "timeOut": 5000,
+                    "extendedTimeOut": 1000
+                }
+                toastr.success("Successfully started appointment for " + self.state.patientName);
+                self.updateAppointmentStart();
+                self.loadAppointmentsFromServer();
+            },
+            error: function(xhr, ajaxOptions, thrownError) {
+                toastr.options = {
+                    "debug": false,
+                    "positionClass": "toast-top-center",
+                    "onclick": null,
+                    "fadeIn": 300,
+                    "fadeOut": 1000,
+                    "timeOut": 5000,
+                    "extendedTimeOut": 1000
+                }
+                toastr.error("Not Authorized");
+                console.log(xhr.message())
+            }
+        });
+    },
+    updateAppointmentEnd: function() {
+        this.setState({
+            appointmentEnded: true
+        });
+    },
+    updatePrescriptionName: function(evt) {
+        this.setState({
+            prescriptionName: evt.target.value
+        });
+    },
+    updatePrescriptionDescription: function(evt) {
+        this.setState({
+            prescriptionDescription: evt.target.value
+        });
+    },
+    endAppointment: function() {
+        var self = this;
+        /**
+            Since a post request is being made. We must pass along this
+            CSRF token.
+
+            We need this because we have csrf protection enabled in SecurityConfig
+        */
+
+        if (csrf_element !== null) {
+            $.ajaxPrefilter(function (options, originalOptions, jqXHR) {
+                jqXHR.setRequestHeader('X-CSRF-Token', csrf_element.value);
+            });
+        }
+        $.ajax({
+            url: "http://localhost:8080/practitioner_appointments/endAppointment",
+            type: "POST",
+            data: {
+                  appointmentId: this.state.appointmentId
+            },
+            success: function() {
+                toastr.options = {
+                    "debug": false,
+                    "positionClass": "toast-top-center",
+                    "onclick": null,
+                    "fadeIn": 300,
+                    "fadeOut": 1000,
+                    "timeOut": 5000,
+                    "extendedTimeOut": 1000
+                }
+                toastr.success("Successfully ended appointment for " + self.state.patientName);
+                self.updateAppointmentEnd();
+                self.loadAppointmentsFromServer();
+            },
+            error: function(xhr, ajaxOptions, thrownError) {
+                toastr.options = {
+                    "debug": false,
+                    "positionClass": "toast-top-center",
+                    "onclick": null,
+                    "fadeIn": 300,
+                    "fadeOut": 1000,
+                    "timeOut": 5000,
+                    "extendedTimeOut": 1000
+                }
+                toastr.error("Not Authorized");
+            }
+        });
+    },
+    showHistory: function() {
+      this.setState({
+        showHistory: true
+      });
+    },
+    hideHistory: function() {
+      this.setState({
+        showHistory: false
+      });
+    },
+    componentDidMount: function () {
+        this.loadAppointmentsFromServer();
+        this.loadPrescriptionsFromServer();
+    },
+    render: function() {
+
+        return(
+
+        <div className="container">
+            <div className="well well-lg">
+                <div className="row">
+                    <div className="col-md-12">
+                        <div id="practitionerAppointmentsCalendar"></div>
+                        <div className="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                          <div className="modal-dialog modal-lg" role="document">
+                            <div className="modal-content">
+                              <div className="modal-header">
+                                <button type="button" className="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                <h4 className="modal-title">
+                                    {this.state.patientName}
+                                </h4>
+                              </div>
+                              <div className="modal-body">
+                                  <div className="row">
+                                      <div className="col-md-2">
+                                          <p>Date:</p>
+                                      </div>
+                                      <div className="col-md-10">
+                                          <p>{this.state.date}</p>
+                                      </div>
+                                  </div>
+                                  <div className="row">
+                                      <div className="col-md-2">
+                                          <p>Time:</p>
+                                      </div>
+                                      <div className="col-md-10">
+                                          <p>{this.state.startTime} - {this.state.endTime}</p>
+                                      </div>
+                                  </div>
+                                  <hr />
+                                  <div className="row">
+                                      <div className="col-md-2">
+                                          <p>Reason for visit:</p>
+                                      </div>
+                                      <div className="col-md-10">
+                                          <p>{this.state.reasonForVisit}</p>
+                                      </div>
+                                  </div>
+                                  <hr />
+                                  <div className="row">
+                                    <div className="col-md-3">
+                                      <p>Prescriptions:</p>
+                                    </div>
+                                    <div className="col-md-7">
+                                        <PrescriptionSelect prescriptions={this.state.prescriptions} value={this.state.prescriptionName} onChange={this.updatePrescriptionName} />
+                                    </div>
+                                    <div className="col-md-2">
+                                      <button className="btn btn-success center-block" onClick={this.addPrescriptions}>Add</button>
+                                    </div>
+                                  </div>
+                                  <hr />
+                                  <div className="row">
+                                    <div className="col-md-3">
+                                      <p>Added Prescriptions:</p>
+                                    </div>
+                                    <div className="col-md-7">
+                                        <ListPrescriptions prescriptions={this.state.addedPrescriptions} removePrescription={this.removePrescription} />
+                                    </div>
+                                    <div className="col-md-2"></div>
+                                  </div>
+                                  <hr />
+                                  <div className="row">
+                                      <div className="col-md-2">
+                                          <p>Notes:</p>
+                                      </div>
+                                      <div className="col-md-10">
+                                          <textarea type="text" rows="4" className="form-control" onChange={this.updateNotes} value={this.state.notes} />
+                                      </div>
+                                  </div>
+                                  {this.state.showHistory &&
+                                    <PatientHistory patientId={this.state.patientId}/>
+                                  }
+                                  <hr />
+                                  <div className="row">
+                                      {this.state.appointmentStarted ? (
+                                        <div className="col-md-4">
+                                            <button className={this.state.appointmentEnded ? "btn btn-danger center-block disabled" : "btn btn-danger center-block" } onClick={this.endAppointment}>End Appointment</button>
+                                        </div>
+                                      ) : (
+                                        <div className="col-md-4">
+                                            <button className={this.state.checkedIn ? "btn btn-primary center-block" : "btn btn-primary center-block disabled"} onClick={this.startAppointment}>Start Appointment</button>
+                                        </div>
+                                      )}
+                                      <div className="col-md-4">
+                                        {this.state.showHistory ? (
+                                            <button className="btn btn-default center-block" onClick={this.hideHistory}>Hide Patient History</button>
+                                        ):(
+                                            <button className="btn btn-default center-block" onClick={this.showHistory}>Show Patient History</button>
+                                        )}
+                                      </div>
+                                      <div className="col-md-4">
+                                        <button className={this.state.appointmentEnded || !this.state.appointmentStarted ? "btn btn-success center-block disabled" : "btn btn-success center-block"} onClick={this.saveChanges}>Save Changes</button>
+                                      </div>
+                                  </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        );
+
+    }
+});
+
+
+
+if (document.getElementById('practitionerCalendar') != null) {
+    var csrf_element = document.getElementById('csrf_token');
+    ReactDOM.render(<ViewAppointments csrf_element="{{csrf_element}}"/>, document.getElementById('practitionerCalendar'));
+}
+
+
+
+var ViewAllAppointments = React.createClass({
+
+    getInitialState: function() {
+        return {
+                  appointments: [],
+                  appointmentId: -1,
+                  patientName: '',
+                  date: '',
+                  startTime: '',
+                  endTime: '',
+                  reasonForVisit: '',
+                  patientId: -1,
+                  notes: '',
+                  checkedIn: false
+        };
+    },
+    updateAppointment: function(id) {
+        var self = this;
+
+        var notes = self.state.appointments[id-1].notes;
+        if ( notes === null) {
+            notes = "";
+        }
+        var checkInTime = self.state.appointments[id-1].checkInTime;
+        var checkedIn = false
+        if (checkInTime !== null) {
+            var checkedIn = true
+        }
+        //need to do 'id-1' offset because id is 1 based
+        this.setState({
+            appointmentId: id,
+            patientName: self.state.appointments[id-1].patientName,
+            date: self.state.appointments[id-1].date,
+            startTime: self.state.appointments[id-1].startTime,
+            endTime: self.state.appointments[id-1].endTime,
+            reasonForVisit: self.state.appointments[id-1].reasonForVisit,
+            notes: notes,
+            checkedIn: checkedIn
+        });
+
+    },
+    updateNotes: function(evt) {
+        this.setState({
+            notes: evt.target.value
+        });
+    },
+    loadCalendar: function() {
+     var self = this;
+
+     var initialLocaleCode = 'en';
+
+     $('#practitionerAppointmentsCalendar').fullCalendar({
+         header: {
+             left: '',
+             center: 'title',
+             right: ''
+         },
+         timezone: 'America/New_York',
+         defaultView: 'agendaDay',
+         allDaySlot: false,
+         weekends: false,
+         nowIndicator: true,
+         slotDuration: "00:15:00",
+         locale: initialLocaleCode,
+         navLinks: true, // can click day/week names to navigate views
+         selectable: false,
+         selectHelper: true,
+         minTime: "06:00:00",
+         maxTime: "18:00:00",
+         editable: true,
+         eventLimit: false, // allow "more" link when too many events
+         eventOverlap: false,
+         selectOverlap: false,
+         eventStartEditable: false,
+         eventDurationEditable: false,
+         eventClick: function(event) {
+            self.updateAppointment(event.appointmentId);
+            // This makes it to where you can't close the modal by clicking away
+            $('#myModal').modal('show');
+         }
+
+     });
+
+     //Clears the calendar so results aren't compounded
+     $('#practitionerAppointmentsCalendar').fullCalendar( 'removeEvents', function(event) {
+         return true;
+     });
+
+     this.state.appointments.forEach(function(appointment) {
+
+         var dateFormat = "MM-DD-YYYY HH:mm";
+         var start = moment((appointment.date + " " + appointment.startTime), dateFormat);
+         var end   = moment((appointment.date + " " + appointment.endTime), dateFormat);
+
+         var color = "#3CB371";
+         if (appointment.checkInTime === null) {
+            color = "#444";
+         }
+
+         var eventData = {
+             id: appointment.publicId,
+             title: appointment.patientName + " (" + appointment.practitionerName + ")",
+             start: start,
+             end: end,
+             appointmentId: appointment.publicId,
+             color: color
+         };
+
+         $('#practitionerAppointmentsCalendar').fullCalendar('renderEvent', eventData, true); // stick? = true
+     });
+    },
+    loadAppointmentsFromServer: function() {
+         var self = this;
+        $.ajax({
+           url: "http://localhost:8080/api/appointments"
+        }).then(function (data) {
+             self.setState({appointments: data._embedded.appointments});
+            return self.loadCalendar();
+        });
+    },
+    updateCheckIn: function() {
+        this.setState({
+            checkedIn: true
+        });
+    },
+    checkInUser: function() {
+        var self = this;
+        /**
+            Since a post request is being made. We must pass along this
+            CSRF token.
+
+            We need this because we have csrf protection enabled in SecurityConfig
+        */
+
+        if (csrf_element !== null) {
+            $.ajaxPrefilter(function (options, originalOptions, jqXHR) {
+                jqXHR.setRequestHeader('X-CSRF-Token', csrf_element.value);
+            });
+        }
+        $.ajax({
+            url: "http://localhost:8080/appointment/checkIn",
+            type: "POST",
+            data: {
+                  appointmentId: this.state.appointmentId
+            },
+            success: function() {
+                toastr.options = {
+                    "debug": false,
+                    "positionClass": "toast-top-center",
+                    "onclick": null,
+                    "fadeIn": 300,
+                    "fadeOut": 1000,
+                    "timeOut": 5000,
+                    "extendedTimeOut": 1000
+                }
+                toastr.success("Successfully checked in " + self.state.patientName);
+                self.updateCheckIn()
+                self.loadAppointmentsFromServer();
+            },
+            error: function(xhr, ajaxOptions, thrownError) {
+                toastr.options = {
+                    "debug": false,
+                    "positionClass": "toast-top-center",
+                    "onclick": null,
+                    "fadeIn": 300,
+                    "fadeOut": 1000,
+                    "timeOut": 5000,
+                    "extendedTimeOut": 1000
+                }
+                toastr.error("Not Authorized");
+            }
+        });
+    },
+    componentDidMount: function () {
+        this.loadAppointmentsFromServer();
+    },
+    render: function() {
+
+        return(
+
+        <div className="container">
+            <div className="well well-lg">
+                <h3 className="text-center">Today&apos;s Appointments</h3>
+                <hr />
+                <div className="row">
+                    <div className="col-md-12">
+                        <div id="practitionerAppointmentsCalendar"></div>
+                        <div className="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                          <div className="modal-dialog" role="document">
+                            <div className="modal-content">
+                              <div className="modal-header">
+                                <button type="button" className="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                <h4 className="modal-title">
+                                    {this.state.patientName}
+                                </h4>
+                              </div>
+                              <div className="modal-body">
+                                  <div className="row">
+                                      <div className="col-md-3">
+                                          <p>Appointment Date:</p>
+                                      </div>
+                                      <div className="col-md-9">
+                                          <p>{this.state.date}</p>
+                                      </div>
+                                  </div>
+                                  <div className="row">
+                                      <div className="col-md-3">
+                                          <p>Appointment Time:</p>
+                                      </div>
+                                      <div className="col-md-9">
+                                          <p>{this.state.startTime} - {this.state.endTime}</p>
+                                      </div>
+                                  </div>
+                                  <hr />
+                                  <div className="row">
+                                      <div className="col-md-12">
+                                          {this.state.checkedIn ? (
+                                              <button className="btn btn-default center-block disabled">Checked In</button>
+                                          ) : (
+                                              <button className="btn btn-success center-block" onClick={this.checkInUser}>Check In</button>
+                                          )}
+                                      </div>
+                                  </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        );
+
+    }
+});
+
+
+
+if (document.getElementById('receptionistCalendar') != null) {
+    var csrf_element = document.getElementById('csrf_token');
+    ReactDOM.render(<ViewAllAppointments csrf_element="{{csrf_element}}"/>, document.getElementById('receptionistCalendar'));
+}
+
+
+
+
+var Prescription = React.createClass({
+    /**
+        propTypes defines the values that this class will be expecting as properties.
+    */
+    propTypes: {
+        prescription:      React.PropTypes.object.isRequired,
+        csrf_element: React.PropTypes.object.isRequired
+    },
+    /**
+        This sets the initial state of the User class. As well as defines initial state variables
+    */
+    getInitialState: function() {
+        return {
+            prescriptions: [],
+            display: true,
+            editing: false,
+            name: this.props.prescription.name,
+            originalName: this.props.prescription.name,
+            description: this.props.prescription.description,
+            originalDescription: this.props.prescription.description,
+        };
+    },
+    componentDidMount: function () {
+        this.loadPrescriptionsFromServer();
+    },
+    loadPrescriptionsFromServer: function() {
+        var self = this;
+        $.ajax({
+            url: "http://localhost:8080/api/prescriptions"
+        }).then(function (data) {
+            self.setState({prescriptions: data._embedded.prescriptions});
+        });
+    },
+    updateName: function(evt) {
+        this.setState({
+            name: evt.target.value
+        });
+    },
+    updateDescription: function(evt) {
+        this.setState({
+            description: evt.target.value
+        });
+    },
+    /**
+        This handles whenever a user tries to delete an entry
+    */
+    handleDelete: function() {
+        var self = this;
+        /**
+            Since a post request is being made. We must pass along this
+            CSRF token.
+
+            We need this because we have csrf protection enabled in SecurityConfig
+        */
+        if (csrf_element !== null) {
+          $.ajaxPrefilter(function (options, originalOptions, jqXHR) {
+             jqXHR.setRequestHeader('X-CSRF-Token', csrf_element.value);
+          });
+        }
+        $.ajax({
+            url: self.props.prescription._links.self.href,
+            type: 'DELETE',
+            success: function(result) {
+                self.setState({display: false});
+            },
+            error: function(xhr, ajaxOptions, thrownError) {
+                toastr.options = {
+                    "debug": false,
+                    "positionClass": "toast-top-center",
+                    "onclick": null,
+                    "fadeIn": 300,
+                    "fadeOut": 1000,
+                    "timeOut": 5000,
+                    "extendedTimeOut": 1000
+                }
+                toastr.error("Not Authorized");
+            }
+        });
+    },
+    handleEdit: function() {
+        this.setState({
+            editing: true
+        });
+    },
+    handleEditConfirm: function() {
+
+        var self = this;
+        /**
+            Since a post request is being made. We must pass along this
+            CSRF token.
+
+            We need this because we have csrf protection enabled in SecurityConfig
+        */
+
+        if (csrf_element !== null) {
+            $.ajaxPrefilter(function (options, originalOptions, jqXHR) {
+                jqXHR.setRequestHeader('X-CSRF-Token', csrf_element.value);
+            });
+        }
+        $.ajax({
+            url: "http://localhost:8080/prescriptions/editPrescription",
+            type: "POST",
+            data: {
+                  id: this.props.prescription.publicId,
+                  name: this.state.name,
+                  description: this.state.description
+            },
+            success: function() {
+                toastr.options = {
+                    "debug": false,
+                    "positionClass": "toast-top-center",
+                    "onclick": null,
+                    "fadeIn": 300,
+                    "fadeOut": 1000,
+                    "timeOut": 5000,
+                    "extendedTimeOut": 1000
+                }
+                self.props.loadPrescriptionsFromServer();
+                toastr.success("Successfully Edited Prescription!");
+                self.setState({
+                    editing: false
+                })
+            },
+            error: function(xhr, ajaxOptions, thrownError) {
+                toastr.options = {
+                    "debug": false,
+                    "positionClass": "toast-top-center",
+                    "onclick": null,
+                    "fadeIn": 300,
+                    "fadeOut": 1000,
+                    "timeOut": 5000,
+                    "extendedTimeOut": 1000
+                }
+                toastr.error("Not Authorized");
+            }
+        });
+    },
+    handleEditCancel: function() {
+        var self = this;
+        this.setState({
+            name: self.state.originalName,
+            description: self.state.originalDescription,
+            editing: false
+        });
+    },
+    /**
+        Renders the HTML
+    */
+    render: function() {
+
+        if (this.state.display == false) {
+            return null;
+        } else {
+            /**
+                This HTML provides fields to show user data.
+            */
+            return (
+                this.state.editing ? (
+                    <tr>
+                      <td className="col-md-4">{this.props.prescription.name}</td>
+                      <td className="col-md-6">
+                        <textarea type="text" rows="4" className="form-control" onChange={this.updateDescription} placeholder="Prescription Description" value={this.state.description} />
+                      </td>
+                      <td className="col-md-1">
+                        <button className="btn btn-success" onClick={this.handleEditConfirm}>
+                            <span className="glyphicon glyphicon-ok" aria-hidden="true"></span>
+                        </button>
+                      </td>
+                      <td className="col-md-1">
+                        <button className="btn btn-danger" onClick={this.handleEditCancel}>
+                            <span className="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                        </button>
+                      </td>
+                    </tr>
+                ) : (
+                    <tr>
+                      <td className="col-md-4">{this.props.prescription.name}</td>
+                      <td className="col-md-6">{this.props.prescription.description}</td>
+                      <td className="col-md-1">
+                        <button className="btn btn-warning" onClick={this.handleEdit}>
+                            <span className="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+                        </button>
+                      </td>
+                      <td className="col-md-1">
+                        <button className="btn btn-danger" onClick={this.handleDelete}>
+                            <span className="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                        </button>
+                      </td>
+                    </tr>
+                )
+            );
+        }
+    }
+
+});
+
+var PrescriptionTable = React.createClass({
+    /**
+        propTypes defines the values that this class will be expecting as properties.
+    */
+    propTypes: {
+            prescriptions: React.PropTypes.array.isRequired
+    },
+    /**
+        Renders the HTML
+    */
+    render: function() {
+        var self = this;
+        var rows = [];
+        var index = 0;
+        this.props.prescriptions.forEach(function(prescription) {
+            index++;
+            rows.push(<Prescription csrf_element={csrf_element} prescription={prescription} key={prescription.publicId} loadPrescriptionsFromServer={self.props.loadPrescriptionsFromServer} />);
+        });
+        return (
+            <div className="panel panel-default">
+              <div className="panel-body">
+                <input id="inputSearch" type="text" className="form-control" placeholder="Search" />
+              </div>
+              <table className="table">
+                <thead className="panel-heading">
+                    <tr>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {rows}
+                </tbody>
+              </table>
+            </div>
+        );
+    }
+});
+
+var AllPrescriptions = React.createClass({
+    /**
+        This method loads the initial state variables
+    */
+
+    getInitialState: function() {
+        return {
+                  prescriptions: [],
+                  name: '',
+                  description: ''
+                };
+    },
+    /**
+        This method fires when the component has mounted
+    */
+    componentDidMount: function () {
+        this.loadPrescriptionsFromServer();
+    },
+    /**
+        This method loads the prescriptions from the server
+    */
+    loadPrescriptionsFromServer: function() {
+        var self = this;
+        $.ajax({
+            url: "http://localhost:8080/api/prescriptions"
+        }).then(function (data) {
+            self.setState({prescriptions: data._embedded.prescriptions});
+        });
+    },
+    /**
+        This method handles the adding of a user. (via AJAX)
+    */
+    handleAddPrescription: function() {
+        var self = this;
+        /**
+            Since a post request is being made. We must pass along this
+            CSRF token.
+
+            We need this because we have csrf protection enabled in SecurityConfig
+        */
+
+        if (csrf_element !== null) {
+            $.ajaxPrefilter(function (options, originalOptions, jqXHR) {
+                jqXHR.setRequestHeader('X-CSRF-Token', csrf_element.value);
+            });
+        }
+        $.ajax({
+            url: "http://localhost:8080/practitioner_appointments/addPrescription",
+            type: "POST",
+            data: {
+                  name: this.state.name,
+                  description: this.state.description
+            },
+            success: function() {
+                self.loadPrescriptionsFromServer();
+                toastr.options = {
+                    "debug": false,
+                    "positionClass": "toast-top-center",
+                    "onclick": null,
+                    "fadeIn": 300,
+                    "fadeOut": 1000,
+                    "timeOut": 5000,
+                    "extendedTimeOut": 1000
+                }
+                toastr.success("Successfully Added Prescription!");
+            },
+            error: function(xhr, ajaxOptions, thrownError) {
+                toastr.options = {
+                    "debug": false,
+                    "positionClass": "toast-top-center",
+                    "onclick": null,
+                    "fadeIn": 300,
+                    "fadeOut": 1000,
+                    "timeOut": 5000,
+                    "extendedTimeOut": 1000
+                }
+                toastr.error("Not Authorized");
+            }
+        });
+    },
+    /**
+        This method renders the HTML
+    */
+
+    updateName: function(evt) {
+        this.setState({
+            name: evt.target.value
+        });
+    },
+    updateDescription: function(evt) {
+        this.setState({
+            description: evt.target.value
+        });
+    },
+    render() {
+        return (
+            <div>
+                <div className="container">
+                    <div className="well well-lg">
+                        <div className="row">
+                            <div className="col-md-3">
+                                <label>Name:</label>
+                                <input type="text" className="form-control" placeholder="Prescription Name" value={this.state.name} onChange={this.updateName} />
+                            </div>
+                            <div className="col-md-6">
+                                <label>Description:</label>
+                                <textarea type="text" rows="4" className="form-control" onChange={this.updateDescription} placeholder="Prescription Description" value={this.state.description} />
+                            </div>
+                            <div className="col-md-3">
+                                <button className="btn btn-primary center-block" id="btnAddPrescription" onClick={this.handleAddPrescription}>Add Prescription</button>
+                            </div>
+                        </div>
+                    </div>
+                    <PrescriptionTable prescriptions={this.state.prescriptions} csrf_element={csrf_element} loadPrescriptionsFromServer={this.loadPrescriptionsFromServer} />
+                </div>
+            </div>
+        );
+    }
+});
+
+
+if (document.getElementById('allPrescriptions') != null) {
+    var csrf_element = document.getElementById('csrf_token');
+    ReactDOM.render(<AllPrescriptions csrf_element="{{csrf_element}}"/>, document.getElementById('allPrescriptions'));
+}
+
+
 
 
 /*TODO:ctn Eventually will want to convert this code (as well as the login/signup page) to utilize REACT */

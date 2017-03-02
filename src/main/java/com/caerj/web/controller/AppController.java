@@ -1,11 +1,9 @@
 package com.caerj.web.controller;
 
-import com.caerj.model.Appointment;
-import com.caerj.model.Patient;
-import com.caerj.model.Role;
-import com.caerj.model.User;
+import com.caerj.model.*;
 import com.caerj.service.AppointmentService;
 import com.caerj.service.PatientService;
+import com.caerj.service.PrescriptionService;
 import com.caerj.service.UserService;
 import com.caerj.web.UserValidator;
 import org.slf4j.Logger;
@@ -15,11 +13,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import javax.servlet.http.HttpServletRequest;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by Calvin on 1/9/17.
@@ -39,6 +39,9 @@ public class AppController {
 
     @Autowired
     private AppointmentService appointmentService;
+
+    @Autowired
+    private PrescriptionService prescriptionService;
 
     private static final Logger logger = LoggerFactory.getLogger(AppController.class);
 
@@ -68,6 +71,27 @@ public class AppController {
         logger.info(" --- RequestMapping from /appointment");
         logger.info(" --- Mapping to /appointment");
         return "appointment";
+    }
+
+    @RequestMapping(value = "/practitioner_appointments")
+    public String practitioner_appointments() {
+        logger.info(" --- RequestMapping from /practitioner_appointments");
+        logger.info(" --- Mapping to /practitioner_appointments");
+        return "practitioner_appointments";
+    }
+
+    @RequestMapping(value = "/prescriptions")
+    public String prescriptions() {
+        logger.info(" --- RequestMapping from /prescriptions");
+        logger.info(" --- Mapping to /prescriptions");
+        return "prescriptions";
+    }
+
+    @RequestMapping(value = "/reports")
+    public String reports() {
+        logger.info(" --- RequestMapping from /reports");
+        logger.info(" --- Mapping to /reports");
+        return "reports";
     }
 
     @RequestMapping(value = "/admin/addUser", method = RequestMethod.POST)
@@ -256,9 +280,169 @@ public class AppController {
         logger.info(" --- Saving appointment");
         appointmentService.save(appointment);
 
+        //Update the patient appointment list
+        List<Appointment> appointmentList = patient.getAppointments();
+        appointmentList.add(appointment);
+        patient.setAppointments(appointmentList);
+        patientService.save(patient);
+
         logger.info(" --- Redirecting to /appointment");
         return "redirect:/appointment";
     }
+
+
+    @RequestMapping(value = "/practitioner_appointments/saveChanges", method = RequestMethod.POST)
+    public String saveChanges(HttpServletRequest request) {
+        logger.info(" --- RequestMapping from /practitioner_appointments/saveChanges");
+
+        String strAppointmentId = request.getParameter("appointmentId");
+        String notes = request.getParameter("notes");
+        String jsonPrescriptions = request.getParameter("prescriptions");
+
+        System.out.println(jsonPrescriptions);
+
+        Long appointmentId = Long.valueOf(strAppointmentId);
+
+        Appointment appointment = appointmentService.findById(appointmentId);
+
+        List prescriptions = new ArrayList<Prescription>();
+
+        JSONArray jsonAccountsArray = new JSONArray(jsonPrescriptions);
+        jsonAccountsArray.length();
+
+        for (int i = 0; i < jsonAccountsArray.length(); i++) {
+            String name = jsonAccountsArray.getString(i);
+
+            System.out.println("Name: " + name);
+
+            Prescription prescription = prescriptionService.findByName(name);
+
+            prescriptions.add(prescription);
+        }
+
+        if (appointment == null) {
+            logger.error("Appointment not found! appointmentId = " + appointmentId);
+            appointment = new Appointment();
+        }
+
+        appointment.setNotes(notes);
+
+        appointment.setPrescriptions(prescriptions);
+
+        logger.info(" --- Saving changes");
+        appointmentService.save(appointment);
+
+        logger.info(" --- Redirecting to /practitioner_appointments");
+        return "redirect:/practitioner_appointments";
+    }
+
+    @RequestMapping(value = "/appointment/checkIn", method = RequestMethod.POST)
+    public String checkIn(HttpServletRequest request) {
+        logger.info(" --- RequestMapping from /appointment/checkIn");
+
+        String strAppointmentId = request.getParameter("appointmentId");
+
+        Long appointmentId = Long.valueOf(strAppointmentId);
+
+        Appointment appointment = appointmentService.findById(appointmentId);
+
+        if (appointment == null) {
+            logger.error("Appointment not found! appointmentId = " + appointmentId);
+        }
+
+        Date currentTime = new Date();
+        appointment.setCheckInTime(currentTime.toString());
+
+        logger.info(" --- Updating appointment");
+        appointmentService.update(appointment);
+
+        logger.info(" --- Redirecting to /appointment");
+        return "redirect:/appointment";
+    }
+
+    @RequestMapping(value = "/practitioner_appointments/startAppointment", method = RequestMethod.POST)
+    public String startAppointment(HttpServletRequest request) {
+        logger.info(" --- RequestMapping from /appointment/startAppointment");
+
+        String strAppointmentId = request.getParameter("appointmentId");
+
+        Long appointmentId = Long.valueOf(strAppointmentId);
+
+        Appointment appointment = appointmentService.findById(appointmentId);
+
+        if (appointment == null) {
+            logger.error("Appointment not found! appointmentId = " + appointmentId);
+        }
+
+        Date currentTime = new Date();
+        appointment.setSessionStartTime(currentTime.toString());
+
+        logger.info(" --- Updating appointment");
+        appointmentService.update(appointment);
+
+        logger.info(" --- Redirecting to /appointment");
+        return "redirect:/appointment";
+    }
+
+    @RequestMapping(value = "/practitioner_appointments/endAppointment", method = RequestMethod.POST)
+    public String endAppointment(HttpServletRequest request) {
+        logger.info(" --- RequestMapping from /appointment/endAppointment");
+
+        String strAppointmentId = request.getParameter("appointmentId");
+
+        Long appointmentId = Long.valueOf(strAppointmentId);
+
+        Appointment appointment = appointmentService.findById(appointmentId);
+
+        if (appointment == null) {
+            logger.error("Appointment not found! appointmentId = " + appointmentId);
+        }
+
+        Date currentTime = new Date();
+        appointment.setSessionEndTime(currentTime.toString());
+
+        logger.info(" --- Updating appointment");
+        appointmentService.update(appointment);
+
+        logger.info(" --- Redirecting to /appointment");
+        return "redirect:/appointment";
+    }
+
+    @RequestMapping(value = "/practitioner_appointments/addPrescription", method = RequestMethod.POST)
+    public String addPrescription(HttpServletRequest request) {
+        logger.info(" --- RequestMapping from /prescriptions/addPrescriptions");
+
+        String name = request.getParameter("name");
+        String description = request.getParameter("description");
+
+        Prescription prescription = new Prescription(name, description);
+
+        prescriptionService.save(prescription);
+
+        logger.info(" --- Redirecting to /prescriptions");
+        return "redirect:/prescriptions";
+    }
+
+    @RequestMapping(value = "/prescriptions/editPrescription", method = RequestMethod.POST)
+    public String editPrescription(HttpServletRequest request) {
+        logger.info(" --- RequestMapping from /prescriptions/editPrescription");
+
+        String strId = request.getParameter("id");
+        String name = request.getParameter("name");
+        String description = request.getParameter("description");
+
+        Long id = Long.valueOf(strId);
+
+        Prescription prescription = new Prescription(name, description);
+        prescription.setId(id);
+
+        prescriptionService.save(prescription);
+
+        logger.info(" --- Redirecting to /prescriptions");
+        return "redirect:/prescriptions";
+    }
+
+
 
 
 }

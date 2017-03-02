@@ -35,13 +35,15 @@
                     <li th:class="${selectedTab} == 'home' ? 'active' : ''"><a href="/"><span class="glyphicon glyphicon-home" aria-hidden="true"></span><span class="sr-only">(current)</span></a></li>
                     <li th:class="${selectedTab} == 'patients' ? 'active' : ''" sec:authorize="hasRole('ROLE_ADMIN') || hasRole('ROLE_RECEPTIONIST')"><a href="/patients">Patients</a></li>
                     <li th:class="${selectedTab} == 'appointment' ? 'active' : ''" sec:authorize="hasRole('ROLE_ADMIN') || hasRole('ROLE_RECEPTIONIST')"><a href="/appointment">Appointment</a></li>
+                    <li th:class="${selectedTab} == 'practitioners_appointments' ? 'active' : ''" sec:authorize="hasRole('ROLE_ADMIN') || hasRole('ROLE_PRACTITIONER')"><a href="/practitioner_appointments">Scheduled Appointments</a></li>
+                    <li th:class="${selectedTab} == 'prescriptions' ? 'active' : ''" sec:authorize="hasRole('ROLE_ADMIN')"><a href="/prescriptions">Prescriptions</a></li>
+                    <li th:class="${selectedTab} == 'reports' ? 'active' : ''"><a href="/reports">Reports</a></li>
                     <li th:class="${selectedTab} == 'admin' ? 'active' : ''" sec:authorize="hasRole('ROLE_ADMIN')"><a href="/admin">Admin</a></li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" sec:authentication="name"></a>
+                        <a id="username" href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" sec:authentication="name"></a>
                         <ul class="dropdown-menu">
-                            <li><a href="#">View Profile</a></li>
                             <li>
                                 <form class="logout inline" th:action="@{/logout}" method="post">
                                     <button class="btn btn-default" type="submit">Logout</button>
@@ -53,6 +55,8 @@
             </div><!-- /.navbar-collapse -->
         </div><!-- /.container-fluid -->
     </nav>
+
+    <img th:fragment="loading" class="center-block" src="img/spin.svg" alt="Loading..." />
 
     <div th:fragment="flash" th:if="${flash != null}" class="errorDiv">
         <div class="alert alert-danger alert-dismissible flash" role="alert" th:classappend="${#strings.toLowerCase(flash.status)}" th:text="${flash.message}">

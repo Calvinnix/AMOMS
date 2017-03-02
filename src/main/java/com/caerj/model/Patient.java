@@ -1,5 +1,6 @@
 package com.caerj.model;
 
+import java.util.List;
 import javax.persistence.*;
 
 /**
@@ -53,6 +54,10 @@ public class Patient {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User practitioner;
+
+    @OneToMany(fetch = FetchType.EAGER)
+    @JoinColumn(name = "appointment_id")
+    private List<Appointment> appointments;
 
     @Column
     private String practitionerName;
@@ -212,5 +217,13 @@ public class Patient {
 
     public void setEmailAddress(String emailAddress) {
         this.emailAddress = emailAddress;
+    }
+
+    public List<Appointment> getAppointments() {
+        return appointments;
+    }
+
+    public void setAppointments(List<Appointment> appointments) {
+        this.appointments = appointments;
     }
 }

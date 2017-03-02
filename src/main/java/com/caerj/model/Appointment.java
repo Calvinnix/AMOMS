@@ -1,6 +1,7 @@
 package com.caerj.model;
 
 import javax.persistence.*;
+import java.util.List;
 
 /**
  * Created by nixc1 on 2/23/17.
@@ -12,6 +13,8 @@ public class Appointment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    private Long publicId;
 
     @OneToOne
     @JoinColumn(name = "patient_id")
@@ -25,13 +28,29 @@ public class Appointment {
 
     private String patientName;
 
+    private Long patientId;
+
+    @Column( length = 10000 ) //this may need to be expanded
+    private String notes;
+
     private String date;
 
     private String startTime;
 
     private String endTime;
 
+    @Column( length = 10000 ) //this may need to be expanded
     private String reasonForVisit;
+
+    private String checkInTime;
+
+    private String sessionStartTime;
+
+    private String sessionEndTime;
+
+    @ManyToMany
+    @JoinColumn(name = "prescription_id")
+    private List<Prescription> prescriptions;
 
     public Appointment() {
     }
@@ -43,7 +62,19 @@ public class Appointment {
         this.startTime = startTime;
         this.endTime = endTime;
         this.reasonForVisit = reasonForVisit;
+        this.notes = notes;
     }
+
+    public Appointment(Patient patient, User practitioner, String date, String startTime, String endTime, String reasonForVisit, String notes) {
+        this.patient = patient;
+        this.practitioner = practitioner;
+        this.date = date;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.reasonForVisit = reasonForVisit;
+    }
+
+
 
     public Long getId() {
         return id;
@@ -51,6 +82,10 @@ public class Appointment {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Long getPublicId() {
+        return id;
     }
 
     public Patient getPatient() {
@@ -87,6 +122,22 @@ public class Appointment {
         return fullName;
     }
 
+    public Long getPatientId() {
+        Long patientId = -1L;
+        if (this.patient != null) {
+            patientId = this.patient.getPublicId();
+        }
+        return patientId;
+    }
+
+    public String getNotes() {
+        return notes;
+    }
+
+    public void setNotes(String notes) {
+        this.notes = notes;
+    }
+
     public String getDate() {
         return date;
     }
@@ -117,5 +168,37 @@ public class Appointment {
 
     public void setReasonForVisit(String reasonForVisit) {
         this.reasonForVisit = reasonForVisit;
+    }
+
+    public String getCheckInTime() {
+        return checkInTime;
+    }
+
+    public void setCheckInTime(String checkInTime) {
+        this.checkInTime = checkInTime;
+    }
+
+    public String getSessionStartTime() {
+        return sessionStartTime;
+    }
+
+    public void setSessionStartTime(String sessionStartTime) {
+        this.sessionStartTime = sessionStartTime;
+    }
+
+    public String getSessionEndTime() {
+        return sessionEndTime;
+    }
+
+    public void setSessionEndTime(String sessionEndTime) {
+        this.sessionEndTime = sessionEndTime;
+    }
+
+    public List<Prescription> getPrescriptions() {
+        return prescriptions;
+    }
+
+    public void setPrescriptions(List<Prescription> prescriptions) {
+        this.prescriptions = prescriptions;
     }
 }
