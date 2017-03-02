@@ -273,13 +273,19 @@ public class AppController {
         logger.info(" --- Saving appointment");
         appointmentService.save(appointment);
 
+        //Update the patient appointment list
+        List<Appointment> appointmentList = patient.getAppointments();
+        appointmentList.add(appointment);
+        patient.setAppointments(appointmentList);
+        patientService.save(patient);
+
         logger.info(" --- Redirecting to /appointment");
         return "redirect:/appointment";
     }
 
 
     @RequestMapping(value = "/practitioner_appointments/saveChanges", method = RequestMethod.POST)
-    public String saveNotes(HttpServletRequest request) {
+    public String saveChanges(HttpServletRequest request) {
         logger.info(" --- RequestMapping from /practitioner_appointments/saveChanges");
 
         String strAppointmentId = request.getParameter("appointmentId");
@@ -298,9 +304,7 @@ public class AppController {
         jsonAccountsArray.length();
 
         for (int i = 0; i < jsonAccountsArray.length(); i++) {
-            JSONObject currentAccount = jsonAccountsArray.getJSONObject(i);
-
-            String name = currentAccount.getString("name");
+            String name = jsonAccountsArray.getString(i);
 
             System.out.println("Name: " + name);
 

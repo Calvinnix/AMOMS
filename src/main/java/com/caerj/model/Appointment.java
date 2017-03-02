@@ -28,6 +28,8 @@ public class Appointment {
 
     private String patientName;
 
+    private Long patientId;
+
     @Column( length = 10000 ) //this may need to be expanded
     private String notes;
 
@@ -46,7 +48,7 @@ public class Appointment {
 
     private String sessionEndTime;
 
-    @OneToMany
+    @ManyToMany
     @JoinColumn(name = "prescription_id")
     private List<Prescription> prescriptions;
 
@@ -118,6 +120,14 @@ public class Appointment {
                        this.patient.getLastName();
         }
         return fullName;
+    }
+
+    public Long getPatientId() {
+        Long patientId = -1L;
+        if (this.patient != null) {
+            patientId = this.patient.getPublicId();
+        }
+        return patientId;
     }
 
     public String getNotes() {

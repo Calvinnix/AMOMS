@@ -1768,6 +1768,82 @@ var ListPrescriptions  = React.createClass({
     }
 });
 
+var PatientHistory = React.createClass({
+  getInitialState: function() {
+    return {
+      appointmentHistory: [],
+      appointments: []
+    };
+  },
+  loadAppointmentHistoryFromServer: function() {
+    var self = this;
+    $.ajax({
+       url: "http://localhost:8080/api/patients/"+self.props.patientId+"/appointments"
+    }).then(function (data) {
+       self.setState({appointmentHistory: data._embedded.appointments});
+       return self.populateAppointments();
+    });
+  },
+  componentDidMount: function() {
+    this.loadAppointmentHistoryFromServer();
+  },
+  populateAppointments: function() {
+    var index = 0;
+    var self = this;
+    this.setState({
+      appointments: self.state.appointments.concat(
+        <div className="row" key={index}>
+          <hr />
+          <div className="col-md-2"><b>Practitioner</b></div>
+          <div className="col-md-2"><b>Date/Time</b></div>
+          <div className="col-md-2"><b>Reason for visit</b></div>
+          <div className="col-md-3"><b>Notes</b></div>
+          <div className="col-md-3"><b>Prescriptions</b></div>
+        </div>
+      )
+    });
+    var appointments = [];
+    this.state.appointmentHistory.forEach(function(appointment) {
+        if (appointment.sessionEndTime !== null) {
+          index++;
+          var prescriptions = [];
+          $.ajax({
+             url: "http://localhost:8080/api/appointments/"+appointment.publicId+"/prescriptions"
+          }).then(function (data) {
+             prescriptions = data._embedded.prescriptions;
+             var prescriptionList = [];
+             prescriptions.forEach(function(prescription) {
+                prescriptionList.push(<li className="list-group-item word-wrap" key={prescription.publicId}>{prescription.name}</li>)
+             });
+             self.setState({
+                appointments: self.state.appointments.concat(
+                  <div className="row" key={appointment.publicId}>
+                     <hr />
+                     <div className="col-md-2">{appointment.practitionerName}</div>
+                     <div className="col-md-2">{appointment.date} <br /> {appointment.startTime} - {appointment.endTime}</div>
+                     <div className="col-md-2 word-wrap">{appointment.reasonForVisit}</div>
+                     <div className="col-md-3 word-wrap">{appointment.notes}</div>
+                     <div className="col-md-3">
+                        <ul className="list-group">
+                          {prescriptionList}
+                        </ul>
+                     </div>
+                   </div>
+                )
+             });
+          });
+        }
+    });
+  },
+  render: function() {
+    return (
+      <div>
+        {this.state.appointments}
+      </div>
+    );
+  }
+});
+
 var ViewAppointments = React.createClass({
 
     getInitialState: function() {
@@ -1790,7 +1866,8 @@ var ViewAppointments = React.createClass({
                   reasonForVisit: '',
                   notes: '',
                   appointmentStarted: false,
-                  appointmentEnded: false
+                  appointmentEnded: false,
+                  showHistory: false
         };
     },
     updateAppointment: function(id) {
@@ -1817,14 +1894,20 @@ var ViewAppointments = React.createClass({
         this.setState({
             appointmentId: id,
             patientName: self.state.appointments[id-1].patientName,
+            patientId: self.state.appointments[id-1].patientId,
             date: self.state.appointments[id-1].date,
             startTime: self.state.appointments[id-1].startTime,
             endTime: self.state.appointments[id-1].endTime,
             reasonForVisit: self.state.appointments[id-1].reasonForVisit,
             notes: notes,
             appointmentStarted: appointmentStarted,
-            appointmentEnded: appointmentEnded
+            appointmentEnded: appointmentEnded,
+            showHistory: false,
+            addedPrescriptions: []
         });
+
+        this.loadAddedPrescriptionsFromServer();
+
     },
     updateNotes: function(evt) {
         this.setState({
@@ -1927,6 +2010,18 @@ var ViewAppointments = React.createClass({
             self.setState({prescriptions: data._embedded.prescriptions});
         });
     },
+    loadAddedPrescriptionsFromServer: function() {
+        var self = this;
+        $.ajax({
+            url: "http://localhost:8080/api/appointments/"+self.state.appointmentId+"/prescriptions"
+        }).then(function (data) {
+            data._embedded.prescriptions.forEach(function (prescription) {
+              self.setState({
+                addedPrescriptions: self.state.addedPrescriptions.concat(prescription['name'])
+              });
+            });
+        });
+    },
     addPrescriptions: function() {
 
         if (this.state.prescriptionName === "") {
@@ -1973,7 +2068,7 @@ var ViewAppointments = React.createClass({
             data: {
                   appointmentId: this.state.appointmentId,
                   notes: this.state.notes,
-                  prescriptions: JSON.stringify(this.state.prescriptions)
+                  prescriptions: JSON.stringify(this.state.addedPrescriptions)
             },
             success: function() {
                 toastr.options = {
@@ -2118,6 +2213,16 @@ var ViewAppointments = React.createClass({
             }
         });
     },
+    showHistory: function() {
+      this.setState({
+        showHistory: true
+      });
+    },
+    hideHistory: function() {
+      this.setState({
+        showHistory: false
+      });
+    },
     componentDidMount: function () {
         this.loadAppointmentsFromServer();
         this.loadPrescriptionsFromServer();
@@ -2197,17 +2302,28 @@ var ViewAppointments = React.createClass({
                                           <textarea type="text" rows="4" className="form-control" onChange={this.updateNotes} value={this.state.notes} />
                                       </div>
                                   </div>
+                                  {this.state.showHistory &&
+                                    <PatientHistory patientId={this.state.patientId}/>
+                                  }
                                   <hr />
                                   <div className="row">
-                                      <div className="col-md-6">
+                                      <div className="col-md-4">
                                           <button className="btn btn-success center-block" onClick={this.saveChanges}>Save Changes</button>
                                       </div>
+                                      <div className="col-md-4">
+                                      {this.state.showHistory ? (
+                                          <button className="btn btn-default center-block" onClick={this.hideHistory}>Hide History</button>
+                                      ):(
+                                          <button className="btn btn-default center-block" onClick={this.showHistory}>Show History</button>
+                                      )}
+                                      </div>
+
                                       {this.state.appointmentStarted ? (
-                                        <div className="col-md-6">
+                                        <div className="col-md-4">
                                             <button className={this.state.appointmentEnded ? "btn btn-danger center-block disabled" : "btn btn-danger center-block" } onClick={this.endAppointment}>End Appointment</button>
                                         </div>
                                       ) : (
-                                        <div className="col-md-6">
+                                        <div className="col-md-4">
                                             <button className="btn btn-primary center-block" onClick={this.startAppointment}>Start Appointment</button>
                                         </div>
                                       )}
