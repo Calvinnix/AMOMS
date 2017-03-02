@@ -1983,7 +1983,7 @@ var ViewAppointments = React.createClass({
 
          var eventData = {
              id: appointment.publicId,
-             title: appointment.patientName + " --- Reason for visit --- " + appointment.reasonForVisit,
+             title: appointment.patientName + "\n" + appointment.reasonForVisit,
              start: start,
              end: end,
              appointmentId: appointment.publicId,
@@ -2307,17 +2307,6 @@ var ViewAppointments = React.createClass({
                                   }
                                   <hr />
                                   <div className="row">
-                                      <div className="col-md-4">
-                                          <button className="btn btn-success center-block" onClick={this.saveChanges}>Save Changes</button>
-                                      </div>
-                                      <div className="col-md-4">
-                                      {this.state.showHistory ? (
-                                          <button className="btn btn-default center-block" onClick={this.hideHistory}>Hide History</button>
-                                      ):(
-                                          <button className="btn btn-default center-block" onClick={this.showHistory}>Show History</button>
-                                      )}
-                                      </div>
-
                                       {this.state.appointmentStarted ? (
                                         <div className="col-md-4">
                                             <button className={this.state.appointmentEnded ? "btn btn-danger center-block disabled" : "btn btn-danger center-block" } onClick={this.endAppointment}>End Appointment</button>
@@ -2327,6 +2316,16 @@ var ViewAppointments = React.createClass({
                                             <button className="btn btn-primary center-block" onClick={this.startAppointment}>Start Appointment</button>
                                         </div>
                                       )}
+                                      <div className="col-md-4">
+                                        {this.state.showHistory ? (
+                                            <button className="btn btn-default center-block" onClick={this.hideHistory}>Hide Patient History</button>
+                                        ):(
+                                            <button className="btn btn-default center-block" onClick={this.showHistory}>Show Patient History</button>
+                                        )}
+                                      </div>
+                                      <div className="col-md-4">
+                                        <button className={this.state.appointmentEnded || !this.state.appointmentStarted ? "btn btn-success center-block disabled" : "btn btn-success center-block"} onClick={this.saveChanges}>Save Changes</button>
+                                      </div>
                                   </div>
                               </div>
                             </div>
