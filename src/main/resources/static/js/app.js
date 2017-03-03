@@ -3428,7 +3428,8 @@ $('#searchBar').click(function(e){
       {
         var hasElementClass   = function( element, className ){ return element.classList ? element.classList.contains( className ) : new RegExp( '(^| )' + className + '( |$)', 'gi' ).test( element.className ); },
           addElementClass   = function( element, className ){ element.classList ? element.classList.add( className ) : element.className += ' ' + className; },
-          removeElementClass  = function( element, className ){ element.classList ? element.classList.remove( className ) : element.className = element.className.replace( new RegExp( '(^|\\b)' + className.split( ' ' ).join( '|' ) + '(\\b|$)', 'gi' ), ' ' ); };
+          removeElementClass  = function( element, className ){ element.classList ? element.classList.remove( className ) : element.className = element.className.replace( new RegExp( '(^|\\b)' + className.split( ' ' ).join( '|' ) + '(\\b|$)', 'gi' ), ' ' );
+      };
 
 
         // search & highlight
@@ -3459,7 +3460,7 @@ $('#searchBar').click(function(e){
 
             [].forEach.call( items, function( entry )
             {
-              entry.innerHTML = entry.innerHTML.replace( /<span class="highlight">([^<]+)<\/span>/gi, '$1' );
+              //entry.innerHTML = entry.innerHTML.replace( /<span class="highlight">([^<]+)<\/span>/gi, '$1' );
             });
 
             var searchVal = input.value.trim().toLowerCase();
@@ -3469,8 +3470,8 @@ $('#searchBar').click(function(e){
               {
                 if( itemsIndexed[ i ].indexOf( searchVal ) != -1 )
                 {
-                  removeElementClass( items[ i ], 'is-hidden' );
-                  items[ i ].innerHTML = items[ i ].innerHTML.replace( new RegExp( searchVal+'(?!([^<]+)?>)', 'gi' ), '<span class="highlight">$&</span>' );
+                  //removeElementClass( items[ i ], 'is-hidden' );
+                  //items[ i ].innerHTML = items[ i ].innerHTML.replace( new RegExp( searchVal+'(?!([^<]+)?>)', 'gi' ), '<span class="highlight">$&</span>' );
                 }
                 else
                   addElementClass( items[ i ], 'is-hidden' );
