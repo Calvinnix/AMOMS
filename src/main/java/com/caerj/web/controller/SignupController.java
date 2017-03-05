@@ -36,7 +36,7 @@ public class SignupController {
     private UserValidator userValidator;
 
     private static final Logger logger = LoggerFactory.getLogger(SignupController.class);
-
+/*
     @RequestMapping(value = "/signup", method = RequestMethod.GET)
     public String signup(Model model, HttpServletRequest request) {
         logger.info(" --- RequestMapping from /signup");
@@ -77,7 +77,7 @@ public class SignupController {
         logger.info(" --- Redirecting to /");
         return "redirect:/";
     }
-
+*/
 
 
 

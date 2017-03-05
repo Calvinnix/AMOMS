@@ -202,6 +202,10 @@ var User = React.createClass({
         Renders the HTML
     */
     render: function() {
+
+        var dltUserId = this.props.user.username;
+        var dltUserIdTarget = "#" + this.props.user.username;
+
         if (this.state.display == false) {
             return null;
         } else if (this.state.editing == true) {
@@ -237,6 +241,7 @@ var User = React.createClass({
                 This HTML provides fields to show user data.
             */
             return (
+
                 <tr>
                       <td className="col-md-2">{this.props.user.username}</td>
                       <td className="col-md-4">********</td>
@@ -248,9 +253,26 @@ var User = React.createClass({
                         </button>
                       </td>
                       <td className="col-md-1">
-                        <button className="btn btn-danger" onClick={this.handleDelete}>
+                        <button className="btn btn-danger" data-toggle="modal" data-target={dltUserIdTarget}>
                             <span className="glyphicon glyphicon-trash" aria-hidden="true"></span>
                         </button>
+                        <div className="modal fade" id={dltUserId} tabindex="-1" role="dialog">
+                            <div className="modal-dialog">
+                                <div className="modal-content">
+                                    <div className="modal-header">
+                                        <button type="button" className="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                         <h4 className="modal-title"/>
+                                    </div>
+                                    <div className="modal-body">
+                                        <p>Are you sure you want to delete {this.props.user.username}?</p>
+                                    </div>
+                                    <div className="modal-footer">
+                                        <button type="button" className="btn btn-default" data-dismiss="modal">Cancel</button>
+                                        <button type="button" className="btn btn-primary" onClick={this.handleDelete} data-dismiss="modal">Yes</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                       </td>
                 </tr>
             );
@@ -832,6 +854,8 @@ var Patient = React.createClass({
         var modalId = "myModal" + this.props.patient.publicId;
         var modalIdDataTarget = "#" + modalId;
         var modalLabelId = "myModalLabel" + this.props.patient.publicId;
+        var modalDltId = "dlt" + modalId;
+        var modalDltIdTarget = "#" + modalDltId;
 
         if (this.state.display == false) {
             return null;
@@ -950,9 +974,26 @@ var Patient = React.createClass({
                     </div>
                   </td>
                   <td className="col-md-1">
-                    <button className="btn btn-danger" onClick={this.handleDelete}>
+                    <button type="button" className="btn btn-danger" data-toggle="modal" data-target={modalDltIdTarget}>
                         <span className="glyphicon glyphicon-trash" aria-hidden="true"></span>
                     </button>
+                    <div className="modal fade" id={modalDltId} tabindex="-1" role="dialog" aria-labelledby={modalLabelId}>
+                        <div className="modal-dialog">
+                            <div className="modal-content">
+                                <div className="modal-header">
+                                    <button type="button" className="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                     <h4 className="modal-title" id={modalLabelId}/>
+                                </div>
+                                <div className="modal-body">
+                                    <p>Are you sure you want to delete {this.props.patient.firstName} {this.props.patient.lastName}?</p>
+                                </div>
+                                <div className="modal-footer">
+                                    <button type="button" className="btn btn-default" data-dismiss="modal">Cancel</button>
+                                    <button type="button" className="btn btn-primary" onClick={this.handleDelete} data-dismiss="modal">Yes</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                   </td>
                 </tr>
 
@@ -2768,6 +2809,9 @@ var Prescription = React.createClass({
     */
     render: function() {
 
+        var dltPrescriptionId = this.props.prescription.name;
+        var dltPrescriptionTarget = "#" + this.props.prescription.name;
+
         if (this.state.display == false) {
             return null;
         } else {
@@ -2802,9 +2846,26 @@ var Prescription = React.createClass({
                         </button>
                       </td>
                       <td className="col-md-1">
-                        <button className="btn btn-danger" onClick={this.handleDelete}>
+                        <button className="btn btn-danger" data-toggle="modal" data-target={dltPrescriptionTarget}>
                             <span className="glyphicon glyphicon-trash" aria-hidden="true"></span>
                         </button>
+                        <div className="modal fade" id={dltPrescriptionId} tabindex="-1" role="dialog">
+                            <div className="modal-dialog">
+                                <div className="modal-content">
+                                    <div className="modal-header">
+                                        <button type="button" className="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                         <h4 className="modal-title"/>
+                                    </div>
+                                    <div className="modal-body">
+                                        <p>Are you sure you want to delete {this.props.prescription.name}?</p>
+                                    </div>
+                                    <div className="modal-footer">
+                                        <button type="button" className="btn btn-default" data-dismiss="modal">Cancel</button>
+                                        <button type="button" className="btn btn-primary" onClick={this.handleDelete} data-dismiss="modal">Yes</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                       </td>
                     </tr>
                 )
@@ -3550,3 +3611,4 @@ $('#searchBar').click(function(e){
 
       }( document, window, 0 ));
    });
+
