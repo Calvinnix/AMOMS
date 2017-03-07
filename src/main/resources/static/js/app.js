@@ -3089,8 +3089,7 @@ var PatientViewReport = React.createClass({
       this.loadAppointmentsFromServer();
     },
     handlePrint: function() {
-      alert("Print")
-      $("#patientViewReport").printElement();
+      $("#patientViewReport").printThis();
     },
     updatePractitionerName: function(evt) {
       this.setState({
@@ -3222,19 +3221,19 @@ var PatientViewReport = React.createClass({
             index++;
             rows.push(
               <div className={appointment.checkInTime === null ? 'row text-danger' : 'row text-success'} key={index}>
-                <div className="col-md-3">
+                <div className="col-md-3 col-print-2">
                   {appointment.patientName}
                 </div>
-                <div className="col-md-2">
+                <div className="col-md-2 col-print-2">
                   {appointment.patientNumber}
                 </div>
-                <div className="col-md-2">
+                <div className="col-md-2 col-print-2">
                   {appointment.date}
                 </div>
-                <div className="col-md-2">
+                <div className="col-md-2 col-print-2">
                   {appointment.startTime} - {appointment.endTime}
                 </div>
-                <div className="col-md-2">
+                <div className="col-md-2 col-print-2">
                   {appointment.practitionerName}
                 </div>
               </div>
@@ -3247,25 +3246,25 @@ var PatientViewReport = React.createClass({
           <h1>Patient Visits Report</h1>
           <hr />
           <div className="row">
-            <div className="col-md-3">
+            <div className="col-md-3 col-print-3">
               <label>Practitioner:</label>
               <select className="form-control" value={this.state.practitionerName} onChange={this.updatePractitionerName}>
                 {practitioners}
               </select>
             </div>
-            <div className="col-md-3">
+            <div className="col-md-3 col-print-3">
               <label>Year:</label>
               <select className="form-control" value={this.state.year} onChange={this.updateYear}>
                 {years}
               </select>
             </div>
-            <div className="col-md-3">
+            <div className="col-md-3 col-print-3">
               <label>Month:</label>
               <select className="form-control" value={this.state.month} onChange={this.updateMonth}>
                 {months}
               </select>
             </div>
-            <div className="col-md-3">
+            <div className="col-md-3 col-print-3">
               <label>Day:</label>
               <select className="form-control" value={this.state.day} onChange={this.updateDay}>
                 {days}
@@ -3274,28 +3273,28 @@ var PatientViewReport = React.createClass({
           </div>
           <hr />
           <div className="row">
-            <div className="col-md-6">
+            <div className="col-md-6 col-print-6">
               <h2 className="text-success">Seen Count: {seenCount}</h2>
             </div>
-            <div className="col-md-6">
+            <div className="col-md-6 col-print-6">
               <h2 className="text-danger">No Show Count: {noShowCount}</h2>
             </div>
           </div>
           <hr />
           <div className="row">
-            <div className="col-md-3">
+            <div className="col-md-3 col-print-3">
               <b>Name</b>
             </div>
-            <div className="col-md-2">
+            <div className="col-md-2 col-print-2">
               <b>Number</b>
             </div>
-            <div className="col-md-2">
+            <div className="col-md-2 col-print-2">
               <b>Date</b>
             </div>
-            <div className="col-md-2">
+            <div className="col-md-2 col-print-2">
               <b>Start - End</b>
             </div>
-            <div className="col-md-2">
+            <div className="col-md-2 col-print-2">
               <b>Practitioner</b>
             </div>
           </div>
@@ -3330,8 +3329,7 @@ var MissedAppointmentsReport = React.createClass({
       this.loadAppointmentsFromServer();
     },
     handlePrint: function() {
-      alert("Print")
-      $("#missedAppointmentsReport").printElement();
+      $("#missedAppointmentsReport").printThis();
     },
     render: function() {
       var self = this;
@@ -3348,19 +3346,19 @@ var MissedAppointmentsReport = React.createClass({
           if (appointment.checkInTime === null) {
             rows.push(
               <div className="row row-striped" key={appointment.publicId}>
-                <div className="col-md-3">
+                <div className="col-md-3 col-print-3">
                   {appointment.patientName}
                 </div>
-                <div className="col-md-2">
+                <div className="col-md-2 col-print-2">
                   {appointment.patientNumber}
                 </div>
-                <div className="col-md-2">
+                <div className="col-md-2 col-print-2">
                   {appointment.date}
                 </div>
-                <div className="col-md-2">
+                <div className="col-md-2 col-print-2">
                   {appointment.startTime} - {appointment.endTime}
                 </div>
-                <div className="col-md-2">
+                <div className="col-md-2 col-print-2">
                   {appointment.practitionerName}
                 </div>
               </div>
@@ -3373,19 +3371,19 @@ var MissedAppointmentsReport = React.createClass({
           <h1>Missed Appointments Report</h1>
           <hr />
           <div className="row">
-            <div className="col-md-3">
+            <div className="col-md-3 col-print-3">
               <b>Name</b>
             </div>
-            <div className="col-md-2">
+            <div className="col-md-2 col-print-2">
               <b>Number</b>
             </div>
-            <div className="col-md-2">
+            <div className="col-md-2 col-print-2">
               <b>Date</b>
             </div>
-            <div className="col-md-2">
+            <div className="col-md-2 col-print-2">
               <b>Start - End</b>
             </div>
-            <div className="col-md-2">
+            <div className="col-md-2 col-print-2">
               <b>Practitioner</b>
             </div>
           </div>
@@ -3421,8 +3419,7 @@ var CallListReport = React.createClass({
     this.loadAppointmentsFromServer();
   },
   handlePrint: function() {
-    alert("Print")
-    $("#callListReport").printElement();
+    $("#callListReport").printThis();
   },
   render: function() {
     var self = this;
@@ -3433,19 +3430,19 @@ var CallListReport = React.createClass({
       if (moment(appointment.date).isBefore(moment().add(7, 'days'))) {
         rows.push(
           <div className="row row-striped" key={appointment.publicId}>
-            <div className="col-md-3">
+            <div className="col-md-3 col-print-3">
               {appointment.patientName}
             </div>
-            <div className="col-md-2">
+            <div className="col-md-2 col-print-2">
               {appointment.patientNumber}
             </div>
-            <div className="col-md-2">
+            <div className="col-md-2 col-print-2">
               {appointment.date}
             </div>
-            <div className="col-md-2">
+            <div className="col-md-2 col-print-2">
               {appointment.startTime} - {appointment.endTime}
             </div>
-            <div className="col-md-2">
+            <div className="col-md-2 col-print-2">
               {appointment.practitionerName}
             </div>
           </div>
@@ -3457,19 +3454,19 @@ var CallListReport = React.createClass({
         <h1>Call Lists Report</h1>
         <hr />
         <div className="row">
-          <div className="col-md-3">
+          <div className="col-md-3 col-print-3">
             <b>Name</b>
           </div>
-          <div className="col-md-2">
+          <div className="col-md-2 col-print-2">
             <b>Number</b>
           </div>
-          <div className="col-md-2">
+          <div className="col-md-2 col-print-2">
             <b>Date</b>
           </div>
-          <div className="col-md-2">
+          <div className="col-md-2 col-print-2">
             <b>Start - End</b>
           </div>
-          <div className="col-md-2">
+          <div className="col-md-2 col-print-2">
             <b>Practitioner</b>
           </div>
         </div>
@@ -4048,4 +4045,5 @@ $('#searchBar').click(function(e){
 
       }( document, window, 0 ));
    });
+
 
