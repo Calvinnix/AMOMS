@@ -3069,6 +3069,647 @@ if (document.getElementById('allPrescriptions') != null) {
 
 
 
+var PatientVisitsReport = React.createClass({
+  getInitialState: function() {
+      return {
+        appointments: [],
+        month: '',
+        year: -1,
+        practitionerName: ''
+      };
+    },
+    loadAppointmentsFromServer: function() {
+      var self = this;
+      $.ajax({
+        url: "http://localhost:8080/api/appointments"
+      }).then(function (data) {
+        self.setState({appointments: data._embedded.appointments});
+      });
+    },
+    componentDidMount: function() {
+      this.loadAppointmentsFromServer();
+    },
+    handlePrint: function() {
+      alert("Print")
+      $("#patientVisitsReport").printElement();
+    },
+    updatePractitionerName: function(evt) {
+      this.setState({
+        practitionerName: evt.target.value
+      });
+    },
+    updateYear: function(evt) {
+      this.setState({
+        year: evt.target.value
+      });
+    },
+    updateMonth: function(evt) {
+      this.setState({
+        month: evt.target.value
+      });
+    },
+    getMonthName: function(monthNumber) {
+      var monthName = "";
+
+      switch(Number(monthNumber)) {
+        case 1:
+          monthName = "January"
+          break;
+        case 2:
+          monthName = "February"
+          break;
+        case 3:
+          monthName = "March"
+          break;
+        case 4:
+          monthName = "April"
+          break;
+        case 5:
+          monthName = "May"
+          break;
+        case 6:
+          monthName = "June"
+          break;
+        case 7:
+          monthName = "July"
+          break;
+        case 8:
+          monthName = "August"
+          break;
+        case 9:
+          monthName = "September"
+          break;
+        case 10:
+          monthName = "October"
+          break;
+        case 11:
+          monthName = "November"
+          break;
+        case 12:
+          monthName = "December"
+          break;
+        default:
+          monthName = "ERROR"
+      }
+
+      return monthName;
+    },
+    render: function() {
+      var self = this;
+      var noShowCount = 0;
+      var seenCount = 0;
+      var rows = [];
+      var practitioners = [<option value={''} key={-1}></option>];
+      var addedPractitionerNames = [];
+      var years = [<option value={''} key={-1}></option>];
+      var addedYears = [];
+      var months = [<option value={''} key={-1}></option>];
+      var addedMonths = [];
+      var index = 0;
+
+      this.state.appointments.forEach(function(appointment) {
+        //Check if appointment is in the past
+        if (moment(appointment.date).isBefore(moment().subtract(1, 'days'))) {
+
+          var practitionerNameOption = <option value={appointment.practitionerName} key={appointment.practitionerName}>{appointment.practitionerName}</option>
+          if (($.inArray(appointment.practitionerName, addedPractitionerNames) === -1)) {
+            practitioners.push(practitionerNameOption);
+            addedPractitionerNames.push(appointment.practitionerName);
+          }
+
+          var year = (appointment.date).split('-')[2]; //This assumes month-day-year format
+
+          var yearOption = <option value={year} key={year}>{year}</option>
+          if (($.inArray(year, addedYears) === -1)) {
+            years.push(yearOption);
+            addedYears.push(year);
+          }
+
+          var month = (appointment.date).split('-')[0]; //This assumes month-day-year format
+          var monthName = self.getMonthName(month)
+
+          var monthOption = <option value={month} key={month}>{monthName}</option>
+          if (($.inArray(month, addedMonths) === -1)) {
+            months.push(monthOption);
+            addedMonths.push(month);
+          }
+
+          if (self.state.practitionerName === appointment.practitionerName     &&
+              self.state.year             === (appointment.date).split('-')[2] &&
+              self.state.month            === (appointment.date).split('-')[0] ) {
+
+              if (appointment.checkInTime === null) {
+                noShowCount++;
+              } else {
+                seenCount++;
+              }
+
+            index++;
+            rows.push(
+              <div className={appointment.checkInTime === null ? 'row text-danger' : 'row text-success'} key={index}>
+                <div className="col-md-3">
+                  {appointment.patientName}
+                </div>
+                <div className="col-md-2">
+                  {appointment.patientNumber}
+                </div>
+                <div className="col-md-2">
+                  {appointment.date}
+                </div>
+                <div className="col-md-2">
+                  {appointment.startTime} - {appointment.endTime}
+                </div>
+                <div className="col-md-2">
+                  {appointment.practitionerName}
+                </div>
+              </div>
+            );
+          }
+        }
+      });
+      return(
+        <div>
+          <h1>Patient Visits Report</h1>
+          <hr />
+          <div className="row">
+            <div className="col-md-4">
+              <label>Practitioner:</label>
+              <select className="form-control" value={this.state.practitionerName} onChange={this.updatePractitionerName}>
+                {practitioners}
+              </select>
+            </div>
+            <div className="col-md-4">
+              <label>Year:</label>
+              <select className="form-control" value={this.state.year} onChange={this.updateYear}>
+                {years}
+              </select>
+            </div>
+            <div className="col-md-4">
+              <label>Month:</label>
+              <select className="form-control" value={this.state.month} onChange={this.updateMonth}>
+                {months}
+              </select>
+            </div>
+          </div>
+          <hr />
+          <div className="row">
+            <div className="col-md-6">
+              <h2 className="text-success">Seen Count: {seenCount}</h2>
+            </div>
+            <div className="col-md-6">
+              <h2 className="text-danger">No Show Count: {noShowCount}</h2>
+            </div>
+          </div>
+          <hr />
+          <div className="row">
+            <div className="col-md-3">
+              <b>Name</b>
+            </div>
+            <div className="col-md-2">
+              <b>Number</b>
+            </div>
+            <div className="col-md-2">
+              <b>Date</b>
+            </div>
+            <div className="col-md-2">
+              <b>Start - End</b>
+            </div>
+            <div className="col-md-2">
+              <b>Practitioner</b>
+            </div>
+          </div>
+          {rows}
+          <hr />
+          <button className="btn btn-primary" onClick={this.handlePrint}>Print</button>
+        </div>
+      );
+    }
+});
+
+if (document.getElementById('patientVisitsReport') != null) {
+    var csrf_element = document.getElementById('csrf_token');
+    ReactDOM.render(<PatientVisitsReport csrf_element="{{csrf_element}}"/>, document.getElementById('patientVisitsReport'));
+}
+
+var PatientViewReport = React.createClass({
+  getInitialState: function() {
+      return {
+        appointments: [],
+        month: '',
+        year: -1,
+        day: -1,
+        practitionerName: ''
+      };
+    },
+    loadAppointmentsFromServer: function() {
+      var self = this;
+      $.ajax({
+        url: "http://localhost:8080/api/appointments"
+      }).then(function (data) {
+        self.setState({appointments: data._embedded.appointments});
+      });
+    },
+    componentDidMount: function() {
+      this.loadAppointmentsFromServer();
+    },
+    handlePrint: function() {
+      alert("Print")
+      $("#patientViewReport").printElement();
+    },
+    updatePractitionerName: function(evt) {
+      this.setState({
+        practitionerName: evt.target.value
+      });
+    },
+    updateYear: function(evt) {
+      this.setState({
+        year: evt.target.value
+      });
+    },
+    updateMonth: function(evt) {
+      this.setState({
+        month: evt.target.value
+      });
+    },
+    updateDay: function(evt) {
+      this.setState({
+        day: evt.target.value
+      });
+    },
+    getMonthName: function(monthNumber) {
+      var monthName = "";
+
+      switch(Number(monthNumber)) {
+        case 1:
+          monthName = "January"
+          break;
+        case 2:
+          monthName = "February"
+          break;
+        case 3:
+          monthName = "March"
+          break;
+        case 4:
+          monthName = "April"
+          break;
+        case 5:
+          monthName = "May"
+          break;
+        case 6:
+          monthName = "June"
+          break;
+        case 7:
+          monthName = "July"
+          break;
+        case 8:
+          monthName = "August"
+          break;
+        case 9:
+          monthName = "September"
+          break;
+        case 10:
+          monthName = "October"
+          break;
+        case 11:
+          monthName = "November"
+          break;
+        case 12:
+          monthName = "December"
+          break;
+        default:
+          monthName = "ERROR"
+      }
+
+      return monthName;
+    },
+    render: function() {
+      var self = this;
+      var noShowCount = 0;
+      var seenCount = 0;
+      var rows = [];
+      var practitioners = [<option value={''} key={-1}></option>];
+      var addedPractitionerNames = [];
+      var years = [<option value={''} key={-1}></option>];
+      var addedYears = [];
+      var months = [<option value={''} key={-1}></option>];
+      var addedMonths = [];
+      var days = [<option value={''} key={-1}></option>];
+      var addedDays = [];
+      var index = 0;
+
+      this.state.appointments.forEach(function(appointment) {
+        //Check if appointment is in the past
+        if (moment(appointment.date).isBefore(moment().subtract(1, 'days'))) {
+
+          var practitionerNameOption = <option value={appointment.practitionerName} key={appointment.practitionerName}>{appointment.practitionerName}</option>
+          if (($.inArray(appointment.practitionerName, addedPractitionerNames) === -1)) {
+            practitioners.push(practitionerNameOption);
+            addedPractitionerNames.push(appointment.practitionerName);
+          }
+
+          var year = (appointment.date).split('-')[2]; //This assumes month-day-year format
+
+          var yearOption = <option value={year} key={year}>{year}</option>
+          if (($.inArray(year, addedYears) === -1)) {
+            years.push(yearOption);
+            addedYears.push(year);
+          }
+
+          var month = (appointment.date).split('-')[0]; //This assumes month-day-year format
+          var monthName = self.getMonthName(month)
+
+          var monthOption = <option value={month} key={month}>{monthName}</option>
+          if (($.inArray(month, addedMonths) === -1)) {
+            months.push(monthOption);
+            addedMonths.push(month);
+          }
+
+          var day = (appointment.date).split('-')[1]; //This assumes month-day-year format
+
+          var dayOption = <option value={day} key={day}>{day}</option>
+          if (($.inArray(day, addedDays) === -1)) {
+            days.push(dayOption);
+            addedDays.push(day);
+          }
+
+          if (self.state.practitionerName === appointment.practitionerName     &&
+              self.state.year             === (appointment.date).split('-')[2] &&
+              self.state.month            === (appointment.date).split('-')[0] &&
+              self.state.day              === (appointment.date).split('-')[1]) {
+
+              if (appointment.checkInTime === null) {
+                noShowCount++;
+              } else {
+                seenCount++;
+              }
+
+            index++;
+            rows.push(
+              <div className={appointment.checkInTime === null ? 'row text-danger' : 'row text-success'} key={index}>
+                <div className="col-md-3">
+                  {appointment.patientName}
+                </div>
+                <div className="col-md-2">
+                  {appointment.patientNumber}
+                </div>
+                <div className="col-md-2">
+                  {appointment.date}
+                </div>
+                <div className="col-md-2">
+                  {appointment.startTime} - {appointment.endTime}
+                </div>
+                <div className="col-md-2">
+                  {appointment.practitionerName}
+                </div>
+              </div>
+            );
+          }
+        }
+      });
+      return(
+        <div>
+          <h1>Patient Visits Report</h1>
+          <hr />
+          <div className="row">
+            <div className="col-md-3">
+              <label>Practitioner:</label>
+              <select className="form-control" value={this.state.practitionerName} onChange={this.updatePractitionerName}>
+                {practitioners}
+              </select>
+            </div>
+            <div className="col-md-3">
+              <label>Year:</label>
+              <select className="form-control" value={this.state.year} onChange={this.updateYear}>
+                {years}
+              </select>
+            </div>
+            <div className="col-md-3">
+              <label>Month:</label>
+              <select className="form-control" value={this.state.month} onChange={this.updateMonth}>
+                {months}
+              </select>
+            </div>
+            <div className="col-md-3">
+              <label>Day:</label>
+              <select className="form-control" value={this.state.day} onChange={this.updateDay}>
+                {days}
+              </select>
+            </div>
+          </div>
+          <hr />
+          <div className="row">
+            <div className="col-md-6">
+              <h2 className="text-success">Seen Count: {seenCount}</h2>
+            </div>
+            <div className="col-md-6">
+              <h2 className="text-danger">No Show Count: {noShowCount}</h2>
+            </div>
+          </div>
+          <hr />
+          <div className="row">
+            <div className="col-md-3">
+              <b>Name</b>
+            </div>
+            <div className="col-md-2">
+              <b>Number</b>
+            </div>
+            <div className="col-md-2">
+              <b>Date</b>
+            </div>
+            <div className="col-md-2">
+              <b>Start - End</b>
+            </div>
+            <div className="col-md-2">
+              <b>Practitioner</b>
+            </div>
+          </div>
+          {rows}
+          <hr />
+          <button className="btn btn-primary" onClick={this.handlePrint}>Print</button>
+        </div>
+      );
+    }
+});
+
+if (document.getElementById('patientViewReport') != null) {
+    var csrf_element = document.getElementById('csrf_token');
+    ReactDOM.render(<PatientViewReport csrf_element="{{csrf_element}}"/>, document.getElementById('patientViewReport'));
+}
+
+var MissedAppointmentsReport = React.createClass({
+  getInitialState: function() {
+      return {
+        appointments: []
+      };
+    },
+    loadAppointmentsFromServer: function() {
+      var self = this;
+      $.ajax({
+        url: "http://localhost:8080/api/appointments"
+      }).then(function (data) {
+        self.setState({appointments: data._embedded.appointments});
+      });
+    },
+    componentDidMount: function() {
+      this.loadAppointmentsFromServer();
+    },
+    handlePrint: function() {
+      alert("Print")
+      $("#missedAppointmentsReport").printElement();
+    },
+    render: function() {
+      var self = this;
+      var rows = [];
+      this.state.appointments.forEach(function(appointment) {
+
+        var sevenDaysAgo    = moment().subtract(7, 'days'); //todo:ctn this edge case needs to be tested
+        var currentDay      = moment().subtract(1, 'days'); //Need to subtract 1 day to not include current appoinments
+        var appointmentDate = moment(appointment.date);
+
+        //Check if the appointment was been 1-7 days in the past
+        if (appointmentDate.isBefore(currentDay) && appointmentDate.isAfter(sevenDaysAgo)) {
+          //If checkInTime is null they didn't checkIn, thus, they missed the appointment
+          if (appointment.checkInTime === null) {
+            rows.push(
+              <div className="row row-striped" key={appointment.publicId}>
+                <div className="col-md-3">
+                  {appointment.patientName}
+                </div>
+                <div className="col-md-2">
+                  {appointment.patientNumber}
+                </div>
+                <div className="col-md-2">
+                  {appointment.date}
+                </div>
+                <div className="col-md-2">
+                  {appointment.startTime} - {appointment.endTime}
+                </div>
+                <div className="col-md-2">
+                  {appointment.practitionerName}
+                </div>
+              </div>
+            );
+          }
+        }
+      });
+      return(
+        <div>
+          <h1>Missed Appointments Report</h1>
+          <hr />
+          <div className="row">
+            <div className="col-md-3">
+              <b>Name</b>
+            </div>
+            <div className="col-md-2">
+              <b>Number</b>
+            </div>
+            <div className="col-md-2">
+              <b>Date</b>
+            </div>
+            <div className="col-md-2">
+              <b>Start - End</b>
+            </div>
+            <div className="col-md-2">
+              <b>Practitioner</b>
+            </div>
+          </div>
+          {rows}
+          <hr />
+          <button className="btn btn-primary" onClick={this.handlePrint}>Print</button>
+        </div>
+      );
+    }
+});
+
+if (document.getElementById('missedAppointmentsReport') != null) {
+    var csrf_element = document.getElementById('csrf_token');
+    ReactDOM.render(<MissedAppointmentsReport csrf_element="{{csrf_element}}"/>, document.getElementById('missedAppointmentsReport'));
+}
+
+var CallListReport = React.createClass({
+
+  getInitialState: function() {
+    return {
+      appointments: []
+    };
+  },
+  loadAppointmentsFromServer: function() {
+    var self = this;
+    $.ajax({
+      url: "http://localhost:8080/api/appointments"
+    }).then(function (data) {
+      self.setState({appointments: data._embedded.appointments});
+    });
+  },
+  componentDidMount: function() {
+    this.loadAppointmentsFromServer();
+  },
+  handlePrint: function() {
+    alert("Print")
+    $("#callListReport").printElement();
+  },
+  render: function() {
+    var self = this;
+    var rows = [];
+    this.state.appointments.forEach(function(appointment) {
+      //Check if appointment date is less than 7 days away
+      //If true add it to the Call List Report
+      if (moment(appointment.date).isBefore(moment().add(7, 'days'))) {
+        rows.push(
+          <div className="row row-striped" key={appointment.publicId}>
+            <div className="col-md-3">
+              {appointment.patientName}
+            </div>
+            <div className="col-md-2">
+              {appointment.patientNumber}
+            </div>
+            <div className="col-md-2">
+              {appointment.date}
+            </div>
+            <div className="col-md-2">
+              {appointment.startTime} - {appointment.endTime}
+            </div>
+            <div className="col-md-2">
+              {appointment.practitionerName}
+            </div>
+          </div>
+        );
+      }
+    });
+    return(
+      <div>
+        <h1>Call Lists Report</h1>
+        <hr />
+        <div className="row">
+          <div className="col-md-3">
+            <b>Name</b>
+          </div>
+          <div className="col-md-2">
+            <b>Number</b>
+          </div>
+          <div className="col-md-2">
+            <b>Date</b>
+          </div>
+          <div className="col-md-2">
+            <b>Start - End</b>
+          </div>
+          <div className="col-md-2">
+            <b>Practitioner</b>
+          </div>
+        </div>
+        {rows}
+        <hr />
+        <button className="btn btn-primary" onClick={this.handlePrint}>Print</button>
+      </div>
+    );
+  }
+});
+
+if (document.getElementById('callListReport') != null) {
+    var csrf_element = document.getElementById('csrf_token');
+    ReactDOM.render(<CallListReport csrf_element="{{csrf_element}}"/>, document.getElementById('callListReport'));
+}
+
 
 /*TODO:ctn Eventually will want to convert this code (as well as the login/signup page) to utilize REACT */
 /*TODO:ctn some code is repeated... This should be cleaned up */

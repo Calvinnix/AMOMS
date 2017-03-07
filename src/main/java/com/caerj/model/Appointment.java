@@ -28,6 +28,8 @@ public class Appointment {
 
     private String patientName;
 
+    private Long patientNumber;
+
     private Long patientId;
 
     @Column( length = 10000 ) //this may need to be expanded
@@ -128,6 +130,14 @@ public class Appointment {
             patientId = this.patient.getPublicId();
         }
         return patientId;
+    }
+
+    public Long getPatientNumber() {
+      Long patientNumber = -1L;
+      if (this.patient != null) {
+        patientNumber = this.patient.getPhoneNumber();
+      }
+      return patientNumber;
     }
 
     public String getNotes() {
