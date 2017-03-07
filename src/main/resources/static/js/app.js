@@ -3244,6 +3244,7 @@ var PatientViewReport = React.createClass({
       return(
         <div>
           <h1>Patient Visits Report</h1>
+          <button className="btn btn-primary" onClick={this.handlePrint}>Print</button>
           <hr />
           <div className="row">
             <div className="col-md-3 col-print-3">
@@ -3300,7 +3301,6 @@ var PatientViewReport = React.createClass({
           </div>
           {rows}
           <hr />
-          <button className="btn btn-primary" onClick={this.handlePrint}>Print</button>
         </div>
       );
     }
@@ -3369,6 +3369,7 @@ var MissedAppointmentsReport = React.createClass({
       return(
         <div>
           <h1>Missed Appointments Report</h1>
+          <button className="btn btn-primary" onClick={this.handlePrint}>Print</button>
           <hr />
           <div className="row">
             <div className="col-md-3 col-print-3">
@@ -3389,7 +3390,6 @@ var MissedAppointmentsReport = React.createClass({
           </div>
           {rows}
           <hr />
-          <button className="btn btn-primary" onClick={this.handlePrint}>Print</button>
         </div>
       );
     }
@@ -3452,6 +3452,7 @@ var CallListReport = React.createClass({
     return(
       <div>
         <h1>Call Lists Report</h1>
+        <button className="btn btn-primary" onClick={this.handlePrint}>Print</button>
         <hr />
         <div className="row">
           <div className="col-md-3 col-print-3">
@@ -3472,7 +3473,6 @@ var CallListReport = React.createClass({
         </div>
         {rows}
         <hr />
-        <button className="btn btn-primary" onClick={this.handlePrint}>Print</button>
       </div>
     );
   }
