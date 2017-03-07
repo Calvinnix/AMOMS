@@ -1,19 +1,16 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org">
   <head th:replace="layout :: head(title='Reports')"></head>
   <body>
     <input type="hidden" id="csrf_token" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
     <div th:replace="layout :: nav(selectedTab='reports')"></div>
     <div class="container">
-      <div id="patientVisitsReport" class="well">
+      <div sec:authorize="hasRole('ROLE_ADMIN') || hasRole('ROLE_PRACTITIONER')"  id="patientViewReport" class="well">
         <block th:replace="layout :: loading"></block>
       </div>
       <hr />
-      <div id="patientViewReport" class="well">
-        <block th:replace="layout :: loading"></block>
-      </div>
-      <hr />
-      <div id="missedAppointmentsReport" class="well">
+      <div sec:authorize="hasRole('ROLE_ADMIN') || hasRole('ROLE_RECEPTIONIST')" id="missedAppointmentsReport" class="well">
         <block th:replace="layout :: loading"></block>
       </div>
       <hr />
