@@ -2594,6 +2594,9 @@ var ViewAllAppointments = React.createClass({
             }
         });
     },
+    cancelAppointment: function() {
+      alert("cancel appointment. This will delete the appointment");
+    },
     componentDidMount: function () {
         this.loadAppointmentsFromServer();
     },
@@ -2636,11 +2639,18 @@ var ViewAllAppointments = React.createClass({
                                   </div>
                                   <hr />
                                   <div className="row">
-                                      <div className="col-md-12">
+                                      <div className="col-md-6">
                                           {this.state.checkedIn ? (
                                               <button className="btn btn-default center-block disabled">Checked In</button>
                                           ) : (
                                               <button className="btn btn-success center-block" onClick={this.checkInUser}>Check In</button>
+                                          )}
+                                      </div>
+                                      <div className="col-md-6">
+                                          {this.state.checkedIn ? (
+                                              <button className="btn btn-default center-block disabled">Cancel</button>
+                                          ) : (
+                                              <button className="btn btn-danger center-block" onClick={this.cancelAppointment}>Cancel Appointment</button>
                                           )}
                                       </div>
                                   </div>
