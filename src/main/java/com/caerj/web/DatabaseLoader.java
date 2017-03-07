@@ -52,8 +52,8 @@ public class DatabaseLoader implements CommandLineRunner {
     @Override
     public void run(String... strings) throws Exception {
 
-        int PATIENT_AMOUNT = 100;
-        int PRESCRIPTION_AMOUNT = 100;
+        int PATIENT_AMOUNT = 20;
+        int PRESCRIPTION_AMOUNT = 20;
         String LOREMIPSUM = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, "
             + "sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut "
             + "enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi "

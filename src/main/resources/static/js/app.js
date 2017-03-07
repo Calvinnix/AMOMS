@@ -749,6 +749,16 @@ var Patient = React.createClass({
             type: 'DELETE',
             success: function(result) {
                 self.setState({display: false});
+                toastr.options = {
+                    "debug": false,
+                    "positionClass": "toast-top-center",
+                    "onclick": null,
+                    "fadeIn": 300,
+                    "fadeOut": 1000,
+                    "timeOut": 5000,
+                    "extendedTimeOut": 1000
+                }
+                toastr.success("Successfully deleted patient");
             },
             error: function(xhr, ajaxOptions, thrownError) {
                 toastr.options = {
@@ -982,10 +992,10 @@ var Patient = React.createClass({
                             <div className="modal-content">
                                 <div className="modal-header">
                                     <button type="button" className="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                                     <h4 className="modal-title" id={modalLabelId}/>
+                                     <h4 className="modal-title" id={modalLabelId}>Delete Confirmation</h4>
                                 </div>
                                 <div className="modal-body">
-                                    <p>Are you sure you want to delete {this.props.patient.firstName} {this.props.patient.lastName}?</p>
+                                    <p>Are you sure you want to delete {this.props.patient.firstName} {this.props.patient.middleName} {this.props.patient.lastName}?</p>
                                 </div>
                                 <div className="modal-footer">
                                     <button type="button" className="btn btn-default" data-dismiss="modal">Cancel</button>
@@ -2464,9 +2474,9 @@ var ViewAllAppointments = React.createClass({
 
      $('#practitionerAppointmentsCalendar').fullCalendar({
          header: {
-             left: '',
+             left: 'prev,next today',
              center: 'title',
-             right: ''
+             right: 'agendaWeek,agendaDay'
          },
          timezone: 'America/New_York',
          defaultView: 'agendaDay',
@@ -2723,6 +2733,16 @@ var Prescription = React.createClass({
             type: 'DELETE',
             success: function(result) {
                 self.setState({display: false});
+                toastr.options = {
+                    "debug": false,
+                    "positionClass": "toast-top-center",
+                    "onclick": null,
+                    "fadeIn": 300,
+                    "fadeOut": 1000,
+                    "timeOut": 5000,
+                    "extendedTimeOut": 1000
+                }
+                toastr.success("Successfully deleted " + self.state.name);
             },
             error: function(xhr, ajaxOptions, thrownError) {
                 toastr.options = {
@@ -2854,7 +2874,7 @@ var Prescription = React.createClass({
                                 <div className="modal-content">
                                     <div className="modal-header">
                                         <button type="button" className="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                                         <h4 className="modal-title"/>
+                                         <h4 className="modal-title">Delete Confirmation</h4>
                                     </div>
                                     <div className="modal-body">
                                         <p>Are you sure you want to delete {this.props.prescription.name}?</p>
