@@ -3082,8 +3082,8 @@ var PatientViewReport = React.createClass({
       return {
         appointments: [],
         month: '',
-        year: -1,
-        day: -1,
+        year: '',
+        day: '',
         practitionerName: ''
       };
     },
@@ -3172,13 +3172,13 @@ var PatientViewReport = React.createClass({
       var noShowCount = 0;
       var seenCount = 0;
       var rows = [];
-      var practitioners = [<option value={''} key={-1}></option>];
+      var practitioners = [<option value={''} key={-1}>All</option>];
       var addedPractitionerNames = [];
-      var years = [<option value={''} key={-1}></option>];
+      var years = [<option value={''} key={-1}>All</option>];
       var addedYears = [];
-      var months = [<option value={''} key={-1}></option>];
+      var months = [<option value={''} key={-1}>All</option>];
       var addedMonths = [];
-      var days = [<option value={''} key={-1}></option>];
+      var days = [<option value={''} key={-1}>All</option>];
       var addedDays = [];
       var index = 0;
 
@@ -3217,10 +3217,10 @@ var PatientViewReport = React.createClass({
             addedDays.push(day);
           }
 
-          if (self.state.practitionerName === appointment.practitionerName     &&
-              self.state.year             === (appointment.date).split('-')[2] &&
-              self.state.month            === (appointment.date).split('-')[0] &&
-              self.state.day              === (appointment.date).split('-')[1]) {
+          if ( (self.state.practitionerName === appointment.practitionerName     || self.state.practitionerName === '') &&
+               (self.state.year             === (appointment.date).split('-')[2] || self.state.year === '')             &&
+               (self.state.month            === (appointment.date).split('-')[0] || self.state.month === '')            &&
+               (self.state.day              === (appointment.date).split('-')[1] || self.state.day === '') ) {
 
               if (appointment.checkInTime === null) {
                 noShowCount++;
