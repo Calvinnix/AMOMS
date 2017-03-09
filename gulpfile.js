@@ -29,6 +29,7 @@ gulp.task('concatjs', () => {
             './src/main/resources/static/js/fullcalendar.min.js',
             './src/main/resources/static/js/pikaday.js',
             './src/main/resources/static/js/search.js',
+            './src/main/resources/static/js/bootstrap-select.js',
             './src/main/resources/static/js/printThis.js'
             ])
         .pipe(concat('bundle.js'))
