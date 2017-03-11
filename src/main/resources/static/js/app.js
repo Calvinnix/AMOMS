@@ -1797,6 +1797,12 @@ var PrescriptionSelect = React.createClass({
     propTypes: {
                 prescriptionName: React.PropTypes.string
     },
+    componentDidUpdate: function(){
+        $('#prescriptionSearch').selectpicker({
+          liveSearch: true,
+          maxOptions: 1
+        });
+    },
     render: function() {
         var prescriptions = [];
         var index = 0;
@@ -1807,7 +1813,7 @@ var PrescriptionSelect = React.createClass({
             prescriptions.push(<PrescriptionOption prescription={prescription} key={index}/>);
         });
         return (
-            <select className="form-control" value={this.props.value} onChange={this.props.onChange}>
+            <select id="prescriptionSearch" className="form-control" value={this.props.value} onChange={this.props.onChange}>
                 {prescriptions}
             </select>
         );
