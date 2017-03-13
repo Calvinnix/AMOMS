@@ -2619,7 +2619,43 @@ var ViewAllAppointments = React.createClass({
         });
     },
     cancelAppointment: function() {
-      alert("cancel appointment. This will delete the appointment");
+      var self = this;
+      if (csrf_element !== null) {
+        $.ajaxPrefilter(function (options, originalOptions, jqXHR) {
+          jqXHR.setRequestHeader('X-CSRF-Token', csrf_element.value);
+        });
+      }
+
+      $.ajax({
+        url: "http://localhost:8080/api/appointments/"+this.state.appointmentId,
+        type: 'DELETE',
+        success: function(result) {
+          toastr.options = {
+            "debug": false,
+            "positionClass": "toast-top-center",
+            "onclick": null,
+            "fadeIn": 300,
+            "fadeOut": 1000,
+            "timeOut": 5000,
+            "extendedTimeOut": 1000
+          }
+          toastr.success("Successfully deleted appointment!");
+          $("#practitionerAppointmentsCalendar").fullCalendar('removeEvents', self.state.appointmentId);
+          $("#myModal").modal("hide");
+        },
+        error: function(xhr, ajaxOptions, thrownError) {
+          toastr.options = {
+            "debug": false,
+            "positionClass": "toast-top-center",
+            "onclick": null,
+            "fadeIn": 300,
+            "fadeOut": 1000,
+            "timeOut": 5000,
+            "extendedTimeOut": 1000
+          }
+          toastr.error("Not Authorized");
+        }
+      });
     },
     componentDidMount: function () {
         this.loadAppointmentsFromServer();
