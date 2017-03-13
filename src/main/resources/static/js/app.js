@@ -1137,6 +1137,15 @@ var PractitionerSelect = React.createClass({
     propTypes: {
                 practitionerName: React.PropTypes.string
     },
+    //Initializes selectpicker after every user choice is loaded
+    componentDidUpdate: function(){
+        if (this.props.users.length > 0){
+            $('#practitionerSelect').selectpicker({
+              liveSearch: true,
+              maxOptions: 1
+            });
+       }
+    },
     render: function() {
         var practitioners = [];
         var index = 0;
@@ -1150,7 +1159,7 @@ var PractitionerSelect = React.createClass({
             }
         });
         return (
-            <select className="form-control" name="selectRole" value={this.props.value} onChange={this.props.onChange}>
+            <select className="form-control" name="selectRole" id="practitionerSelect" data-live-search="true" value={this.props.value} onChange={this.props.onChange}>
                 {practitioners}
             </select>
         );
@@ -1208,7 +1217,7 @@ var AllPatients = React.createClass({
             }).then(function (data) {
                 self.setState({users: data._embedded.users});
             });
-        },
+    },
     /**
         This method handles the adding of a user. (via AJAX)
     */
@@ -1456,6 +1465,15 @@ var PatientOption = React.createClass({
 });
 
 var PatientSelect = React.createClass({
+    //Initializes selectpicker after all patients are loaded
+    componentDidUpdate: function(){
+        if (this.props.patients.length > 0){
+            $('#patientSelect').selectpicker({
+              liveSearch: true,
+              maxOptions: 1
+            });
+       }
+    },
 
     render: function() {
         var patients = [];
@@ -1467,7 +1485,7 @@ var PatientSelect = React.createClass({
             patients.push(<PatientOption patient={patient} key={index}/>);
         });
         return (
-            <select className="form-control" value={this.props.value} onChange={this.props.onChange}>
+            <select className="form-control" id="patientSelect" data-live-search="true" value={this.props.value} onChange={this.props.onChange}>
                 {patients}
             </select>
         );
@@ -1779,6 +1797,12 @@ var PrescriptionSelect = React.createClass({
     propTypes: {
                 prescriptionName: React.PropTypes.string
     },
+    componentDidUpdate: function(){
+        $('#prescriptionSearch').selectpicker({
+          liveSearch: true,
+          maxOptions: 1
+        });
+    },
     render: function() {
         var prescriptions = [];
         var index = 0;
@@ -1789,7 +1813,7 @@ var PrescriptionSelect = React.createClass({
             prescriptions.push(<PrescriptionOption prescription={prescription} key={index}/>);
         });
         return (
-            <select className="form-control" value={this.props.value} onChange={this.props.onChange}>
+            <select id="prescriptionSearch" className="form-control" value={this.props.value} onChange={this.props.onChange}>
                 {prescriptions}
             </select>
         );
