@@ -2641,7 +2641,6 @@ var ViewAllAppointments = React.createClass({
           }
           toastr.success("Successfully deleted appointment!");
           $("#practitionerAppointmentsCalendar").fullCalendar('removeEvents', self.state.appointmentId);
-          $("#myModal").modal("hide");
         },
         error: function(xhr, ajaxOptions, thrownError) {
           toastr.options = {
@@ -2661,6 +2660,7 @@ var ViewAllAppointments = React.createClass({
         this.loadAppointmentsFromServer();
     },
     render: function() {
+        var id = "#" + this.state.appointmentId;
 
         return(
 
@@ -2710,7 +2710,7 @@ var ViewAllAppointments = React.createClass({
                                           {this.state.checkedIn ? (
                                               <button className="btn btn-default center-block disabled">Cancel</button>
                                           ) : (
-                                              <button className="btn btn-danger center-block" onClick={this.cancelAppointment}>Cancel Appointment</button>
+                                              <button className="btn btn-danger center-block" data-toggle="modal" data-dismiss="modal" href={id} >Cancel Appointment</button>
                                           )}
                                       </div>
                                   </div>
@@ -2721,9 +2721,24 @@ var ViewAllAppointments = React.createClass({
                     </div>
                 </div>
             </div>
+            <div className="modal fade" id={this.state.appointmentId} tabindex="-1" role="dialog">
+                <div className="modal-dialog">
+                    <div className="modal-content">
+                        <div className="modal-header">
+                            <button type="button" className="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                             <h4 className="modal-title">Delete Confirmation</h4>
+                        </div>
+                        <div className="modal-body">
+                            <p>Are you sure you want to delete this appointment?</p>
+                        </div>
+                        <div className="modal-footer">
+                            <button type="button" className="btn btn-default" data-dismiss="modal">Cancel</button>
+                            <button type="button" className="btn btn-primary" onClick={this.cancelAppointment} data-dismiss="modal">Yes</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-
-
         );
 
     }
@@ -3573,8 +3588,6 @@ var picker = new Pikaday(
 });
 
 picker.setMoment(moment().date(1).month(0).year(1970));
-
-
 
 $("#btnLogin").click(function(e) {
   validateLoginForm($(this), e);
