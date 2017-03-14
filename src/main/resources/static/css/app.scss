@@ -191,3 +191,7 @@ a:hover {
     -moz-box-sizing: border-box;
     box-sizing: border-box;
 }
+
+.bootstrap-select.btn-group .dropdown-menu li a{
+  text-align: left;
+}

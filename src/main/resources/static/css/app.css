@@ -553,3 +553,6 @@ body.fb_hidden {
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box; }
+
+.bootstrap-select.btn-group .dropdown-menu li a {
+  text-align: left; }
