@@ -3497,7 +3497,9 @@ var CallListReport = React.createClass({
     this.state.appointments.forEach(function(appointment) {
       //Check if appointment date is less than 7 days away
       //If true add it to the Call List Report
-      if (moment(appointment.date).isBefore(moment().add(7, 'days'))) {
+
+      //Check to see if the appointment is within 1-7 days away
+      if (moment(appointment.date).isBefore(moment().add(7, 'days')) && moment(appointment.date).isAfter(moment())) {
         rows.push(
           <div className="row row-striped" key={appointment.publicId}>
             <div className="col-md-3 col-print-3">
