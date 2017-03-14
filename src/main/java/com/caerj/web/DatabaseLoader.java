@@ -86,120 +86,7 @@ public class DatabaseLoader implements CommandLineRunner {
 
 
         User practitioner = userService.findUserByUsername("practitioner");
-/*
-        for (int i = 0; i < PATIENT_AMOUNT; i++) {
-            Patient patient = new Patient("FirstName"+i,
-                "MiddleName"+i,
-                "LastName"+i,
-                true,
-                "January 8, 2000",
-                i+" Brickbored ln.",
-                "Marietta",
-                "GA",
-                30062,
-                "Single",
-                1,
-                2223334444L+i,
-                practitioner,
-                "practitioner",
-                i+"email@address.com");
-            this.patientDao.save(patient);
-        }
 
-        for (int i = 0; i < PRESCRIPTION_AMOUNT; i++) {
-            Prescription prescription = new Prescription("Prescription"+i, i+" "+LOREMIPSUM);
-            this.prescriptionDao.save(prescription);
-        }
-
-        Date date = new Date();
-        for (int i = 1; i <= PATIENT_AMOUNT; i++) {
-            Long id = new Long(i);
-            id = id%10;
-            if (id == 0L) {
-              id = 1L;
-            }
-            Patient patient = patientService.findById(id);
-
-            String startTime = "";
-            String endTime = "";
-
-            if (i % 10 == 0) {
-              Calendar cal = Calendar.getInstance();
-              cal.setTime(date);
-              cal.add(Calendar.DATE, 1);
-              date = cal.getTime();
-
-              startTime = "06:00";
-              endTime = "06:30";
-
-            }
-
-            if (i % 10 == 1) {
-              startTime = "06:45";
-              endTime   = "07:15";
-            }
-
-            if (i % 10 == 2) {
-              startTime = "07:30";
-              endTime   = "08:00";
-            }
-
-            if (i % 10 == 3) {
-              startTime = "08:15";
-              endTime   = "08:45";
-            }
-
-            if (i % 10 == 4) {
-              startTime = "09:00";
-              endTime   = "09:30";
-            }
-
-            if (i % 10 == 5) {
-              startTime = "09:45";
-              endTime   = "10:15";
-            }
-
-            if (i % 10 == 6) {
-              startTime = "10:30";
-              endTime   = "11:00";
-            }
-
-            if (i % 10 == 7) {
-              startTime = "11:15";
-              endTime   = "11:45";
-            }
-
-            if (i % 10 == 8) {
-              startTime = "12:00";
-              endTime   = "12:30";
-            }
-
-            if (i % 10 == 9) {
-              startTime = "12:45";
-              endTime   = "13:15";
-            }
-
-
-
-            SimpleDateFormat dt = new SimpleDateFormat("MM-dd-yyyy");
-            String formattedDate = dt.format(date);
-
-            Appointment appointment = new Appointment(patient, practitioner, formattedDate, startTime, endTime, LOREMIPSUM);
-
-            this.appointmentDao.save(appointment);
-
-            //Update the patient appointment list
-            List<Appointment> appointmentList = patient.getAppointments();
-            appointmentList.add(appointment);
-
-            patient.setAppointments(appointmentList);
-
-            this.patientDao.save(patient);
-
-
-        }
-
-*/
         for (int i = 0; i < PRESCRIPTION_AMOUNT; i++) {
             Prescription prescription = new Prescription("Prescription"+i, i+" "+LOREMIPSUM);
             this.prescriptionDao.save(prescription);
@@ -213,7 +100,7 @@ public class DatabaseLoader implements CommandLineRunner {
         AddAppointment("6:30","7:30",cal.getTime(),patientService.findById(1L),LOREMIPSUM,true);
         cal.set(2015,2,23);
         AddAppointment("8:30","12:45",cal.getTime(),patientService.findById(2L),LOREMIPSUM,true);
-        AddAppointment("2:00","4:30",cal.getTime(),patientService.findById(3L),LOREMIPSUM,false);
+        AddAppointment("14:00","16:30",cal.getTime(),patientService.findById(3L),LOREMIPSUM,false);
         cal.set(2015,4,1);
         AddAppointment("7:00","8:30",cal.getTime(),patientService.findById(4L),LOREMIPSUM,false);
         cal.set(2015,4,28);
@@ -256,7 +143,7 @@ public class DatabaseLoader implements CommandLineRunner {
         cal.add(Calendar.DATE,1);
         AddAppointment("6:30","7:30",cal.getTime(),patientService.findById(25L),LOREMIPSUM,false);
         AddAppointment("10:30","11:30",cal.getTime(),patientService.findById(26L),LOREMIPSUM,false);
-        AddAppointment("2:00","3:45",cal.getTime(),patientService.findById(27L),LOREMIPSUM,false);
+        AddAppointment("14:00","15:45",cal.getTime(),patientService.findById(27L),LOREMIPSUM,false);
 
     }
 
@@ -264,95 +151,85 @@ public class DatabaseLoader implements CommandLineRunner {
 
         Patient temp;
 
-        temp=new Patient("Billy","","Batson",true,"January 18,1973","2334 Heavner Avenue","Marietta","GA",30064,"Single",0,7707933386L,userService.findUserByUsername("dr. bob"),"Bob","billyB@email.com");
-    this.patientDao.save(temp);
-
-
-        temp=new Patient("Victor","","Stone",true,"April 29,1991","4159 Smith Road","Marietta","GA",30067,"Single",0,7709558463L,userService.findUserByUsername("dr. billy"),"Billy","victorS@email.com");
+        temp=new Patient("Billy","","Batson",true,"January 18,1973","2334 Heavner Avenue","Marietta","GA",30064,"Single",0,7707933386L,userService.findUserByUsername("dr. bob"),"dr. bob","billyB@email.com");
         this.patientDao.save(temp);
 
-        temp=new Patient("Anna","","Marie",false,"July 13,1993","411 Smith Road","Marietta","GA",30068,"Single",0,7707954886L,userService.findUserByUsername("dr. chang"),"Chang","annaM@email.com");
+        temp=new Patient("Victor","","Stone",true,"April 29,1991","4159 Smith Road","Marietta","GA",30067,"Single",0,7709558463L,userService.findUserByUsername("dr. billy"),"dr. billy","victorS@email.com");
         this.patientDao.save(temp);
 
-        temp=new Patient("Virgil","Ovid","Hawkins",true,"November 14,1940","1681 Elsie Drive","Marietta","GA",30068,"Single",0,7707987586L,userService.findUserByUsername("dr. billy"),"Billy","virgilH@email.com");
+        temp=new Patient("Anna","","Marie",false,"July 13,1993","411 Smith Road","Marietta","GA",30068,"Single",0,7707954886L,userService.findUserByUsername("dr. chang"),"dr. chang","annaM@email.com");
         this.patientDao.save(temp);
 
-        temp=new Patient("Richard","Osgood","Foley",true,"January 23,1948","4098 Elk Creek Road","Marietta","GA",30064,"Single",0,7703015678L,userService.findUserByUsername("dr. billy"),"Billy","richardF@email.com");
+        temp=new Patient("Virgil","Ovid","Hawkins",true,"November 14,1940","1681 Elsie Drive","Marietta","GA",30068,"Single",0,7707987586L,userService.findUserByUsername("dr. billy"),"dr. billy","virgilH@email.com");
         this.patientDao.save(temp);
 
-        temp=new Patient("Wally","","West",true,"August 29,1973","12 Neuport Lane","Marietta","GA",30062,"Single",0,7707415942L,userService.findUserByUsername("dr. bob"),"Bob","wallyW@email.com");
+        temp=new Patient("Richard","Osgood","Foley",true,"January 23,1948","4098 Elk Creek Road","Marietta","GA",30064,"Single",0,7703015678L,userService.findUserByUsername("dr. billy"),"dr. billy","richardF@email.com");
         this.patientDao.save(temp);
 
-        temp=new Patient("Conner","","Kent",true,"June 4,1965","4684 Hanifan Lane","Marietta","GA",30064,"Single",0,7704222420L,userService.findUserByUsername("dr. chang"),"Chang","connerK@email.com");
+        temp=new Patient("Wally","","West",true,"August 29,1973","12 Neuport Lane","Marietta","GA",30062,"Single",0,7707415942L,userService.findUserByUsername("dr. bob"),"dr. bob","wallyW@email.com");
         this.patientDao.save(temp);
 
-        temp=new Patient("Megan","","Morse",false,"June 18,1963","1230 Oak Street","Marietta","GA",30066,"Single",0,4046932587L,userService.findUserByUsername("dr. bob"),"Bob","meganM@email.com");
+        temp=new Patient("Conner","","Kent",true,"June 4,1965","4684 Hanifan Lane","Marietta","GA",30064,"Single",0,7704222420L,userService.findUserByUsername("dr. chang"),"dr. chang","connerK@email.com");
         this.patientDao.save(temp);
 
-        temp=new Patient("Garfield","","Logan",true,"July 17,1933","3332 Pine Garden Lane","Marietta","GA",30066,"Single",0,6782154869L,userService.findUserByUsername("dr. chang"),"Chang","bb@email.com");
+        temp=new Patient("Megan","","Morse",false,"June 18,1963","1230 Oak Street","Marietta","GA",30066,"Single",0,4046932587L,userService.findUserByUsername("dr. bob"),"dr. bob","meganM@email.com");
         this.patientDao.save(temp);
 
-
-
-
-
-        temp=new Patient("Bart","","Allen",true,"July 7,1978","742 Elkview Drive","Marietta","GA",30064,"Single",0,7701483757L,userService.findUserByUsername("dr. bob"),"Bob","bartA@email.com");
+        temp=new Patient("Garfield","","Logan",true,"July 17,1933","3332 Pine Garden Lane","Marietta","GA",30066,"Single",0,6782154869L,userService.findUserByUsername("dr. chang"),"dr. chang","bb@email.com");
         this.patientDao.save(temp);
 
-        temp=new Patient("Oliver","","Queen",true,"October 3,1984","1495 Lakeland Park Drive","Marietta","GA",30062,"Married",0,4046589598L,userService.findUserByUsername("dr. chang"),"Chang","oliverQ@email.com");
+        temp=new Patient("Bart","","Allen",true,"July 7,1978","742 Elkview Drive","Marietta","GA",30064,"Single",0,7701483757L,userService.findUserByUsername("dr. bob"),"dr. bob","bartA@email.com");
         this.patientDao.save(temp);
 
-        temp=new Patient("Arthur","","Curry",true,"June 27,1990","2036 Fowler Avenue","Marietta","GA",30062,"Single",0,6784584587L,userService.findUserByUsername("dr. billy"),"Billy","arthurC@email.com");
+        temp=new Patient("Oliver","","Queen",true,"October 3,1984","1495 Lakeland Park Drive","Marietta","GA",30062,"Married",0,4046589598L,userService.findUserByUsername("dr. chang"),"dr. chang","oliverQ@email.com");
         this.patientDao.save(temp);
 
-        temp=new Patient("Floyd","","Lawton",true,"June 5,1956","2664 Heavner Avenue","Marietta","GA",30064,"Single",0,7707894587L,userService.findUserByUsername("dr. chang"),"Chang","floydL@email.com");
+        temp=new Patient("Arthur","","Curry",true,"June 27,1990","2036 Fowler Avenue","Marietta","GA",30062,"Single",0,6784584587L,userService.findUserByUsername("dr. billy"),"dr. billy","arthurC@email.com");
         this.patientDao.save(temp);
 
-        temp=new Patient("Nora","","Fries",false,"May 9,1973","3022 Tully Streete","Marietta","GA",30060,"Married",0,6786586986L,userService.findUserByUsername("dr. bob"),"Bob","noraF@email.com");
+        temp=new Patient("Floyd","","Lawton",true,"June 5,1956","2664 Heavner Avenue","Marietta","GA",30064,"Single",0,7707894587L,userService.findUserByUsername("dr. chang"),"dr. chang","floydL@email.com");
         this.patientDao.save(temp);
 
-        temp=new Patient("Rachel","","Roth",false,"August 21,1973","2506 Heavner Avenue","Marietta","GA",30061,"Single",0,7704581235L,userService.findUserByUsername("dr. billy"),"Billy","rachelR@email.com");
+        temp=new Patient("Nora","","Fries",false,"May 9,1973","3022 Tully Streete","Marietta","GA",30060,"Married",0,6786586986L,userService.findUserByUsername("dr. bob"),"dr. bob","noraF@email.com");
         this.patientDao.save(temp);
 
-        temp=new Patient("Cassandra","","Cain",false,"March 19,1960","1130 Leroy Lane","Marietta","GA",30062,"Single",0,7707788596L,userService.findUserByUsername("dr. chang"),"Chang","cassandraC@email.com");
+        temp=new Patient("Rachel","","Roth",false,"August 21,1973","2506 Heavner Avenue","Marietta","GA",30061,"Single",0,7704581235L,userService.findUserByUsername("dr. billy"),"dr. billy","rachelR@email.com");
         this.patientDao.save(temp);
 
-        temp=new Patient("Stephanie","","Brown",false,"May 23,1983","1130 Leroy Lane","Marietta","GA",30064,"Single",0,4044563713L,userService.findUserByUsername("dr. billy"),"Billy","stephB@email.com");
+        temp=new Patient("Cassandra","","Cain",false,"March 19,1960","1130 Leroy Lane","Marietta","GA",30062,"Single",0,7707788596L,userService.findUserByUsername("dr. chang"),"dr. chang","cassandraC@email.com");
         this.patientDao.save(temp);
 
-        temp=new Patient("Roy","","Harper",true,"August 30,1960","3300 Sheila Lane","Marietta","GA",30062,"Single",0,6784584587L,userService.findUserByUsername("dr. bob"),"Bob","royH@email.com");
+        temp=new Patient("Stephanie","","Brown",false,"May 23,1983","1130 Leroy Lane","Marietta","GA",30064,"Single",0,4044563713L,userService.findUserByUsername("dr. billy"),"dr. billy","stephB@email.com");
         this.patientDao.save(temp);
 
-
-
-
-
-
-        temp=new Patient("Curtis","","Connors",true,"January 4,1993","5894 Heavner Avenue","Marietta","GA",30067,"Single",0,6784524897L,userService.findUserByUsername("dr. billy"),"Billy","curtisC@email.com");
+        temp=new Patient("Roy","","Harper",true,"August 30,1960","3300 Sheila Lane","Marietta","GA",30062,"Single",0,6784584587L,userService.findUserByUsername("dr. bob"),"dr. bob","royH@email.com");
         this.patientDao.save(temp);
 
-        temp=new Patient("Quentin","","Beck",true,"Decemeber 16,1990","515 Leroy Lane","Marietta","GA",30063,"Single",0,4045454874L,userService.findUserByUsername("dr. billy"),"Billy","quentinB@email.com");
+        temp=new Patient("Curtis","","Connors",true,"January 4,1993","5894 Heavner Avenue","Marietta","GA",30067,"Single",0,6784524897L,userService.findUserByUsername("dr. billy"),"dr. billy","curtisC@email.com");
         this.patientDao.save(temp);
 
-        temp=new Patient("May","","Reilly",false,"May 4,1983","98 Lakeland Park Drive","Marietta","GA",30064,"Single",0,7707793863L,userService.findUserByUsername("dr. chang"),"Chang","mayR@email.com");
+        temp=new Patient("Quentin","","Beck",true,"Decemeber 16,1990","515 Leroy Lane","Marietta","GA",30063,"Single",0,4045454874L,userService.findUserByUsername("dr. billy"),"dr. billy","quentinB@email.com");
         this.patientDao.save(temp);
 
-        temp=new Patient("Martha","","Kane",false,"September 14,1974","4658 Smith Street","Marietta","GA",30062,"Single",0,4045681515L,userService.findUserByUsername("dr. chang"),"Chang","marthaK@email.com");
+        temp=new Patient("May","","Reilly",false,"May 4,1983","98 Lakeland Park Drive","Marietta","GA",30064,"Single",0,7707793863L,userService.findUserByUsername("dr. chang"),"dr. chang","mayR@email.com");
         this.patientDao.save(temp);
 
-        temp=new Patient("Pamela","Lillian","Isley",false,"January 18,1973","4592 Angie Drive","Marietta","GA",30064,"Single",0,7705154878L,userService.findUserByUsername("dr. bob"),"Bob","ivy@email.com");
+        temp=new Patient("Martha","","Kane",false,"September 14,1974","4658 Smith Street","Marietta","GA",30062,"Single",0,4045681515L,userService.findUserByUsername("dr. chang"),"dr. chang","marthaK@email.com");
         this.patientDao.save(temp);
 
-        temp=new Patient("Thomas","","Elliot",true,"May 17,1955","1212 Johnstown Road","Marietta","GA",30061,"Single",0,7707933386L,userService.findUserByUsername("dr. chang"),"Chang","thomasE@email.com");
+        temp=new Patient("Pamela","Lillian","Isley",false,"January 18,1973","4592 Angie Drive","Marietta","GA",30064,"Single",0,7705154878L,userService.findUserByUsername("dr. bob"),"dr. bob","ivy@email.com");
         this.patientDao.save(temp);
 
-        temp=new Patient("Kent","","Nelson",true,"August 25,1955","3165 Mattson Street","Marietta","GA",30060,"Single",0,6784952541L,userService.findUserByUsername("dr. bob"),"Bob","kentN@email.com");
+        temp=new Patient("Thomas","","Elliot",true,"May 17,1955","1212 Johnstown Road","Marietta","GA",30061,"Single",0,7707933386L,userService.findUserByUsername("dr. chang"),"dr. chang","thomasE@email.com");
         this.patientDao.save(temp);
 
-        temp=new Patient("Martha","","Clark",false,"Decemeber 22,1973","4205 Liberty Street","Marietta","GA",30067,"Single",0,4048896322L,userService.findUserByUsername("dr. chang"),"Chang","marthaC@email.com");
+        temp=new Patient("Kent","","Nelson",true,"August 25,1955","3165 Mattson Street","Marietta","GA",30060,"Single",0,6784952541L,userService.findUserByUsername("dr. bob"),"dr. bob","kentN@email.com");
         this.patientDao.save(temp);
 
-        temp=new Patient("Michael","Jon","Carter",true,"Decemeber 18,1966","4324 Heavner Avenue","Marietta","GA",30060,"Single",0,7707456688L,userService.findUserByUsername("dr. bob"),"Bob","booster@email.com");
+        temp=new Patient("Martha","","Clark",false,"Decemeber 22,1973","4205 Liberty Street","Marietta","GA",30067,"Single",0,4048896322L,userService.findUserByUsername("dr. chang"),"dr. chang","marthaC@email.com");
+        this.patientDao.save(temp);
+
+        temp=new Patient("Michael","Jon","Carter",true,"Decemeber 18,1966","4324 Heavner Avenue","Marietta","GA",30060,"Single",0,7707456688L,userService.findUserByUsername("dr. bob"),"dr. bob","booster@email.com");
         this.patientDao.save(temp);
 
     }
