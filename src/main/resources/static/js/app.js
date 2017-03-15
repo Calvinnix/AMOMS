@@ -1668,17 +1668,18 @@ var AddAppointment = React.createClass({
 
     },
     updatePatientId: function(evt) {
-
+        var pracDisplay = document.getElementsByClassName('filter-option pull-left');
         if (evt.target.value !== "") {
             this.setState({
                 patientId: evt.target.value
             });
             this.updatePractitionerName(this.state.patients[evt.target.value-1].practitionerName); //Subtract 1 from index because it isn't 0 based
+            pracDisplay[1].textContent = this.state.patients[evt.target.value-1].practitionerName;
         } else {
             this.setState({
                 patientId: -1
             });
-            this.updatePractitionerName(this.state.patients[evt.target.value-1].practitionerName);
+            this.updatePractitionerName(this.props.patients[evt.target.value-1].practitionerName);
         }
      },
     updateReasonForVisit: function(evt) {
@@ -4130,5 +4131,4 @@ $('#searchBar').click(function(e){
 
       }( document, window, 0 ));
    });
-
 
