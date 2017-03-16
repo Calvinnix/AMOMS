@@ -3732,6 +3732,7 @@ function validateAddPatientForm(element, e){
 
     if (errorMessage.length !== 0) {
       e.preventDefault();
+      e.stopPropagation();
       element.parent().prepend('<div class="errorDiv"><div class="alert alert-danger">'+errorMessage+'</div></div>');
     }
 }
