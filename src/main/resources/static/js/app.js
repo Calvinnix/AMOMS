@@ -1066,7 +1066,7 @@ var PatientTable = React.createClass({
 var SelectState = React.createClass({
     render: function() {
         return (
-            <select className="form-control" value={this.props.value} onChange={this.props.onChange}>
+            <select className="form-control" id="stateSelect" value={this.props.value} onChange={this.props.onChange}>
                 	<option></option>
                 	<option value="AL">Alabama</option>
                 	<option value="AK">Alaska</option>
@@ -1364,22 +1364,22 @@ var AllPatients = React.createClass({
                         <div className="row">
                             <div className="col-md-4">
                                 <label>First Name:</label>
-                                <input type="text" className="form-control" name="inputFirstName" placeholder="First Name" value={this.state.firstName} onChange={this.updateFirstName} />
+                                <input type="text" className="form-control" id="inputFirstName" placeholder="First Name" value={this.state.firstName} onChange={this.updateFirstName} />
                             </div>
                             <div className="col-md-4">
                                 <label>Middle Name:</label>
-                                <input type="text" className="form-control" name="inputMiddleName" placeholder="Middle Name" value={this.state.middleName} onChange={this.updateMiddleName} />
+                                <input type="text" className="form-control" id="inputMiddleName" placeholder="Middle Name" value={this.state.middleName} onChange={this.updateMiddleName} />
                             </div>
                             <div className="col-md-4">
                                 <label>Last Name:</label>
-                                <input type="text" className="form-control" name="inputLastName" placeholder="Last Name" value={this.state.lastName} onChange={this.updateLastName} />
+                                <input type="text" className="form-control" id="inputLastName" placeholder="Last Name" value={this.state.lastName} onChange={this.updateLastName} />
                             </div>
                         </div>
                         <hr />
                         <div className="row">
                             <div className="col-md-3">
                                 <label>Gender:</label>
-                                <select className="form-control" name="selectGender" value={this.state.gender} onChange={this.updateGender} >
+                                <select className="form-control" id="selectGender" value={this.state.gender} onChange={this.updateGender} >
                                     <option></option>
                                     <option value="true">Male</option>
                                     <option value="false">Female</option>
@@ -1391,7 +1391,7 @@ var AllPatients = React.createClass({
                             </div>
                             <div className="col-md-3">
                                 <label>Marital Status:</label>
-                                <select className="form-control" name="selectMaritalStatus" value={this.state.maritalStatus} onChange={this.updateMaritalStatus} >
+                                <select className="form-control" id="selectMaritalStatus" value={this.state.maritalStatus} onChange={this.updateMaritalStatus} >
                                     <option></option>
                                     <option value="Single">Single</option>
                                     <option value="Married">Married</option>
@@ -1401,18 +1401,18 @@ var AllPatients = React.createClass({
                             </div>
                             <div className="col-md-3">
                                 <label>Number of Children:</label>
-                                <input type="number" className="form-control" name="inputNumberOfChildren" placeholder="Number of Children" min="0" max="1000" value={this.state.numberOfChildren} onChange={this.updateNumberOfChildren} />
+                                <input type="number" className="form-control" id="inputNumberOfChildren" placeholder="Number of Children" min="0" max="1000" value={this.state.numberOfChildren} onChange={this.updateNumberOfChildren} />
                             </div>
                         </div>
                         <hr />
                         <div className="row">
                             <div className="col-md-5">
                                 <label>Address:</label>
-                                <input type="text" className="form-control" name="inputAddress" placeholder="Address" value={this.state.address} onChange={this.updateAddress} />
+                                <input type="text" className="form-control" id="inputAddress" placeholder="Address" value={this.state.address} onChange={this.updateAddress} />
                             </div>
                             <div className="col-md-3">
                                 <label>City:</label>
-                                <input type="text" className="form-control" name="inputCity" placeholder="City" value={this.state.city} onChange={this.updateCity} />
+                                <input type="text" className="form-control" id="inputCity" placeholder="City" value={this.state.city} onChange={this.updateCity} />
                             </div>
                             <div className="col-md-2">
                                 <label>State:</label>
@@ -1420,18 +1420,18 @@ var AllPatients = React.createClass({
                             </div>
                             <div className="col-md-2">
                                 <label>Zip Code:</label>
-                                <input type="number" className="form-control" name="inputZipCode" placeholder="Zip Code" value={this.state.zipCode} onChange={this.updateZipCode} />
+                                <input type="number" className="form-control" id="inputZipCode" placeholder="Zip Code" value={this.state.zipCode} onChange={this.updateZipCode} />
                             </div>
                         </div>
                         <hr />
                         <div className="row">
                             <div className="col-md-3">
                                 <label>Phone Number:</label>
-                                <input type="number" className="form-control" name="inputPhoneNumber" placeholder="Phone Number" value={this.state.phoneNumber} onChange={this.updatePhoneNumber} />
+                                <input type="number" className="form-control" id="inputPhoneNumber" placeholder="Phone Number" value={this.state.phoneNumber} onChange={this.updatePhoneNumber} />
                             </div>
                             <div className="col-md-3">
                                 <label>Email Address:</label>
-                                <input type="email" className="form-control" name="inputEmailAddress" placeholder="Email Address" value={this.state.emailAddress} onChange={this.updateEmailAddress} />
+                                <input type="email" className="form-control" id="inputEmailAddress" placeholder="Email Address" value={this.state.emailAddress} onChange={this.updateEmailAddress} />
                             </div>
                             <div className="col-md-3">
                                 <label>Practitioner:</label>
@@ -3605,15 +3605,16 @@ $("#btnAddPatient").click(function(e){
 function validateAddPatientForm(element, e){
     var firstname = $("#inputFirstName");
     var lastname = $("#inputLastName");
-    var zipcode = $("#inputLastName");
-    var phonenumber = $("inputPhoneNumber");
-    var address = $("inputAddress");
-    var email = $("inputEmailAddress");
-    var city = $("inputCIty");
-    var dob = $("inputDOB");
-    var maritalstatus = $("selectMaritalStatus");
-    var gen = $("selectGender");
-    var children = $("inputNumberOfChildren");
+    var zipcode = $("#inputZipCode");
+    var phonenumber = $("#inputPhoneNumber");
+    var address = $("#inputAddress");
+    var email = $("#inputEmailAddress");
+    var city = $("#inputCity");
+    var state = $("#stateSelect");
+    var dob = $("#datepicker");
+    var maritalstatus = $("#selectMaritalStatus");
+    var gen = $("#selectGender");
+    var children = $("#inputNumberOfChildren");
     var errorMessage = "";
 
     element.siblings("div.errorDiv").each(function(){
@@ -3688,6 +3689,16 @@ function validateAddPatientForm(element, e){
     } else {
       city.addClass("valid");
       city.removeClass("invalid");
+    }
+
+    var stateErrorMessage = returnStateLengthErrorMessage();
+    if ( stateErrorMessage.length !== 0 ) {
+      errorMessage += cityErrorMessage;
+      state.addClass("invalid");
+      state.removeClass("valid");
+    } else {
+      state.addClass("valid");
+      state.removeClass("invalid");
     }
 
     var dobErrorMessage = returnDOBLengthErrorMessage();
@@ -3830,7 +3841,7 @@ function returnUsernameErrorMessage(username) {
     errorMessage += "Username must be less than 20 characters.\n";
   }
   return errorMessage;
-}
+};
 
 function returnPasswordErrorMessage(password) {
     var errorMessage = "";
@@ -3841,7 +3852,7 @@ function returnPasswordErrorMessage(password) {
       errorMessage += "Password must be less than 32 characters.\n";
     }
   return errorMessage;
-}
+};
 
 function returnConfirmPasswordErrorMessage(password, confirmPassword) {
   var errorMessage = "";
@@ -3849,108 +3860,117 @@ function returnConfirmPasswordErrorMessage(password, confirmPassword) {
     errorMessage += "The confirmation password does not match.\n";
   }
   return errorMessage;
-}
+};
 
 function returnNameLengthErrorMessage(){
      var errorMessage = "";
-     var fName = document.getElementsByName("inputFirstName");
-     if(fName[0].value.length === 0){
+     var fName = document.getElementById("inputFirstName");
+     if(fName.value.length === 0){
          errorMessage += "Name cannot be left blank.\n";
      }
      return errorMessage;
- }
+ };
 
 function returnLastNameLengthErrorMessage(){
     var errorMessage = "";
-    var lName = document.getElementsByName("inputLastName");
-    if(lName[0].value.length === 0){
+    var lName = document.getElementById("inputLastName");
+    if(lName.value.length === 0){
         errorMessage += "Last Name cannot be left blank.\n";
     }
     return errorMessage;
-}
+};
 
 function returnZipLengthErrorMessage(){
     var errorMessage = "";
-    var lName = document.getElementsByName("inputZipCode");
-    if(lName[0].value.length < 5){
+    var lName = document.getElementById("inputZipCode");
+    if(lName.value.length < 5){
         errorMessage += "Zip must contain at least 5 numbers.\n";
     }
     return errorMessage;
-}
+};
 
 function returnPhoneLengthErrorMessage(){
     var errorMessage = "";
-    var pNumber = document.getElementsByName("inputPhoneNumber");
-    if(pNumber[0].value.length === 0 || pNumber[0].value.length < 10 || pNumber[0].value.length > 10){
+    var pNumber = document.getElementById("inputPhoneNumber");
+    if(pNumber.value.length === 0 || pNumber.value.length < 10 || pNumber.value.length > 10){
         errorMessage += "Phone Number is invalid.\n";
     }
     return errorMessage;
-}
+};
 
 function returnAddressLengthErrorMessage(){
     var errorMessage = "";
-    var address = document.getElementsByName("inputAddress");
-    if(address[0].value.length === 0){
+    var address = document.getElementById("inputAddress");
+    if(address.value.length === 0){
         errorMessage += "address cannot be left blank.\n";
     }
     return errorMessage;
-}
+};
 
 function returnCityLengthErrorMessage(){
     var errorMessage = "";
-    var city = document.getElementsByName("inputCity");
-    if(city[0].value.length === 0){
+    var city = document.getElementById("inputCity");
+    if(city.value.length === 0){
         errorMessage += "City cannot be left blank.\n";
     }
     return errorMessage;
-}
+};
+
+function returnStateLengthErrorMessage(){
+    var errorMessage = "";
+    var state = document.getElementById("stateSelect");
+    if(state.value.length === 0){
+        errorMessage += "City cannot be left blank.\n";
+    }
+    return errorMessage;
+};
 
 function returnDOBLengthErrorMessage(){
     var errorMessage = "";
-    var dob = document.getElementsByName("inputDOB");
-    if(dob[0].value.length === 0){
+    var dob = document.getElementById("datepicker");
+    if(dob.value.length === 0){
         errorMessage += "DOB cannot be left blank.\n";
     }
     return errorMessage;
-}
+};
 
 function returnMarriedLengthErrorMessage(){
     var errorMessage = "";
-    var status = document.getElementsByName("selectMaritalStatus");
-    if(status[0].value.length === 0){
+    var status = document.getElementById("selectMaritalStatus");
+    if(status.value.length === 0){
         errorMessage += "Marital Status cannot be left blank.\n";
     }
     return errorMessage;
-}
+};
 
 function returnGenderLengthErrorMessage(){
     var errorMessage = "";
-    var gender = document.getElementsByName("selectGender");
-    if(gender[0].value.length === 0){
+    var gender = document.getElementById("selectGender");
+    if(gender.value.length === 0){
         errorMessage += "Gender cannot be left blank.\n";
     }
     return errorMessage;
-}
+};
 
 function returnChildrenLengthErrorMessage(){
     var errorMessage = "";
-    var children = document.getElementsByName("inputNumberOfChildren");
-    if(children[0].value.length === 0){
+    var children = document.getElementById("inputNumberOfChildren");
+    if(children.value.length === 0){
         errorMessage += "Number of Children cannot be left blank.\n";
     }
     return errorMessage;
-}
+};
 
 function returnEmailLengthErrorMessage(){
     var errorMessage = "";
-    var email = document.getElementsByName("inputEmailAddress");
-    if(email[0].value.length === 0){
+    var email = document.getElementById("inputEmailAddress");
+    if(email.value.length === 0){
         errorMessage += "Email cannot be left blank.\n";
-    }else if(email[0].value.includes("@") === false || email[0].value.includes(".com") === false ){
+    }else if(email.value.includes("@") === false || email.value.includes(".com") === false ){
         errorMessage += "Email is invalid.\n";
     }
     return errorMessage;
-}
+};
 
 $(document).ready(function() {
 
@@ -3980,7 +4000,7 @@ $(document).ready(function() {
             minTime: "06:00:00",
             maxTime: "18:00:00",
             editable: true,
-            eventLimit: false // allow "more" link when too many events
+            eventLimit: false, // allow "more" link when too many events
         });
 
         // build the locale selector's options
